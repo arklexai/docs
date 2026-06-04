@@ -1,38 +1,13 @@
 {
   "$schema": "https://mintlify.com/docs.json",
   "theme": "mint",
-  "name": "Mintlify Starter Kit",
+  "name": "Arkdock",
   "colors": {
-    "primary": "#16A34A",
-    "light": "#07C983",
-    "dark": "#15803D"
+    "primary": "#035e7b",
+    "light": "#e6f2f6",
+    "dark": "#024d65"
   },
   "favicon": "/favicon.svg",
-  "navigation": {
-    "pages": [
-      {
-        "group": "Getting Started",
-        "pages": [
-          "index",
-          "quickstart"
-        ]
-      }
-    ],
-    "global": {
-      "anchors": [
-        {
-          "anchor": "Documentation",
-          "href": "https://mintlify.com/docs",
-          "icon": "book-open-cover"
-        },
-        {
-          "anchor": "Blog",
-          "href": "https://mintlify.com/blog",
-          "icon": "newspaper"
-        }
-      ]
-    }
-  },
   "logo": {
     "light": "/logo/light.svg",
     "dark": "/logo/dark.svg"
@@ -41,22 +16,21 @@
     "links": [
       {
         "label": "Support",
-        "href": "mailto:hi@mintlify.com"
+        "href": "mailto:support@arklex.ai"
       }
     ],
     "primary": {
       "type": "button",
-      "label": "Dashboard",
-      "href": "https://app.mintlify.com"
+      "label": "Sign in",
+      "href": "https://arkdock.arklex.ai/platform/login"
     }
   },
   "contextual": {
     "options": [
       "copy",
       "view",
-      "chatgpt",
       "claude",
-      "perplexity",
+      "chatgpt",
       "mcp",
       "cursor",
       "vscode"
@@ -64,9 +38,33 @@
   },
   "footer": {
     "socials": {
-      "x": "https://x.com/mintlify",
-      "github": "https://github.com/mintlify",
-      "linkedin": "https://linkedin.com/company/mintlify"
+      "x": "https://x.com/arklexai",
+      "github": "https://github.com/arklexai",
+      "linkedin": "https://linkedin.com/company/arklexai"
     }
+  },
+  "navigation": {
+    "groups": [
+      {
+        "group": "Get Started",
+        "pages": ["overview", "quickstart"]
+      },
+      {
+        "group": "Core Features",
+        "pages": [
+          "agents",
+          "scenarios",
+          "simulations",
+          "evaluations",
+          "annotations",
+          "knowledge",
+          "metrics"
+        ]
+      },
+      {
+        "group": "Team Management",
+        "pages": ["settings"]
+      }
+    ]
   }
 }

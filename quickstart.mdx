@@ -1,47 +1,187 @@
 ---
-title: "Quickstart"
-description: "Begin with a guide on the fastest path to a successful outcome"
+title: "Quick Start"
+description: "Get from sign-up to your first simulation result in under 10 minutes."
 ---
 
-Describe how someone begins using your product. What is the first thing they need to do? Are there any prerequisites?
+<Note>
+  **Onboarding checklist** — After you log in for the first time, an **Onboarding Checklist** widget appears in the left sidebar showing five steps: Connect your agent, Generate scenarios, Run a simulation, Run an evaluation, and Set up metrics. Each step is automatically checked off as you complete it. The checklist disappears once all five are done. Use it to track your progress through this guide.
+</Note>
 
-A quickstart should take someone from zero to using your product. They'll get a quick win and a sense of what they can accomplish.
+---
 
-## Prerequisites
+## Step 1: Create an account
 
-Before you begin, you must have:
+Go to the Arkdock sign-up page and create an account with your work email. After submitting the form you will receive a verification email. Click the link in that email to activate your account and land on the platform.
 
-- Requirement one (for example, Node.js 18+, a free account, an API key)
-- Requirement two (for example, a compatible device, a compatible browser, a compatible operating system)
+If your team already has an Arkdock organization, ask an admin to send you an invite link instead of signing up directly. Invite links automatically join you to the existing organization.
 
-## Get started
+---
+
+## Step 2: Connect an agent
+
+Navigate to **Agents** in the left sidebar and click **Connect Agent**.
+
+Fill in the form:
+
+| Field | What to enter |
+|---|---|
+| Agent name | A descriptive name (e.g. "Customer Support v2") |
+| API Type | `Chat Completions` for most agents, `A2A` for Agent-to-Agent protocol |
+| Endpoint URL | The full URL Arkdock will POST conversations to |
+| Headers | Any auth headers your endpoint requires (e.g. `Authorization: Bearer <token>`). Values are encrypted at rest. |
+| Body | Default parameters or system messages your endpoint expects |
+
+Click **Test Connection** to verify the endpoint responds before saving. A green checkmark confirms the connection works. Click **Connect Agent** to save.
+
+<Frame>
+  <img src="/images/connect-agent-form.png" alt="Connect Agent form — select the API type, enter the endpoint URL, add auth headers, and configure body parameters before clicking Test Connection." />
+</Frame>
+
+---
+
+## Step 3: Add scenarios
+
+Navigate to **Scenarios** and click **Generate Scenarios** (or **Import** if you have an existing scenario file).
+
+To generate scenarios with AI:
 
 <Steps>
-  <Step title="Install">
-    Describe how to install your product or sign up.
-
-    ```bash
-    npm install your-package
-    ```
+  <Step title="Describe your agent">
+    Describe your agent and the kinds of users it serves.
   </Step>
-  <Step title="Configure">
-    Describe any setup or configuration needed before first use.
-
-    ```bash
-    your-cli init
-    ```
+  <Step title="Review generated scenarios">
+    Arkdock generates a set of scenario personas, each with a user goal and profile.
   </Step>
-  <Step title="Run it">
-    Show the first thing a user does to see it working.
-
-    ```bash
-    your-cli start
-    ```
+  <Step title="Save to a group">
+    Review and edit the generated scenarios, then save them to a scenario group.
   </Step>
 </Steps>
 
-<Tip>
-  Give people a way to get help. This could be a link to a support page, a chat with a customer support agent, or a forum for your product.
+Each scenario represents one type of simulated user. A scenario group organizes related scenarios together (e.g. all scenarios for a specific product line or support topic).
 
-  Example: Need help? Reach out to us at [support@yourcompany.com](mailto:support@yourcompany.com).
-</Tip>
+---
+
+## Step 4: Run a simulation
+
+Navigate to **Simulations** and click **New Simulation**.
+
+<Steps>
+  <Step title="Select agent">
+    Select the agent you connected in Step 2.
+  </Step>
+  <Step title="Name the simulation">
+    Give the simulation a descriptive name.
+  </Step>
+  <Step title="Select scenarios">
+    Select the scenarios to include.
+  </Step>
+  <Step title="Configure conversation settings">
+    Set **Conversations per scenario** (default: 1, capped so total conversations stay at or below 50) and **Max turns per conversation** (default: 5, max 10).
+  </Step>
+  <Step title="Run">
+    Click **Run Simulation**.
+  </Step>
+</Steps>
+
+<Frame>
+  <img src="/images/new-simulation.png" alt="New Simulation panel — select an agent, pick scenarios, set conversations per scenario and max turns, then click Run Simulation." />
+</Frame>
+
+Arkdock will navigate you to the simulation detail page. Each row in the conversations table represents one simulated conversation. Click any row to read the full transcript.
+
+---
+
+## Step 5: Run an evaluation
+
+Once the simulation status shows **Completed**, navigate to **Evaluations** and click **New Evaluation**.
+
+<Steps>
+  <Step title="Select simulation">
+    **Simulation** — Select the simulation you just ran.
+  </Step>
+  <Step title="Choose a judge">
+    **LLM Judge** — Choose a provider and model (e.g. GPT-4o, Claude 3.5 Sonnet, Gemini 2.0 Flash).
+  </Step>
+  <Step title="Select metrics">
+    **Metrics** — Select the metrics to score. **Goal Completion is always included.** Add Helpfulness, Coherence, or any custom metrics you care about.
+  </Step>
+  <Step title="Run">
+    Click **Run Evaluation**.
+  </Step>
+</Steps>
+
+Arkdock scores each conversation turn and updates the status to Completed when done. Click the evaluation row to open the detail page.
+
+---
+
+## Step 6: Review results
+
+The evaluation detail page breaks results into four sections:
+
+- **Quantitative Metrics** — numeric scores per metric, grouped into turn-level and conversation-level, with band labels (Excellent, Good, Needs Improvement, Poor).
+- **Qualitative Metrics** — label distributions for categorical metrics.
+- **Unique Errors** — behavioral failures detected by the LLM judge, grouped by severity with suggested fixes.
+- **Conversations** — the full list of scored conversations with per-conversation scores and status.
+
+<Frame>
+  <img src="/images/evaluation-detail.png" alt="Evaluation detail page showing turn-level and conversation-level metric cards with score bars and band labels." />
+</Frame>
+
+Click any conversation row to open the transcript modal. Expand the **Reasoning** panel on each assistant turn to read the LLM judge's explanation for that score.
+
+---
+
+## Step 7: Invite your team
+
+Evaluation results are more useful when the whole team can review them. Navigate to **Settings** in the sidebar, then open the **Members** tab.
+
+Click **Invite Member** and enter your teammate's work email. They receive an invitation link that joins them to your organization. If they do not have an Arkdock account yet, they are prompted to create one on acceptance.
+
+Roles determine what each member can do:
+
+| Role | What they can do |
+|---|---|
+| **Admin** | Full access including member management and billing |
+| **Member** | Access to agents, scenarios, simulations, evaluations, knowledge, and metrics |
+
+Once teammates are in, they can annotate evaluation turns in the **Annotations** tab to calibrate LLM judge scores against human judgment. Admins can toggle the **Admin view** in an evaluation to see all reviewers' annotations alongside the auto-evaluation scores.
+
+---
+
+## Step 8: Monitor token usage and billing
+
+Arkdock bills by token consumption. Navigate to **Settings > Billing** to see your current plan, token usage for the billing period, and any overage charges.
+
+### Plans
+
+| Plan | Price | Best for |
+|---|---|---|
+| **Free** | $0/month | Getting started and early exploration |
+| **Pro** | $299/month | Teams running production workloads |
+| **Enterprise** | Custom | Organizations with custom scale or compliance needs |
+
+### Token dimensions
+
+Every simulation (input/output to your agent and the LLM judge) and every knowledge indexing operation consumes tokens. The Billing tab shows three meters:
+
+| Dimension | Resets | Free allowance | Pro allowance |
+|---|---|---|---|
+| **Input tokens** | Each billing period | 700K | 14M |
+| **Output tokens** | Each billing period | 100K | 2M |
+| **Knowledge tokens** | Never (lifetime hard limit) | 5K | 100K |
+
+The progress bar for each dimension turns amber at 80% and red at 100%. On the Free plan, operations pause when any limit is reached — no overage is charged. On Pro, operations continue and overage is billed at $0.01 per 1K input tokens and $0.05 per 1K output tokens, up to a default ceiling of $2,000 per month. You can set a lower **Spending Cap** on the Billing tab to prevent unexpected charges.
+
+<Frame>
+  <img src="/images/billing.png" alt="Settings > Billing — plan comparison, token usage meters for the current period, and the spending cap control." />
+</Frame>
+
+To upgrade, click **Upgrade to Pro** on the Billing tab. To manage your payment method or download invoices, click **Manage Billing** (opens the Stripe billing portal).
+
+---
+
+## Next steps
+
+- [Add more agents](/agents) to compare multiple agent versions.
+- [Customize metrics](/metrics) to score domain-specific behaviors.
+- [Upload knowledge documents](/knowledge) to give your simulated users access to product docs or FAQs.

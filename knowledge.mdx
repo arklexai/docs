@@ -1,0 +1,98 @@
+---
+title: "Knowledge"
+description: "Manage documents and websites that simulated users can reference during a simulation."
+---
+
+The Knowledge section manages documents and websites that simulated users can reference during a simulation. Attaching knowledge to a scenario gives the simulated user access to specific content — useful for testing whether your agent responds faithfully to its source material.
+
+---
+
+## Knowledge types
+
+Arkdock supports two types of knowledge sources:
+
+| Type | Description |
+|---|---|
+| **Documents** | Uploaded files (PDFs, text documents, and similar formats). |
+| **Websites** | Web pages crawled and indexed from a URL. |
+
+Both types are chunked and indexed so the simulated user can draw on their contents when forming conversation turns.
+
+---
+
+## Documents
+
+Navigate to **Knowledge** and select the **Documents** tab.
+
+### Uploading a document
+
+Click **Upload Document** and select a file from your computer. Once uploaded, the document is processed and made available to attach to scenarios.
+
+Each document entry in the list shows:
+
+- Document name
+- Upload date
+- Processing status (Pending, Processing, Ready, Failed)
+
+### Viewing a document
+
+Click any document row to open the document detail page. The detail view shows the document content and metadata. Documents that fail to process show an error message with guidance on supported formats.
+
+### Deleting a document
+
+Open the document detail page and use the delete action. Deleting a document removes it from the knowledge base. Scenarios that reference the deleted document will lose access to its content for future simulations.
+
+---
+
+## Websites
+
+Navigate to **Knowledge** and select the **Websites** tab.
+
+### Adding a website
+
+Click **Add Website** and enter the URL to crawl. Arkdock fetches and indexes the page content. For multi-page documentation sites, you can add individual page URLs.
+
+Each website entry shows:
+
+- The URL
+- When it was added
+- Processing status
+
+### Viewing a website
+
+Click any website row to open the link detail page, which shows the indexed content and metadata.
+
+### Deleting a website
+
+Open the link detail page and use the delete action.
+
+---
+
+## Attaching knowledge to scenarios
+
+Once documents or websites are in the knowledge base, you can attach them to individual scenarios on the scenario detail page.
+
+A simulated user with attached knowledge documents will reference their contents when relevant during a conversation. This is particularly useful for:
+
+- **Faithfulness testing** — verifying that the agent's responses align with what a knowledgeable user would expect based on documented facts.
+- **Grounded evaluation** — ensuring agents don't hallucinate information that contradicts the documents the user has access to.
+- **Edge case coverage** — giving simulated users specific product specs, pricing tables, or policy details that can reveal gaps in agent knowledge.
+
+---
+
+## FAQ
+
+<AccordionGroup>
+  <Accordion title="What file formats are supported for document uploads?">
+    Commonly supported formats include PDF, TXT, and DOCX. If a document fails to process, check that it is not password-protected and is within the supported file size limit.
+  </Accordion>
+  <Accordion title="Does adding a website crawl linked pages?">
+    Currently Arkdock indexes the specific URL you provide, not a full site crawl. Add individual URLs for each page you want available.
+  </Accordion>
+  <Accordion title="How current is the indexed website content?">
+    Content is indexed at the time you add the URL. Arkdock does not automatically re-crawl URLs when the source page changes. Delete and re-add the URL to refresh the indexed content.
+  </Accordion>
+  <Accordion title="Can I share knowledge items across multiple scenarios?">
+    Yes. A single document or website can be attached to as many scenarios as needed. Updating the source document does not affect simulations that have already been run.
+  </Accordion>
+</AccordionGroup>

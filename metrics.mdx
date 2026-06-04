@@ -1,0 +1,183 @@
+---
+title: "Metrics"
+description: "Define what the LLM judge evaluates. Use built-in metrics or create custom ones with your own rubric."
+---
+
+Metrics define what the LLM judge evaluates during an evaluation run. Arkdock includes seven built-in metrics and supports custom metrics that you define with a natural-language rubric.
+
+---
+
+## Built-in metrics
+
+| Metric | What it measures |
+|---|---|
+| **Helpfulness** | Whether the agent's responses actually help the user accomplish their goal. |
+| **Coherence** | Whether the agent's responses are logically consistent and well-structured across the conversation. |
+| **Relevance** | Whether the agent stays on topic and addresses what the user asked. |
+| **Verbosity** | Whether the agent's response length is appropriate — not too terse or unnecessarily long. |
+| **Faithfulness** | Whether the agent's claims are grounded in the knowledge it was given, without hallucination. |
+| **Goal Completion** | Whether the simulated user's stated goal was fully achieved by the end of the conversation. Scored 0-1 rather than 0-5. **Always required** — this metric is automatically included in every evaluation and cannot be deselected. |
+| **Agent Behavior Failure** | Whether the agent exhibited any defined failure behaviors (e.g. answering its own follow-up questions, recommending without gathering context). |
+
+Built-in metrics use Arkdock's default scoring rubrics and are available in all evaluations without any configuration.
+
+---
+
+## Custom metrics
+
+Custom metrics let you define domain-specific behaviors to score. Navigate to **Metrics** in the sidebar to create and manage them.
+
+### Creating a custom metric
+
+Click **New Metric** or the **+** icon on the Metrics page.
+
+**Name** — A short label for the metric (e.g. "Upsell Appropriateness", "Policy Compliance").
+
+**Description** — A one-sentence description that appears as a tooltip in evaluation results.
+
+**Scoring prompt** — The rubric the LLM judge uses to score this metric. Write it as a clear instruction describing:
+
+- What behavior or quality to look for.
+- How to score it on a 0-5 scale (or 0-1 for completion-style metrics).
+- Any examples that clarify edge cases.
+
+**Example prompt for a custom metric:**
+
+```
+Evaluate whether the agent gathered sufficient information from the user
+before making a product recommendation.
+
+Score 5 if the agent asked at least two clarifying questions about budget,
+use case, or preferences before recommending.
+Score 3 if the agent asked one clarifying question.
+Score 1 if the agent made a recommendation without asking any questions.
+Score 0 if the agent's recommendation directly contradicted the user's
+stated preferences.
+```
+
+**Color** — An optional color label used to visually distinguish the metric in the metrics list.
+
+Click **Save** to create the metric. Custom metrics are immediately available in the metric selector when creating an evaluation.
+
+### Editing a custom metric
+
+Click a metric row to open its detail view. Edit the name, description, or prompt and click **Save**. The updated prompt is used for all future evaluations. Previous evaluation results are not retroactively rescored.
+
+### Metric versions
+
+Each time you save changes to a custom metric, a new version is created. You can view version history from the metric detail page to see what changed between runs and understand score differences over time.
+
+### Deleting a custom metric
+
+Open the metric detail page and use the delete action. Deleting a metric removes it from future evaluations. Historical evaluation results that used this metric remain unchanged.
+
+---
+
+## Metric Alignment
+
+Metric Alignment uses your team's human annotations to automatically improve a metric's scoring prompt. When the LLM judge and your reviewers consistently disagree on a metric, run Alignment to distill those disagreements into a refined rubric — without writing the new prompt by hand.
+
+Alignment is available for both built-in and custom metrics. For built-in metrics, accepting an alignment result produces a new custom metric (a fork). For custom metrics, it bumps the metric to a new version.
+
+### Starting an alignment run
+
+Open a metric's detail page. At the bottom you will find the **Alignment** section. Click **Start Alignment**.
+
+In the Start Alignment dialog, configure:
+
+| Field | Description |
+|---|---|
+| **Source evaluations** | One or more completed evaluations that have resolved annotations for this metric. Only evaluations with resolved annotation data appear in this list. |
+| **Reflection LM** | The provider and model used to analyze disagreements and distill guidelines. Defaults to the platform default if left blank. |
+| **Judge model** | The model used to verify the distilled guidelines. Optional. |
+| **Delta threshold** | Minimum score gap between the LLM judge and a human annotation for the pair to be counted as a disagreement. |
+
+Click **Start**. The run enters the queue immediately.
+
+### Alignment phases
+
+While an alignment run is in progress, a phase label shows the current step:
+
+1. Loading annotations
+2. Building disagreement traces
+3. Distilling guidelines
+4. Finalizing
+
+Each run typically completes within a few minutes depending on the number of conversations and the reflection model chosen.
+
+### Alignment statuses
+
+| Status | Meaning |
+|---|---|
+| Pending | Queued, not yet started |
+| Running | In progress |
+| Aligned | Completed successfully — guidelines are ready to review |
+| Error | Run failed — view the error detail and retry |
+| Cancelled | Run was cancelled before completion |
+
+### Reviewing and accepting results
+
+When a run reaches **Aligned** status, expand it to view the distilled guidelines. The panel shows:
+
+- The full guidelines text (what the LLM judge should look for, in plain language)
+- The number of disagreements found across the source evaluations
+- How many agreeing rows were skipped
+
+If the guidelines look good, click **Accept**:
+
+- For a **built-in metric**: a new custom metric is created containing the distilled guidelines as its scoring prompt. The original built-in metric is unchanged.
+- For a **custom metric**: the current metric is updated to a new version with the refined prompt. All future evaluations using this metric will apply the new rubric.
+
+If the guidelines do not look useful (e.g. the run found zero disagreements or the output is too generic), discard the run and try again with different source evaluations or a different reflection model.
+
+### Cancelling a run
+
+Click **Cancel** on any in-flight alignment run to stop it. Cancellation is idempotent — cancelling an already-completed run has no effect.
+
+### Alignment history
+
+The Alignment section shows all past runs for the metric, newest first. Each row shows the status, creation time, and source evaluations used. Expand any completed run to view its guidelines, even after accepting.
+
+---
+
+## Selecting metrics for an evaluation
+
+When creating an evaluation, the **Metrics** selector lists all available metrics grouped by type:
+
+- **Custom** — your organization's custom metrics, shown first.
+- **Built-in** — the seven standard Arkdock metrics.
+
+Use the search input to find a specific metric by name. Check individual metrics or use **Select All** / **Deselect All** to quickly configure the set.
+
+At least one metric must be selected before an evaluation can run.
+
+---
+
+## FAQ
+
+<AccordionGroup>
+  <Accordion title="How do I choose which metrics to include in an evaluation?">
+    Start with the built-in metrics that are most relevant to your agent's purpose. For a customer support agent, Helpfulness, Goal Completion, and Faithfulness are usually the most informative. Add custom metrics for behaviors specific to your use case.
+  </Accordion>
+  <Accordion title="Can I use custom metrics alongside built-in ones?">
+    Yes. Mix and match freely. Each metric is scored independently.
+  </Accordion>
+  <Accordion title="Does the choice of LLM judge affect scores?">
+    Yes. Different models interpret scoring rubrics differently. For consistency across evaluation runs, use the same judge and model. If you change judges, treat the results as a separate baseline rather than a direct comparison to prior runs.
+  </Accordion>
+  <Accordion title="How specific should a custom metric prompt be?">
+    Be as specific as possible about the score boundaries. A vague prompt like "Rate how professional the agent sounds" produces inconsistent scores. A prompt that defines what a 1, 3, and 5 look like will produce much more reliable results.
+  </Accordion>
+  <Accordion title="How many custom metrics can I create?">
+    There is no hard limit on custom metrics. Practically, evaluations with more than 10-12 metrics can become harder to interpret. Focus on the 3-5 metrics that best capture the behaviors you care about.
+  </Accordion>
+  <Accordion title="What is the difference between Alignment and editing the scoring prompt manually?">
+    Editing a prompt manually requires you to write the new rubric yourself. Alignment derives the rubric automatically by analyzing disagreements between the LLM judge's scores and your team's resolved annotations. It is most useful when you have a pattern of disagreement but are not sure exactly how to express the correction in the prompt.
+  </Accordion>
+  <Accordion title="Can I run Alignment on a built-in metric?">
+    Yes. Accepting an alignment result on a built-in metric creates a new custom metric (a fork) that contains the distilled guidelines. The original built-in metric is not modified.
+  </Accordion>
+  <Accordion title="How many resolved annotations do I need before running Alignment?">
+    There is no hard minimum, but more resolved annotations give the reflection model more signal. Runs based on fewer than 5-10 resolved disagreements tend to produce generic or low-confidence guidelines. Aim to annotate and resolve at least one full evaluation before starting.
+  </Accordion>
+</AccordionGroup>

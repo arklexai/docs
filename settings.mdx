@@ -1,0 +1,137 @@
+---
+title: "Settings"
+description: "Manage your profile, team members, usage, and billing."
+---
+
+The Settings page manages your personal profile and your organization's team configuration, usage, and billing. Navigate to **Settings** in the sidebar.
+
+---
+
+## Profile
+
+The Profile tab lets you update your account details.
+
+| Field | Description |
+|---|---|
+| Display name | Your name as it appears in evaluation results and shared views |
+| Email | Your account email address |
+| Password | Change your password (requires entering the current password) |
+
+---
+
+## Members
+
+The Members tab shows everyone in your organization and lets admins manage access.
+
+### Roles
+
+| Role | Permissions |
+|---|---|
+| **Admin** | Full access to all features including member management, billing, and all team data |
+| **Member** | Access to agents, scenarios, simulations, evaluations, knowledge, and metrics. Cannot manage members or billing. |
+
+### Inviting teammates
+
+Click **Invite Member** and enter the email address. An invitation email is sent with a link to join the organization. Invited users who do not yet have an Arkdock account will be prompted to create one when they accept.
+
+Pending invites are shown in the members list with a "Pending" status until the recipient accepts.
+
+### Changing a member's role
+
+Admins can change a member's role from the member row. Click the role dropdown and select the new role.
+
+### Removing a member
+
+Admins can remove a member using the kebab menu on their row. Removed members lose access to the organization immediately. Their historical contributions (evaluations created, annotations added) remain in the platform.
+
+---
+
+## Usage
+
+The Usage tab shows your organization's consumption metrics for the current billing period:
+
+- Number of simulations run
+- Total conversations generated
+- Number of evaluations completed
+- API calls made
+
+Usage is refreshed periodically. Contact support if you believe there is a discrepancy.
+
+---
+
+## Billing
+
+The Billing tab shows your current plan, live token usage for the billing period, and overage controls.
+
+### Plans
+
+| Plan | Price | Best for |
+|---|---|---|
+| **Free** | $0/month | Every new organization starts here |
+| **Pro** | $299/month | Teams running production workloads |
+| **Enterprise** | Custom | Custom scale, compliance, or on-prem requirements |
+
+**Free plan includes:**
+- 700K input tokens / billing period
+- 100K output tokens / billing period
+- 5K knowledge tokens (lifetime hard limit)
+- Operations pause at the limit — no overage charges
+- Up to 2 concurrent operations
+
+**Pro plan includes:**
+- 14M input tokens / billing period
+- 2M output tokens / billing period
+- 100K knowledge tokens (lifetime hard limit)
+- Input overage: $0.01 per 1K tokens
+- Output overage: $0.05 per 1K tokens
+- $2,000/month default overage ceiling
+- Custom spending cap
+
+**Enterprise plan includes:**
+- Custom token allowances and overage rates
+- Bring your own LLM model/provider
+- On-prem deployment option
+- Dedicated CSM and SLA
+- SSO / SAML
+
+### Token usage
+
+The Billing tab shows three token meters for the current billing period:
+
+| Dimension | Resets | Notes |
+|---|---|---|
+| Input tokens | Each billing period | Tokens sent to your agent and the LLM judge |
+| Output tokens | Each billing period | Tokens returned by your agent and the LLM judge |
+| Knowledge tokens | Never (lifetime hard limit) | Tokens consumed indexing documents and websites |
+
+Each bar turns amber at 80% and red at 100%.
+
+### Overage and spending cap
+
+On the Free plan, operations pause when any token limit is reached. No overage is charged.
+
+On the Pro plan, operations continue past the included allowance and overage is billed at the per-token rates above. A default ceiling of $2,000/month caps total overage. Use the **Spending Cap** control to set a lower limit and prevent unexpected charges.
+
+### Upgrading and managing
+
+Click **Upgrade to Pro** to start the checkout flow (opens the Stripe payment page). Click **Manage Billing** to update your payment method, download invoices, or cancel your subscription (opens the Stripe billing portal).
+
+To cancel a Pro subscription, use the **Cancel Subscription** option on the Billing tab. The subscription remains active until the end of the current billing period.
+
+Contact support for Enterprise pricing.
+
+---
+
+## FAQ
+
+<AccordionGroup>
+  <Accordion title="Can I belong to multiple organizations?">
+    Not currently. Each Arkdock account is associated with one organization. If you need access to another organization, you will need a separate account.
+  </Accordion>
+  <Accordion title="What happens to data when a member is removed?">
+    Evaluations, simulations, agents, and scenarios created by the removed member remain in the organization. Annotations and comments are attributed to their account. The removed member can no longer access the organization.
+  </Accordion>
+  <Accordion title="Can a member invite others?">
+    Only admins can send invitations. Members can view the team roster but cannot add or remove members.
+  </Accordion>
+</AccordionGroup>

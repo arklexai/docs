@@ -1,0 +1,232 @@
+---
+title: "Evaluations"
+description: "Score simulation conversations with an LLM judge and detect behavioral failures."
+---
+
+An evaluation scores the conversations from one or more simulations using an LLM judge. It produces per-metric scores, detects behavioral failures, and supports human annotation for calibration.
+
+---
+
+## Evaluations list
+
+Navigate to **Evaluations** in the sidebar to see all evaluations in your organization.
+
+| Column | Description |
+|---|---|
+| Evaluation Name | The name you gave the evaluation |
+| Simulations Evaluated | The simulation(s) whose conversations were scored |
+| Created By | The team member who created it |
+| Date | Creation date |
+| Errors | Number of unique behavioral errors detected |
+| Status | Completed, Running, or Failed |
+
+Use the **Filter** button to narrow by creator or status. Use the **Search** bar to filter by evaluation name or simulation name.
+
+Click any row to open the evaluation detail page.
+
+---
+
+## Creating an evaluation
+
+### From the Evaluations page
+
+Click **New Evaluation** to open the creation sheet.
+
+**Evaluation Name** — A name for this evaluation run (e.g. "Q2 Helpfulness Review - GPT-4o Judge").
+
+**Simulation** — Select a completed simulation to evaluate. The combobox lists all completed simulations. Use the search input and "Created by me" filter to narrow the list.
+
+**LLM Judge** — Select a provider and model to use as the judge:
+
+| Provider | Available models |
+|---|---|
+| OpenAI | GPT-4o (default), GPT-4o Mini, GPT-4 Turbo, GPT-3.5 Turbo |
+| Anthropic | Claude 3.5 Sonnet (default), Claude 3.5 Haiku, Claude 3 Opus, Claude 3 Haiku |
+| Google | Gemini 2.0 Flash (default), Gemini 1.5 Pro, Gemini 1.5 Flash |
+
+**Metrics** — Select which metrics to include. **Goal Completion is always included** and cannot be deselected — it is required on every evaluation. Select additional metrics as needed. See [Metrics](/metrics) for descriptions of each built-in metric and instructions for creating custom metrics.
+
+Click **Run Evaluation** to start. The evaluation scores each conversation and updates the status to Completed when done.
+
+### From a simulation
+
+You can also run an evaluation directly from the Simulations page. Click the kebab menu on a completed simulation and select **New Evaluation**.
+
+---
+
+## Evaluation detail page
+
+The detail page is divided into a stats strip, a sidebar, and a main content area.
+
+### Stats strip
+
+At the top of the page:
+
+| Stat | Description |
+|---|---|
+| Conversations | Total number of conversations scored |
+| Avg Turns | Average number of turns per conversation |
+| Avg Score | Average score across all metrics and conversations |
+
+Conversation status counts (Done, Partial Failure, Failed) appear on the right side of the strip.
+
+### Sidebar navigation
+
+The sidebar links to six sections:
+
+| Section | Description |
+|---|---|
+| Quantitative Metrics | Numeric scores for each selected metric |
+| Qualitative Metrics | Label distributions for categorical metrics |
+| Unique Errors | Behavioral failures detected across all conversations |
+| Conversations | Full list of scored conversations |
+| Annotations | Per-turn human annotation view |
+| Annotation Calibration | Agreement analysis between auto-evaluation and human review |
+
+---
+
+## Quantitative Metrics
+
+Shows a card for each numeric metric selected when the evaluation was created. Metrics are grouped into two sections: **Turn-level** (scored per assistant turn) and **Conversation-level** (scored once for the full conversation).
+
+Each card displays:
+
+- The metric name and score (e.g. 3.6/5 or 1.00/1 for Goal Completion).
+- A progress bar visualizing the score.
+- A band label indicating the score range.
+
+| Band | Score threshold | Color |
+|---|---|---|
+| Excellent | ≥ 80% of max | Emerald |
+| Good | 60-80% | Sky blue |
+| Needs Improvement | 40-60% | Amber |
+| Poor | < 40% | Rose |
+
+<Frame>
+  <img src="/images/evaluation-detail.png" alt="Evaluation detail page showing turn-level and conversation-level metric cards with score bars and band labels." />
+</Frame>
+
+---
+
+## Qualitative Metrics
+
+For metrics that produce categorical labels (e.g. sentiment, tone, response type), this section shows the label distribution across all conversations.
+
+Each metric group shows one collapsible row per label. Expanding a row reveals the list of conversations and turn numbers where that label was assigned. Click a conversation link to open the conversation modal at that specific turn.
+
+---
+
+## Errors
+
+Lists behavioral failures detected by the LLM judge, grouped by severity.
+
+| Severity | Color |
+|---|---|
+| Critical | Red |
+| High | Orange |
+| Medium | Amber |
+| Low | Indigo |
+
+Each error entry shows:
+
+- The severity and category.
+- How many times the error occurred (e.g. "9 occurrences").
+- A description of the problematic behavior.
+- A suggested fix, if the judge provided one.
+- Links to the specific conversations and turns where the error was observed.
+
+Click a conversation link to open the conversation modal at that turn.
+
+---
+
+## Conversations
+
+A table of all conversations scored in this evaluation.
+
+| Column | Description |
+|---|---|
+| Scenario | The scenario ID that generated the conversation |
+| Goal | The simulated user's goal |
+| Goal Completion | How well the conversation achieved the stated goal (0-1 scale) |
+| Final Score | The overall conversation score (0-1 scale) |
+| Simulation | Which simulation this conversation came from |
+| Status | Done, Partial Failure, or Failed |
+
+Click any row to open the conversation modal and see the full transcript with per-turn scores, behavioral failure annotations, and LLM judge reasoning.
+
+### Conversation modal
+
+The modal shows the complete transcript with alternating user and assistant turns. For each assistant turn, the panel displays per-metric scores alongside a **Reasoning** section containing the LLM judge's explanation for that score. Expand the Reasoning section to understand why a turn was scored the way it was — useful for identifying prompt improvements or metric calibration issues.
+
+Use the **Previous** and **Next** arrows to cycle through all conversations in the evaluation without closing the modal.
+
+### Conversation status
+
+| Status | Meaning |
+|---|---|
+| Done | The conversation completed and the agent performed acceptably. |
+| Partial Failure | The conversation completed but the agent failed on one or more metrics. |
+| Failed | The conversation did not complete or the agent failed critically. |
+
+---
+
+## Annotations
+
+The Annotations tab shows per-turn human annotations alongside auto-evaluation scores.
+
+Use the **Member / Admin toggle** in the evaluation header to switch views:
+
+- **Member view** — shows your own annotations for each turn.
+- **Admin view** — shows all reviewers' annotations alongside the auto-evaluation scores and resolved values.
+
+Conversations are listed in collapsible sections. Each turn within a conversation is a row in a spreadsheet-style grid with columns for the turn reference, reviewer, comment, and one column per metric.
+
+- **Quantitative metrics** — numeric inputs accepting values 0-5. Shows both the auto-evaluation value and the resolved value.
+- **Qualitative metrics** — dropdown selectors for the label options.
+
+Annotations are auto-saved 800 ms after the last edit. A status indicator shows "saving..." then "saved".
+
+---
+
+## Annotation Calibration
+
+Shows the agreement rate between auto-evaluation scores and human annotations for each metric.
+
+Per metric:
+
+- An agreement rate percentage bar.
+- For quantitative metrics: auto average vs. resolved average.
+- For qualitative metrics: the most common disagreement pair (e.g. "auto: Helpful → resolved: Partially Helpful").
+- An expandable disagreement list showing the specific turn, conversation, auto value, resolved value, and who resolved it.
+
+Use this section to identify metrics where the LLM judge consistently diverges from human judgment and refine the metric prompt accordingly.
+
+---
+
+## Rerunning an evaluation
+
+Click the kebab menu on any evaluation row and select **Rerun**. The rerun sheet pre-fills the evaluation name and shows a summary of the original configuration (simulations, metrics, model). Edit the name to distinguish this run, then click **Run Evaluation**.
+
+The rerun creates a new evaluation record. It uses the same simulations, metrics, and LLM judge as the original.
+
+---
+
+## FAQ
+
+<AccordionGroup>
+  <Accordion title="Can I evaluate the same simulation with different LLM judges?">
+    Yes. Create separate evaluations for the same simulation, each with a different judge. Compare the scores to understand how much variance the judge choice introduces.
+  </Accordion>
+  <Accordion title="Can an evaluation cover multiple simulations?">
+    Yes. The simulation selector supports multiple selections. This is useful for rolling up results from several simulation runs into a single scored view.
+  </Accordion>
+  <Accordion title="How are scores normalized?">
+    Scores are on a 0-5 scale where 5 is the best possible performance. The exact scoring criteria depend on the metric definition and the LLM judge's interpretation of the rubric.
+  </Accordion>
+  <Accordion title="What is Goal Completion scored on?">
+    Goal Completion is scored 0-1 rather than 0-5. A score of 1.0 means the simulated user's stated goal was fully achieved by the end of the conversation.
+  </Accordion>
+  <Accordion title="How do I improve a metric that consistently scores low?">
+    Start with the Errors tab to find specific behavioral failures. Review the conversations linked to each error to understand the pattern. Then update your agent's system prompt, knowledge base, or configuration to address the root cause. Re-run the simulation and evaluation to confirm the improvement.
+  </Accordion>
+</AccordionGroup>

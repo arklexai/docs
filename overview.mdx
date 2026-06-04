@@ -1,0 +1,166 @@
+---
+title: "Overview"
+description: "Arkdock is a web platform for testing, simulating, and evaluating AI agents."
+---
+
+## What is Arkdock?
+
+Arkdock is a web platform for testing, simulating, and evaluating AI agents. It gives teams a central place to connect their agents, define realistic test scenarios, run multi-turn simulations, and score agent performance using LLM-judged evaluation metrics — all without writing test infrastructure from scratch.
+
+The platform is built around a three-step workflow:
+
+```mermaid
+flowchart LR
+  subgraph inputs["Your inputs"]
+    A["AI Agent\n(HTTP endpoint or A2A protocol)"]
+    K["Knowledge Base\n(docs and websites)"]
+  end
+  subgraph define["1 · Define"]
+    S["Scenarios\nUser personas and goals"]
+  end
+  subgraph execute["2 · Execute"]
+    SIM["Simulation\nMulti-turn conversations"]
+  end
+  subgraph score["3 · Score"]
+    E["Evaluation\nLLM judge + metrics"]
+    R["Results\nScores · Errors · Annotations"]
+  end
+  K -->|"grounds personas"| S
+  A -->|"agent under test"| SIM
+  S -->|"drives conversation"| SIM
+  SIM -->|"transcripts"| E
+  E --> R
+```
+
+1. **Scenarios** describe who your simulated users are, what they want, and what they know.
+2. **Simulations** run those scenarios against a connected agent and produce full conversation transcripts.
+3. **Evaluations** score the transcripts using quantitative and qualitative metrics, and detect behavioral failures. Teams can define **custom metrics** for domain-specific behaviors and use **annotations** to correct LLM judge scores they disagree with, feeding a calibration loop that brings automated scoring in line with human judgment over time.
+
+---
+
+## Who is it for?
+
+Arkdock is built for teams that build and operate AI agents:
+
+- **AI engineers** who want to catch regressions before deploying a new agent version.
+- **QA teams** who need structured, repeatable test coverage across a wide range of user intents.
+- **Product teams** who want visibility into how well their agent serves users in realistic conditions.
+
+No testing infrastructure or scripting experience is required. Arkdock handles scenario execution, conversation management, and evaluation scoring through the UI.
+
+---
+
+## What makes it different?
+
+### Any agent, any framework
+
+Connect agents built with any framework (LangChain, CrewAI, OpenAI Agents SDK, custom code) through a standard Chat Completions or A2A API endpoint. No SDK to install in your agent codebase.
+
+### Realistic, multi-turn testing
+
+Simulations play out as full conversations, not single-turn probes. Each simulated user follows a defined persona and goal across multiple turns, producing transcripts that reflect real-world interaction patterns.
+
+### LLM-judged evaluation
+
+Evaluations use your choice of LLM judge (GPT-4o, Claude, Gemini) to score conversations on built-in and custom metrics. Scores are computed at the conversation and metric level so you can compare runs, track regressions, and prioritize fixes.
+
+### Custom metrics for domain-specific behaviors
+
+Seven built-in metrics cover general agent quality, but every product has behaviors no generic rubric captures. Teams can define custom metrics in plain language — write a scoring prompt describing what good and bad look like on a 0-5 scale, and the LLM judge applies it from the next evaluation onward. Custom metrics are versioned, reusable across evaluations, and mix freely with built-ins.
+
+### Human-in-the-loop calibration
+
+When the team disputes an LLM judge score, reviewers can enter their own score in the **Annotations** tab without overwriting the original. The **Annotation Calibration** tab then shows agreement rates per metric, surfaces the most common disagreements, and links back to each disputed turn — giving teams the evidence they need to refine a metric's prompt and close the gap between automated scoring and human judgment.
+
+---
+
+## Core capabilities
+
+### Agents
+
+Connect and manage the AI agents you want to test. Each agent stores its API endpoint, authentication headers (encrypted at rest), and default body parameters. You can test the connection before saving and view all simulations run against an agent from its detail page.
+
+[Learn more about Agents](/agents)
+
+### Scenarios
+
+Scenarios define the simulated user profiles that interact with your agent. Each scenario specifies a user goal, a persona description, and optionally a knowledge base of documents the simulated user can reference. Scenarios can be generated with AI or imported in bulk.
+
+[Learn more about Scenarios](/scenarios)
+
+### Simulations
+
+A simulation runs a set of scenarios against a connected agent and records every conversation turn. You control how many conversations to generate per scenario and the maximum number of turns per conversation. Simulations can optionally trigger an evaluation automatically on completion.
+
+[Learn more about Simulations](/simulations)
+
+### Evaluations
+
+Evaluations score simulation transcripts using an LLM judge and a set of metrics you select. Results are organized into performance metric scores, qualitative label distributions, detected errors with suggested fixes, and full conversation transcripts. Human reviewers can annotate individual turns for calibration.
+
+[Learn more about Evaluations](/evaluations)
+
+### Knowledge
+
+The Knowledge section manages the documents and websites your scenarios can reference. Uploaded documents and crawled web pages are indexed so that simulated users can draw on them when interacting with an agent.
+
+[Learn more about Knowledge](/knowledge)
+
+### Metrics
+
+Seven built-in metrics are available out of the box (Helpfulness, Coherence, Relevance, Verbosity, Faithfulness, Goal Completion, Agent Behavior Failure). You can also define custom metrics with a natural-language prompt that tells the LLM judge what to look for and how to score it.
+
+[Learn more about Metrics](/metrics)
+
+---
+
+## FAQ
+
+<AccordionGroup>
+  <Accordion title="What agent types does Arkdock support?">
+    Arkdock supports two integration types: Chat Completions (any endpoint that follows the OpenAI `/chat/completions` schema) and A2A (Agent-to-Agent protocol). Most agents built on popular frameworks can be connected via the Chat Completions endpoint with no code changes.
+  </Accordion>
+  <Accordion title="Does Arkdock require changes to my agent code?">
+    No. Arkdock calls your agent over HTTP. As long as your agent exposes a compatible endpoint, no changes are needed in your agent codebase.
+  </Accordion>
+  <Accordion title="How are API keys and headers stored?">
+    Header values (typically used for API keys and auth tokens) are encrypted at rest. The platform displays masked values and never returns the raw secret after it is saved.
+  </Accordion>
+  <Accordion title="Which LLM providers can be used as the evaluation judge?">
+    You can choose from OpenAI (GPT-4o, GPT-4o Mini, GPT-4 Turbo, GPT-3.5 Turbo), Anthropic (Claude 3.5 Sonnet, Claude 3.5 Haiku, Claude 3 Opus, Claude 3 Haiku), and Google (Gemini 2.0 Flash, Gemini 1.5 Pro, Gemini 1.5 Flash).
+  </Accordion>
+  <Accordion title="Can I run an evaluation automatically after a simulation?">
+    Yes. When creating a simulation you can enable "Also run an evaluation", select an LLM judge, and pick your metrics. The evaluation starts automatically once the simulation completes.
+  </Accordion>
+  <Accordion title="What is the difference between a simulation and an evaluation?">
+    A simulation is the execution layer: it runs scenarios against your agent and produces conversation transcripts. An evaluation is the scoring layer: it takes one or more completed simulations and scores the transcripts using an LLM judge.
+  </Accordion>
+  <Accordion title="Can multiple team members annotate the same evaluation?">
+    Yes. Multiple reviewers can annotate turns independently. Admins can toggle to a view that shows all reviewers' annotations alongside the auto-evaluation scores and the resolved values used for calibration.
+  </Accordion>
+</AccordionGroup>
+
+---
+
+## Quick links
+
+<CardGroup cols={2}>
+  <Card title="Quick Start" icon="bolt" href="/quickstart">
+    Connect your first agent and run a simulation in minutes.
+  </Card>
+  <Card title="Agents" icon="robot" href="/agents">
+    Connect and configure AI agents for testing.
+  </Card>
+  <Card title="Scenarios" icon="users" href="/scenarios">
+    Define the simulated users that drive conversations.
+  </Card>
+  <Card title="Simulations" icon="flask" href="/simulations">
+    Run scenarios against agents and capture transcripts.
+  </Card>
+  <Card title="Evaluations" icon="chart-bar" href="/evaluations">
+    Score transcripts with LLM judges and metrics.
+  </Card>
+  <Card title="Annotations" icon="pen" href="/annotations">
+    Add human judgment to calibrate automated scores.
+  </Card>
+</CardGroup>

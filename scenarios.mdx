@@ -1,0 +1,156 @@
+---
+title: "Scenarios"
+description: "Define the simulated users that interact with your agent during a simulation."
+---
+
+Scenarios define the simulated users that interact with your agent during a simulation. Each scenario specifies a user goal, a persona, and optionally a set of knowledge documents the simulated user can reference.
+
+---
+
+## Scenario groups
+
+Scenarios are organized into **scenario groups**. A group is a logical collection of related scenarios — for example, all scenarios for a specific product category, support topic, or user segment.
+
+Navigate to **Scenarios** in the sidebar to see all groups in your organization. Click a group to open it and see the individual scenarios it contains.
+
+---
+
+## Creating scenarios
+
+There are three ways to add scenarios to a group: **generate with AI** (single or bulk), **generate from conversation history**, or **import from a file**.
+
+### Generate scenarios
+
+Click **Generate Scenarios** on the Scenarios page or inside a group. The wizard opens with three generation modes: **Single Scenario**, **Bulk Generation**, and **Conversation History**.
+
+#### Single Scenario mode (3 steps)
+
+Use this mode to create one carefully crafted scenario at a time.
+
+<Steps>
+  <Step title="Scenario Details">
+    Enter a scenario name, a background description of the company and agent context, a user profile describing the simulated user's demographics and behavior, and the specific goal the user is trying to accomplish.
+  </Step>
+  <Step title="Knowledge">
+    Attach up to 10 knowledge items from the Knowledge section. These give the simulated user access to specific documents or web content during the conversation.
+  </Step>
+  <Step title="Review">
+    Preview the generated scenario, make any final edits, and save to the group.
+  </Step>
+</Steps>
+
+#### Bulk Generation mode (5 steps)
+
+Use this mode to generate up to 20 scenarios at once by defining a matrix of user attributes.
+
+<Steps>
+  <Step title="Agent Context">
+    Describe the company, the agent's role, and the use case. Arkdock uses this to auto-detect the domain and pre-fill relevant demographic and business attribute fields.
+  </Step>
+  <Step title="Goals">
+    Define up to 10 user goals (capped at the number of scenarios you want to generate). These are the tasks or intents the simulated users will be trying to accomplish.
+  </Step>
+  <Step title="User Attributes">
+    Configure the demographic and business attributes that vary across the generated personas. Attributes are organized into tabs (Demographics, Business, Psychographics, and a Custom tab). Each attribute accepts a comma-separated list of values. Arkdock draws from these when generating diverse personas.
+  </Step>
+  <Step title="Knowledge">
+    Attach up to 100 knowledge items to ground the bulk-generated scenarios in real content. At least one knowledge source is required.
+  </Step>
+  <Step title="Review">
+    Preview the generated scenario set, edit individual scenarios, and save the group.
+  </Step>
+</Steps>
+
+#### Conversation History mode
+
+Use this mode to generate scenarios grounded in real conversation data. Instead of describing your agent's use case from scratch, you upload a file of past conversations and Arkdock discovers user attributes from them.
+
+<Steps>
+  <Step title="Upload conversation history">
+    Upload a file containing past conversations (e.g. exported chat logs). Arkdock sends the file to the discovery API to extract user attribute patterns.
+  </Step>
+  <Step title="Review discovered attributes">
+    The discovery run surfaces demographic, behavioral, and domain-specific attributes observed across the uploaded conversations. Review and edit the attribute list before generation.
+  </Step>
+  <Step title="Configure and generate">
+    Select how many scenarios to generate. Arkdock uses the discovered attributes as the persona matrix, producing scenarios that reflect the distribution of real users in your data.
+  </Step>
+  <Step title="Review and save">
+    Preview the generated scenarios, make any final edits, and save to the group.
+  </Step>
+</Steps>
+
+Conversation History mode is most useful when you already have production traffic and want your test scenarios to reflect the actual variety of users interacting with your agent.
+
+### Import scenarios
+
+Click **Import Scenarios** to upload a scenario file. The import wizard parses the file, lets you review and map fields, and adds the scenarios to the current group.
+
+---
+
+## Anatomy of a scenario
+
+Each scenario contains:
+
+| Field | Description |
+|---|---|
+| **Goal** | What the simulated user is trying to accomplish. Written from the user's perspective (e.g. "You want to find out if the Energy Saver Bundle qualifies for a government rebate."). |
+| **Profile** | A persona description that shapes how the user communicates — their background, knowledge level, tone, and any relevant constraints. |
+| **Knowledge base** | Documents the simulated user has access to. Attach files from the Knowledge section to give the simulated user specific context to draw on during the conversation. |
+
+The goal and profile together determine how the simulated user behaves during a simulation. A well-written goal is specific enough to produce a focused conversation but open-ended enough to generate natural variation across multiple runs.
+
+---
+
+## Managing scenarios
+
+### Viewing a scenario
+
+Click a scenario row within a group to open the scenario detail page. The detail view shows the goal, profile, and attached knowledge documents.
+
+### Editing a scenario
+
+Open the scenario detail page and click **Edit**. Changes are saved per-field. Scenario versions are tracked so you can see what changed between simulation runs.
+
+### Deleting a scenario
+
+Open the scenario detail page and use the delete action. Scenarios that have been used in completed simulations remain accessible in historical simulation records even after deletion.
+
+---
+
+## Selecting scenarios for a simulation
+
+When creating a simulation, the **Scenarios** field shows all available scenarios grouped by their scenario group. You can:
+
+- Select individual scenarios by checking their checkbox.
+- Select all scenarios in a group using **Select Group**.
+- Select all scenarios across all groups using **Select All**.
+- Preview a scenario's goal, profile, and knowledge base by clicking the scenario name or the chevron icon.
+
+Use the search input and "Created by me" filter to narrow a long scenario list.
+
+---
+
+## FAQ
+
+<AccordionGroup>
+  <Accordion title="How many scenarios can I generate at once?">
+    Bulk Generation supports up to 20 scenarios per run. For a first pass, generating 10-15 scenarios covering your most important user intents is a good starting point. You can always add more groups or run additional generation rounds.
+  </Accordion>
+  <Accordion title="How many scenarios should I include in a simulation?">
+    Start with 5-15 scenarios that cover your most important user intents. You can always run a new simulation with a broader set once you have reviewed the initial results.
+  </Accordion>
+  <Accordion title="What makes a good scenario goal?">
+    A goal should be specific enough to drive a focused conversation but not so prescriptive that it removes all variation. Compare:
+
+    - Too vague: "Talk to the agent about returns."
+    - Too prescriptive: "Say 'I want to return item #12345, order #67890, purchased on 2024-01-15, and I expect a full refund within 3 days.'"
+    - Good: "Your smart speaker arrived damaged after 35 days. You want a full refund or replacement."
+  </Accordion>
+  <Accordion title="Can scenarios reference documents the agent also has access to?">
+    Yes. Attaching a document to a scenario gives the simulated user knowledge of its contents, which is useful for testing whether the agent's responses align with its source material. This is especially relevant for faithfulness and relevance evaluations.
+  </Accordion>
+  <Accordion title="How do scenario versions work?">
+    Each time you edit and save a scenario, a new version is created. Simulations record which version of each scenario was used, so historical results remain accurate even if the scenario is updated later.
+  </Accordion>
+</AccordionGroup>
