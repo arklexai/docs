@@ -36,14 +36,6 @@ Click **New Evaluation** to open the creation sheet.
 
 **Simulation** — Select a completed simulation to evaluate. The combobox lists all completed simulations. Use the search input and "Created by me" filter to narrow the list.
 
-**LLM Judge** — Select a provider and model to use as the judge:
-
-| Provider | Available models |
-|---|---|
-| OpenAI | GPT-4o (default), GPT-4o Mini, GPT-4 Turbo, GPT-3.5 Turbo |
-| Anthropic | Claude 3.5 Sonnet (default), Claude 3.5 Haiku, Claude 3 Opus, Claude 3 Haiku |
-| Google | Gemini 2.0 Flash (default), Gemini 1.5 Pro, Gemini 1.5 Flash |
-
 **Metrics** — Select which metrics to include. **Goal Completion is always included** and cannot be deselected — it is required on every evaluation. Select additional metrics as needed. See [Metrics](/metrics) for descriptions of each built-in metric and instructions for creating custom metrics.
 
 Click **Run Evaluation** to start. The evaluation scores each conversation and updates the status to Completed when done.
@@ -66,9 +58,6 @@ At the top of the page:
 |---|---|
 | Conversations | Total number of conversations scored |
 | Avg Turns | Average number of turns per conversation |
-| Avg Score | Average score across all metrics and conversations |
-
-Conversation status counts (Done, Partial Failure, Failed) appear on the right side of the strip.
 
 ### Sidebar navigation
 
@@ -184,7 +173,7 @@ Conversations are listed in collapsible sections. Each turn within a conversatio
 - **Quantitative metrics** — numeric inputs accepting values 0-5. Shows both the auto-evaluation value and the resolved value.
 - **Qualitative metrics** — dropdown selectors for the label options.
 
-Annotations are auto-saved 800 ms after the last edit. A status indicator shows "saving..." then "saved".
+Click **Save Annotation** to commit changes. Unsaved changes are tracked per turn and highlighted visually so nothing is accidentally lost.
 
 ---
 
@@ -207,16 +196,13 @@ Use this section to identify metrics where the LLM judge consistently diverges f
 
 Click the kebab menu on any evaluation row and select **Rerun**. The rerun sheet pre-fills the evaluation name and shows a summary of the original configuration (simulations, metrics, model). Edit the name to distinguish this run, then click **Run Evaluation**.
 
-The rerun creates a new evaluation record. It uses the same simulations, metrics, and LLM judge as the original.
+The rerun creates a new evaluation record. It uses the same simulations and metrics as the original.
 
 ---
 
 ## FAQ
 
 <AccordionGroup>
-  <Accordion title="Can I evaluate the same simulation with different LLM judges?">
-    Yes. Create separate evaluations for the same simulation, each with a different judge. Compare the scores to understand how much variance the judge choice introduces.
-  </Accordion>
   <Accordion title="Can an evaluation cover multiple simulations?">
     Yes. The simulation selector supports multiple selections. This is useful for rolling up results from several simulation runs into a single scored view.
   </Accordion>

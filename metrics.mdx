@@ -35,13 +35,17 @@ Click **New Metric** or the **+** icon on the Metrics page.
 
 **Description** — A one-sentence description that appears as a tooltip in evaluation results.
 
-**Scoring prompt** — The rubric the LLM judge uses to score this metric. Write it as a clear instruction describing:
+**Type** — Whether the metric produces a numeric score (`Quantitative`) or a category label (`Qualitative`).
 
-- What behavior or quality to look for.
-- How to score it on a 0-5 scale (or 0-1 for completion-style metrics).
-- Any examples that clarify edge cases.
+**Scope** — Whether to score each assistant turn independently (`Turn`) or the full conversation once (`Conversation`).
 
-**Example prompt for a custom metric:**
+**System Prompt** — The fixed instruction the LLM judge receives describing its role and how to apply this metric.
+
+**User Prompt Template** — The per-turn or per-conversation prompt the judge uses to produce a score. Reference the conversation content here. For quantitative metrics, define the numeric scale and what each score level means.
+
+**Type-specific config** — For quantitative metrics, set the score range (e.g. 0–5 or 0–1). For qualitative metrics, define the label options the judge can assign.
+
+**Example scoring rubric (quantitative, turn-level):**
 
 ```
 Evaluate whether the agent gathered sufficient information from the user
@@ -54,8 +58,6 @@ Score 1 if the agent made a recommendation without asking any questions.
 Score 0 if the agent's recommendation directly contradicted the user's
 stated preferences.
 ```
-
-**Color** — An optional color label used to visually distinguish the metric in the metrics list.
 
 Click **Save** to create the metric. Custom metrics are immediately available in the metric selector when creating an evaluation.
 

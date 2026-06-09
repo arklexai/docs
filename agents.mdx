@@ -12,8 +12,9 @@ An agent in Arkdock represents the AI system you want to test. Connecting an age
 Navigate to **Agents** in the sidebar to see all agents in your organization. Each card shows:
 
 - The agent name
+- Agent description (if provided)
 - Total number of simulations run against it
-- Average failure rate across all evaluations (shown as `-` until at least one evaluation is complete)
+- Total number of evaluations completed against it
 
 Click any card to open the agent detail page.
 
@@ -110,7 +111,7 @@ The same fields from the Connect Agent form, pre-populated with the saved values
 - **Save** — sends only the changed fields to the API.
 - **Discard** — resets all fields to the last saved values.
 - **Test Connection** — tests using the saved configuration (no body needed).
-- **Delete agent** — a destructive action at the bottom of the form. A confirmation dialog appears before deletion. On confirm, the agent and its associated data are deleted and you are returned to the agent list.
+- **Delete agent** — a destructive action at the bottom of the form. Deletion is blocked if any simulations or evaluations still reference this agent. Delete those first, then return here to delete the agent. A confirmation dialog appears before the final deletion.
 
 ---
 
@@ -120,8 +121,8 @@ The same fields from the Connect Agent form, pre-populated with the saved values
   <Accordion title="Can I connect the same agent endpoint multiple times?">
     Yes. There is no uniqueness constraint on the endpoint URL. This is useful for representing different configurations of the same agent (e.g. different system prompts or temperatures) as separate agents for side-by-side comparison.
   </Accordion>
-  <Accordion title="What happens to simulations if I delete an agent?">
-    Simulations and evaluations already completed against that agent remain in the platform. The agent name will appear as deleted in historical records.
+  <Accordion title="Can I delete an agent that has existing simulations or evaluations?">
+    No. The backend rejects deletion if any simulations or evaluations still reference the agent. Delete the associated simulations and evaluations first, then delete the agent.
   </Accordion>
   <Accordion title="Can I update headers without losing the saved encrypted values?">
     Yes. Leave a header value blank when editing to keep the existing encrypted value. Only rows with a value entered are updated on save.

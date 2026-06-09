@@ -50,7 +50,10 @@ Navigate to **Knowledge** and select the **Websites** tab.
 
 ### Adding a website
 
-Click **Add Website** and enter the URL to crawl. Arkdock fetches and indexes the page content. For multi-page documentation sites, you can add individual page URLs.
+Two buttons are available on the Websites tab:
+
+- **Add Domain** — Crawl a domain and index content from multiple pages. Enter the domain URL and set a maximum page count (1–1,000). Use this for multi-page documentation sites or knowledge bases where you want Arkdock to follow links and extract content from many pages.
+- **Add Link** — Index a single URL or YouTube video. Use this when you have one specific page or video to add.
 
 Each website entry shows:
 
@@ -87,7 +90,7 @@ A simulated user with attached knowledge documents will reference their contents
     Commonly supported formats include PDF, TXT, and DOCX. If a document fails to process, check that it is not password-protected and is within the supported file size limit.
   </Accordion>
   <Accordion title="Does adding a website crawl linked pages?">
-    Currently Arkdock indexes the specific URL you provide, not a full site crawl. Add individual URLs for each page you want available.
+    It depends on which option you use. **Add Domain** crawls a domain and indexes content from multiple pages up to the maximum page count you configure. **Add Link** indexes only the single URL or YouTube video you provide.
   </Accordion>
   <Accordion title="How current is the indexed website content?">
     Content is indexed at the time you add the URL. Arkdock does not automatically re-crawl URLs when the source page changes. Delete and re-add the URL to refresh the indexed content.

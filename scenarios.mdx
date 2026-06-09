@@ -17,11 +17,13 @@ Navigate to **Scenarios** in the sidebar to see all groups in your organization.
 
 ## Creating scenarios
 
-There are three ways to add scenarios to a group: **generate with AI** (single or bulk), **generate from conversation history**, or **import from a file**.
+There are four ways to add scenarios: **create a single scenario**, **generate in bulk**, **import from a file**, and (where enabled) **generate from conversation history**.
 
 ### Generate scenarios
 
-Click **Generate Scenarios** on the Scenarios page or inside a group. The wizard opens with three generation modes: **Single Scenario**, **Bulk Generation**, and **Conversation History**.
+Click **Add Scenarios** on the Scenarios page or inside a group. A picker dialog appears with the available creation paths. Select a path to open the corresponding wizard.
+
+The wizard opens with the following modes:
 
 #### Single Scenario mode (3 steps)
 
@@ -62,6 +64,10 @@ Use this mode to generate up to 20 scenarios at once by defining a matrix of use
 </Steps>
 
 #### Conversation History mode
+
+<Note>
+  This mode is only available on organizations where the Adaptive Scenarios feature has been enabled. If you do not see it in the picker, contact your account team.
+</Note>
 
 Use this mode to generate scenarios grounded in real conversation data. Instead of describing your agent's use case from scratch, you upload a file of past conversations and Arkdock discovers user attributes from them.
 

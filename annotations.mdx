@@ -56,11 +56,10 @@ Each comment shows the author's name and the date and time it was posted. Commen
 
 ## Resolving disagreements
 
-Resolving a turn or conversation produces a single **resolved score** for each metric by applying a majority vote across all annotations:
+Resolving a turn or conversation produces a single **resolved score** for each metric by applying a strict majority vote across all annotations:
 
-- For quantitative metrics, the most common value wins. When reviewers are in agreement, the average is used.
-- For qualitative metrics, the label with the most votes wins.
-- When there is a tie (score spread greater than 1.5 on a 1-5 scale, greater than 0.3 on a 0-1 scale, or equal vote counts on categorical metrics), a value is picked from the tied candidates.
+- For quantitative and qualitative metrics, the value with the most annotations wins.
+- When there is a tie (no single value has more votes than the others), the metric is flagged in the resolve dialog and the admin must manually select the resolved value before confirming. The admin's choice is recorded with an override marker distinct from the majority-vote result.
 
 Only **account owners (admins)** can resolve annotations. Three resolution actions are available:
 

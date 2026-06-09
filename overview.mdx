@@ -62,7 +62,7 @@ Simulations play out as full conversations, not single-turn probes. Each simulat
 
 ### LLM-judged evaluation
 
-Evaluations use your choice of LLM judge (GPT-4o, Claude, Gemini) to score conversations on built-in and custom metrics. Scores are computed at the conversation and metric level so you can compare runs, track regressions, and prioritize fixes.
+Evaluations use an LLM judge to score conversations on built-in and custom metrics. Scores are computed at the conversation and metric level so you can compare runs, track regressions, and prioritize fixes.
 
 ### Custom metrics for domain-specific behaviors
 
@@ -90,7 +90,7 @@ Scenarios define the simulated user profiles that interact with your agent. Each
 
 ### Simulations
 
-A simulation runs a set of scenarios against a connected agent and records every conversation turn. You control how many conversations to generate per scenario and the maximum number of turns per conversation. Simulations can optionally trigger an evaluation automatically on completion.
+A simulation runs a set of scenarios against a connected agent and records every conversation turn. You control how many conversations to generate per scenario and the maximum number of turns per conversation.
 
 [Learn more about Simulations](/simulations)
 
@@ -125,12 +125,6 @@ Seven built-in metrics are available out of the box (Helpfulness, Coherence, Rel
   </Accordion>
   <Accordion title="How are API keys and headers stored?">
     Header values (typically used for API keys and auth tokens) are encrypted at rest. The platform displays masked values and never returns the raw secret after it is saved.
-  </Accordion>
-  <Accordion title="Which LLM providers can be used as the evaluation judge?">
-    You can choose from OpenAI (GPT-4o, GPT-4o Mini, GPT-4 Turbo, GPT-3.5 Turbo), Anthropic (Claude 3.5 Sonnet, Claude 3.5 Haiku, Claude 3 Opus, Claude 3 Haiku), and Google (Gemini 2.0 Flash, Gemini 1.5 Pro, Gemini 1.5 Flash).
-  </Accordion>
-  <Accordion title="Can I run an evaluation automatically after a simulation?">
-    Yes. When creating a simulation you can enable "Also run an evaluation", select an LLM judge, and pick your metrics. The evaluation starts automatically once the simulation completes.
   </Accordion>
   <Accordion title="What is the difference between a simulation and an evaluation?">
     A simulation is the execution layer: it runs scenarios against your agent and produces conversation transcripts. An evaluation is the scoring layer: it takes one or more completed simulations and scores the transcripts using an LLM judge.
