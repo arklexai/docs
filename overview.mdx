@@ -5,30 +5,30 @@ description: "Arkdock is a web platform for testing, simulating, and evaluating 
 
 ## What is Arkdock?
 
-Arkdock is a web platform for testing, simulating, and evaluating AI agents. It gives teams a central place to connect their agents, define realistic test scenarios, run multi-turn simulations, and score agent performance using LLM-judged evaluation metrics — all without writing test infrastructure from scratch.
+You've built an AI agent. Now how do you know it actually works for real users before you ship it? Arkdock gives teams a central place to connect their agents, define realistic test scenarios, run multi-turn simulations, and score agent performance with LLM-judged evaluation metrics — all without writing test infrastructure from scratch.
 
 The platform is built around a three-step workflow:
 
 ```mermaid
 flowchart LR
-  subgraph inputs["Your inputs"]
-    A["AI Agent\n(HTTP endpoint or A2A protocol)"]
-    K["Knowledge Base\n(docs and websites)"]
+  subgraph inputs["Inputs"]
+    A["AI Agent"]
+    K["Knowledge Base\n(optional)"]
   end
   subgraph define["1 · Define"]
-    S["Scenarios\nUser personas and goals"]
+    S["Scenarios"]
   end
   subgraph execute["2 · Execute"]
-    SIM["Simulation\nMulti-turn conversations"]
+    SIM["Simulation"]
   end
   subgraph score["3 · Score"]
-    E["Evaluation\nLLM judge + metrics"]
-    R["Results\nScores · Errors · Annotations"]
+    E["Evaluation"]
+    R["Results"]
   end
-  K -->|"grounds personas"| S
-  A -->|"agent under test"| SIM
-  S -->|"drives conversation"| SIM
-  SIM -->|"transcripts"| E
+  K -. "grounds personas" .-> S
+  A --> SIM
+  S --> SIM
+  SIM --> E
   E --> R
 ```
 
@@ -47,6 +47,14 @@ Arkdock is built for teams that build and operate AI agents:
 - **Product teams** who want visibility into how well their agent serves users in realistic conditions.
 
 No testing infrastructure or scripting experience is required. Arkdock handles scenario execution, conversation management, and evaluation scoring through the UI.
+
+---
+
+## Common use cases
+
+- **Regression testing before a release** — Run the same scenario set against each new agent version to catch capability regressions before they reach users.
+- **Comparing two system prompts** — Connect both variants as separate agents, run identical simulations, and compare scores side by side.
+- **Establishing a quality baseline** — Run a broad evaluation on your current agent to set a score floor that future releases must meet or beat.
 
 ---
 
@@ -71,6 +79,14 @@ Seven built-in metrics cover general agent quality, but every product has behavi
 ### Human-in-the-loop calibration
 
 When the team disputes an LLM judge score, reviewers can enter their own score in the **Annotations** tab without overwriting the original. The **Annotation Calibration** tab then shows agreement rates per metric, surfaces the most common disagreements, and links back to each disputed turn — giving teams the evidence they need to refine a metric's prompt and close the gap between automated scoring and human judgment.
+
+```mermaid
+flowchart LR
+  A["LLM judge scores"] --> B["Human flags disagreements"]
+  B --> C["Calibration tab surfaces drift"]
+  C --> D["Team refines metric prompt"]
+  D --> A
+```
 
 ---
 
