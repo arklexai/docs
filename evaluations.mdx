@@ -137,7 +137,7 @@ A table of all conversations scored in this evaluation.
 | Scenario | The scenario ID that generated the conversation |
 | Goal | The simulated user's goal |
 | Goal Completion | How well the conversation achieved the stated goal (0-1 scale) |
-| Final Score | The overall conversation score (0-1 scale) |
+| Final Score | The overall conversation score (1-5 scale) |
 | Simulation | Which simulation this conversation came from |
 | Status | Done, Running, or Failed |
 
@@ -170,7 +170,7 @@ Use the **Member / Admin toggle** in the evaluation header to switch views:
 
 Conversations are listed in collapsible sections. Each turn within a conversation is a row in a spreadsheet-style grid with columns for the turn reference, reviewer, comment, and one column per metric.
 
-- **Quantitative metrics** — numeric inputs accepting values 0-5. Shows both the auto-evaluation value and the resolved value.
+- **Quantitative metrics** — numeric inputs accepting values 1-5. Shows both the auto-evaluation value and the resolved value.
 - **Qualitative metrics** — dropdown selectors for the label options.
 
 Click **Save Annotation** to commit changes. Unsaved changes are tracked per turn and highlighted visually so nothing is accidentally lost.
@@ -207,10 +207,10 @@ The rerun creates a new evaluation record. It uses the same simulations and metr
     Yes. The simulation selector supports multiple selections. This is useful for rolling up results from several simulation runs into a single scored view.
   </Accordion>
   <Accordion title="How are scores normalized?">
-    Scores are on a 0-5 scale where 5 is the best possible performance. The exact scoring criteria depend on the metric definition and the LLM judge's interpretation of the rubric.
+    Scores are on a 1-5 scale where 5 is the best possible performance. The exact scoring criteria depend on the metric definition and the LLM judge's interpretation of the rubric.
   </Accordion>
   <Accordion title="What is Goal Completion scored on?">
-    Goal Completion is scored 0-1 rather than 0-5. A score of 1.0 means the simulated user's stated goal was fully achieved by the end of the conversation.
+    Goal Completion is scored 0-1 rather than 1-5. A score of 1.0 means the simulated user's stated goal was fully achieved by the end of the conversation.
   </Accordion>
   <Accordion title="How do I improve a metric that consistently scores low?">
     Start with the Errors tab to find specific behavioral failures. Review the conversations linked to each error to understand the pattern. Then update your agent's system prompt, knowledge base, or configuration to address the root cause. Re-run the simulation and evaluation to confirm the improvement.

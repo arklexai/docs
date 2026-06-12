@@ -16,7 +16,7 @@ Metrics define what the LLM judge evaluates during an evaluation run. Arkdock in
 | **Relevance** | Whether the agent stays on topic and addresses what the user asked. |
 | **Verbosity** | Whether the agent's response length is appropriate — not too terse or unnecessarily long. |
 | **Faithfulness** | Whether the agent's claims are grounded in the knowledge it was given, without hallucination. |
-| **Goal Completion** | Whether the simulated user's stated goal was fully achieved by the end of the conversation. Scored 0-1 rather than 0-5. **Always required** — this metric is automatically included in every evaluation and cannot be deselected. |
+| **Goal Completion** | Whether the simulated user's stated goal was fully achieved by the end of the conversation. Scored 0-1 rather than 1-5. **Always required** — this metric is automatically included in every evaluation and cannot be deselected. |
 | **Agent Behavior Failure** | Whether the agent exhibited any defined failure behaviors (e.g. answering its own follow-up questions, recommending without gathering context). |
 
 Built-in metrics use Arkdock's default scoring rubrics and are available in all evaluations without any configuration.
@@ -43,7 +43,7 @@ Click **New Metric** or the **+** icon on the Metrics page.
 
 **User Prompt Template** — The per-turn or per-conversation prompt the judge uses to produce a score. Reference the conversation content here. For quantitative metrics, define the numeric scale and what each score level means.
 
-**Type-specific config** — For quantitative metrics, set the score range (e.g. 0–5 or 0–1). For qualitative metrics, define the label options the judge can assign.
+**Type-specific config** — For quantitative metrics, set the score range (e.g. 1–5 or 0–1). For qualitative metrics, define the label options the judge can assign.
 
 **Example scoring rubric (quantitative, turn-level):**
 
@@ -54,8 +54,8 @@ before making a product recommendation.
 Score 5 if the agent asked at least two clarifying questions about budget,
 use case, or preferences before recommending.
 Score 3 if the agent asked one clarifying question.
-Score 1 if the agent made a recommendation without asking any questions.
-Score 0 if the agent's recommendation directly contradicted the user's
+Score 2 if the agent made a recommendation without asking any questions.
+Score 1 if the agent's recommendation directly contradicted the user's
 stated preferences.
 ```
 
