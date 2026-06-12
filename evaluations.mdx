@@ -18,7 +18,7 @@ Navigate to **Evaluations** in the sidebar to see all evaluations in your organi
 | Created By | The team member who created it |
 | Date | Creation date |
 | Errors | Number of unique behavioral errors detected |
-| Status | Completed, Running, or Failed |
+| Status | Completed, Running, Failed, or Cancelled |
 
 Use the **Filter** button to narrow by creator or status. Use the **Search** bar to filter by evaluation name or simulation name.
 
@@ -139,7 +139,7 @@ A table of all conversations scored in this evaluation.
 | Goal Completion | How well the conversation achieved the stated goal (0-1 scale) |
 | Final Score | The overall conversation score (0-1 scale) |
 | Simulation | Which simulation this conversation came from |
-| Status | Done, Partial Failure, or Failed |
+| Status | Done, Running, or Failed |
 
 Click any row to open the conversation modal and see the full transcript with per-turn scores, behavioral failure annotations, and LLM judge reasoning.
 
@@ -154,7 +154,7 @@ Use the **Previous** and **Next** arrows to cycle through all conversations in t
 | Status | Meaning |
 |---|---|
 | Done | The conversation completed and the agent performed acceptably. |
-| Partial Failure | The conversation completed but the agent failed on one or more metrics. |
+| Running | The conversation is still being scored. |
 | Failed | The conversation did not complete or the agent failed critically. |
 
 ---
