@@ -158,37 +158,9 @@ Use the **Previous** and **Next** arrows to cycle through all conversations in t
 | Failed | The conversation did not complete or the agent failed critically. |
 
 ---
+## Annotations and calibration
 
-## Annotations
-
-The Annotations tab shows per-turn human annotations alongside auto-evaluation scores.
-
-Use the **Member / Admin toggle** in the evaluation header to switch views:
-
-- **Member view** — shows your own annotations for each turn.
-- **Admin view** — shows all reviewers' annotations alongside the auto-evaluation scores and resolved values.
-
-Conversations are listed in collapsible sections. Each turn within a conversation is a row in a spreadsheet-style grid with columns for the turn reference, reviewer, comment, and one column per metric.
-
-- **Quantitative metrics** — numeric inputs accepting values 1-5. Shows both the auto-evaluation value and the resolved value.
-- **Qualitative metrics** — dropdown selectors for the label options.
-
-Click **Save Annotation** to commit changes. Unsaved changes are tracked per turn and highlighted visually so nothing is accidentally lost.
-
----
-
-## Annotation Calibration
-
-Shows the agreement rate between auto-evaluation scores and human annotations for each metric.
-
-Per metric:
-
-- An agreement rate percentage bar.
-- For quantitative metrics: auto average vs. resolved average.
-- For qualitative metrics: the most common disagreement pair (e.g. "auto: Helpful → resolved: Partially Helpful").
-- An expandable disagreement list showing the specific turn, conversation, auto value, resolved value, and who resolved it.
-
-Use this section to identify metrics where the LLM judge consistently diverges from human judgment and refine the metric prompt accordingly.
+The evaluation detail page includes an **Annotations** tab for human review and an **Annotation Calibration** tab showing agreement rates between the LLM judge and human reviewers. See [Annotations](/annotations) for full details.
 
 ---
 
