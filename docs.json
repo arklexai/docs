@@ -64,6 +64,10 @@
       {
         "group": "Team Management",
         "pages": ["settings"]
+      },
+      {
+        "group": "Advanced",
+        "pages": ["metric-alignment"]
       }
     ]
   }

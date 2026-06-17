@@ -77,68 +77,7 @@ Open the metric detail page and use the delete action. Deleting a metric removes
 
 ## Metric Alignment
 
-Metric Alignment uses your team's human annotations to automatically improve a metric's scoring prompt. When the LLM judge and your reviewers consistently disagree on a metric, run Alignment to distill those disagreements into a refined rubric — without writing the new prompt by hand.
-
-Alignment is available for both built-in and custom metrics. For built-in metrics, accepting an alignment result produces a new custom metric (a fork). For custom metrics, it bumps the metric to a new version.
-
-### Starting an alignment run
-
-Open a metric's detail page. At the bottom you will find the **Alignment** section. Click **Start Alignment**.
-
-In the Start Alignment dialog, configure:
-
-| Field | Description |
-|---|---|
-| **Source evaluations** | One or more completed evaluations that have resolved annotations for this metric. Only evaluations with resolved annotation data appear in this list. |
-| **Reflection LM** | The provider and model used to analyze disagreements and distill guidelines. Defaults to the platform default if left blank. |
-| **Judge model** | The model used to verify the distilled guidelines. Optional. |
-| **Delta threshold** | Minimum score gap between the LLM judge and a human annotation for the pair to be counted as a disagreement. |
-
-Click **Start**. The run enters the queue immediately.
-
-### Alignment phases
-
-While an alignment run is in progress, a phase label shows the current step:
-
-1. Loading annotations
-2. Building disagreement traces
-3. Distilling guidelines
-4. Finalizing
-
-Each run typically completes within a few minutes depending on the number of conversations and the reflection model chosen.
-
-### Alignment statuses
-
-| Status | Meaning |
-|---|---|
-| Pending | Queued, not yet started |
-| Running | In progress |
-| Aligned | Completed successfully — guidelines are ready to review |
-| Error | Run failed — view the error detail and retry |
-| Cancelled | Run was cancelled before completion |
-
-### Reviewing and accepting results
-
-When a run reaches **Aligned** status, expand it to view the distilled guidelines. The panel shows:
-
-- The full guidelines text (what the LLM judge should look for, in plain language)
-- The number of disagreements found across the source evaluations
-- How many agreeing rows were skipped
-
-If the guidelines look good, click **Accept**:
-
-- For a **built-in metric**: a new custom metric is created containing the distilled guidelines as its scoring prompt. The original built-in metric is unchanged.
-- For a **custom metric**: the current metric is updated to a new version with the refined prompt. All future evaluations using this metric will apply the new rubric.
-
-If the guidelines do not look useful (e.g. the run found zero disagreements or the output is too generic), discard the run and try again with different source evaluations or a different reflection model.
-
-### Cancelling a run
-
-Click **Cancel** on any in-flight alignment run to stop it. Cancellation is idempotent — cancelling an already-completed run has no effect.
-
-### Alignment history
-
-The Alignment section shows all past runs for the metric, newest first. Each row shows the status, creation time, and source evaluations used. Expand any completed run to view its guidelines, even after accepting.
+When your team's annotations consistently disagree with LLM judge scores, Metric Alignment can automatically distill those disagreements into a refined rubric. See [Metric Alignment](/metric-alignment) for the full workflow.
 
 ---
 
@@ -172,14 +111,5 @@ At least one metric must be selected before an evaluation can run.
   </Accordion>
   <Accordion title="How many custom metrics can I create?">
     There is no hard limit on custom metrics. Practically, evaluations with more than 10-12 metrics can become harder to interpret. Focus on the 3-5 metrics that best capture the behaviors you care about.
-  </Accordion>
-  <Accordion title="What is the difference between Alignment and editing the scoring prompt manually?">
-    Editing a prompt manually requires you to write the new rubric yourself. Alignment derives the rubric automatically by analyzing disagreements between the LLM judge's scores and your team's resolved annotations. It is most useful when you have a pattern of disagreement but are not sure exactly how to express the correction in the prompt.
-  </Accordion>
-  <Accordion title="Can I run Alignment on a built-in metric?">
-    Yes. Accepting an alignment result on a built-in metric creates a new custom metric (a fork) that contains the distilled guidelines. The original built-in metric is not modified.
-  </Accordion>
-  <Accordion title="How many resolved annotations do I need before running Alignment?">
-    There is no hard minimum, but more resolved annotations give the reflection model more signal. Runs based on fewer than 5-10 resolved disagreements tend to produce generic or low-confidence guidelines. Aim to annotate and resolve at least one full evaluation before starting.
   </Accordion>
 </AccordionGroup>
