@@ -154,33 +154,7 @@ Once teammates are in, they can annotate evaluation turns in the **Annotations**
 
 ## Step 8: Monitor token usage and billing
 
-Arkdock bills by token consumption. Navigate to **Settings > Billing** to see your current plan, token usage for the billing period, and any overage charges.
-
-### Plans
-
-| Plan | Price | Best for |
-|---|---|---|
-| **Free** | $0/month | Getting started and early exploration |
-| **Pro** | $299/month | Teams running production workloads |
-| **Enterprise** | Custom | Organizations with custom scale or compliance needs |
-
-### Token dimensions
-
-Every simulation (input/output to your agent and the LLM judge) and every knowledge indexing operation consumes tokens. The Billing tab shows three meters:
-
-| Dimension | Resets | Free allowance | Pro allowance |
-|---|---|---|---|
-| **Input tokens** | Each billing period | 700K | 14M |
-| **Output tokens** | Each billing period | 100K | 2M |
-| **Knowledge tokens** | Never (lifetime hard limit) | 5K | 100K |
-
-The progress bar for each dimension turns amber at 80% and red at 100%. On the Free plan, operations pause when any limit is reached — no overage is charged. On Pro, operations continue and overage is billed at $0.01 per 1K input tokens and $0.05 per 1K output tokens, up to a default ceiling of $2,000 per month. You can set a lower **Spending Cap** on the Billing tab to prevent unexpected charges.
-
-<Frame>
-  <img src="/images/billing.png" alt="Settings > Billing — plan comparison, token usage meters for the current period, and the spending cap control." />
-</Frame>
-
-To upgrade, click **Upgrade to Pro** on the Billing tab. To manage your payment method or download invoices, click **Manage Billing** (opens the Stripe billing portal).
+Navigate to **Settings > Billing** to view your current plan, token usage for the billing period, and upgrade options. See [Settings](/settings) for full billing details.
 
 ---
 
