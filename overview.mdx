@@ -90,46 +90,6 @@ flowchart LR
 
 ---
 
-## Core capabilities
-
-### Agents
-
-Connect and manage the AI agents you want to test. Each agent stores its API endpoint, authentication headers (encrypted at rest), and default body parameters. You can test the connection before saving and view all simulations run against an agent from its detail page.
-
-[Learn more about Agents](/agents)
-
-### Scenarios
-
-Scenarios define the simulated user profiles that interact with your agent. Each scenario specifies a user goal, a persona description, and a knowledge base of documents the simulated user can reference. Scenarios can be generated with AI or imported in bulk.
-
-[Learn more about Scenarios](/scenarios)
-
-### Simulations
-
-A simulation runs a set of scenarios against a connected agent and records every conversation turn. You control how many conversations to generate per scenario and the maximum number of turns per conversation.
-
-[Learn more about Simulations](/simulations)
-
-### Evaluations
-
-Evaluations score simulation transcripts using an LLM judge and a set of metrics you select. Results are organized into performance metric scores, qualitative label distributions, detected errors with suggested fixes, and full conversation transcripts. Human reviewers can annotate individual turns for calibration.
-
-[Learn more about Evaluations](/evaluations)
-
-### Knowledge
-
-The Knowledge section manages the documents and websites your scenarios can reference. Uploaded documents and crawled web pages are indexed so that simulated users can draw on them when interacting with an agent.
-
-[Learn more about Knowledge](/knowledge)
-
-### Metrics
-
-Seven built-in metrics are available out of the box (Helpfulness, Coherence, Relevance, Verbosity, Faithfulness, Goal Completion, Agent Behavior Failure). You can also define custom metrics with a natural-language prompt that tells the LLM judge what to look for and how to score it.
-
-[Learn more about Metrics](/metrics)
-
----
-
 ## FAQ
 
 <AccordionGroup>
