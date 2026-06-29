@@ -1,6 +1,6 @@
 ---
-title: "Quick Start"
-description: "Get from sign-up to your first simulation result in under 10 minutes."
+title: "Quickstart"
+description: "Begin with a guide on the fastest path to a successful outcome"
 ---
 
 Arkdock is built around the workflow below. Whether you are a PM validating that a new agent version still handles your top user journeys, or a QA engineer building repeatable test coverage across personas and edge cases, each step maps directly to a page in the platform.
@@ -31,7 +31,7 @@ Navigate to **Agents** in the left sidebar and click **Connect Agent**.
 Fill in the form:
 
 | Field | What to enter |
-|---|---|
+| --- | --- |
 | Agent name | A descriptive name (e.g. "Customer Support v2") |
 | API Type | `Chat Completions` for most agents, `A2A` for Agent-to-Agent protocol |
 | Endpoint URL | The full URL Arkdock will POST conversations to |
@@ -41,7 +41,7 @@ Fill in the form:
 Click **Test Connection** to verify the endpoint responds before saving. A green checkmark confirms the connection works. Click **Connect Agent** to save.
 
 <Frame>
-  <img src="/images/connect-agent-form.png" alt="Connect Agent form — select the API type, enter the endpoint URL, add auth headers, and configure body parameters before clicking Test Connection." />
+  ![Connect Agent form — select the API type, enter the endpoint URL, add auth headers, and configure body parameters before clicking Test Connection.](/images/connect-agent-form.png)
 </Frame>
 
 ---
@@ -91,7 +91,7 @@ Navigate to **Simulations** and click **New Simulation**.
 </Steps>
 
 <Frame>
-  <img src="/images/new-simulation.png" alt="New Simulation panel — select an agent, pick scenarios, set conversations per scenario and max turns, then click Run Simulation." />
+  ![New Simulation panel — select an agent, pick scenarios, set conversations per scenario and max turns, then click Run Simulation.](/images/new-simulation.png)
 </Frame>
 
 Arkdock will navigate you to the simulation detail page. Each row in the conversations table represents one simulated conversation. Click any row to read the full transcript.
@@ -106,8 +106,17 @@ Once the simulation status shows **Completed**, navigate to **Evaluations** and 
   <Step title="Select simulation">
     **Simulation** — Select the simulation you just ran.
   </Step>
+  <Step title="Choose a judge">
+    **LLM Judge** — Choose a provider and model (e.g. GPT-4o, Claude 3.5 Sonnet, Gemini 2.0 Flash).
+  </Step>
   <Step title="Select metrics">
     **Metrics** — Select the metrics to score. **Goal Completion is always included.** Add Helpfulness, Coherence, or any custom metrics you care about.
+  </Step>
+  <Step title="Select metrics">
+    **Metrics** — Select the metrics to score. **Goal Completion is always included.** Add Helpfulness, Coherence, or any custom metrics you care about.
+  </Step>
+  <Step title="Run">
+    Click **Run Evaluation**.
   </Step>
   <Step title="Run">
     Click **Run Evaluation**.
@@ -128,7 +137,7 @@ The evaluation detail page breaks results into four sections:
 - **Conversations** — the full list of scored conversations with per-conversation scores and status.
 
 <Frame>
-  <img src="/images/evaluation-detail.png" alt="Evaluation detail page showing turn-level and conversation-level metric cards with score bars and band labels." />
+  ![Evaluation detail page showing turn-level and conversation-level metric cards with score bars and band labels.](/images/evaluation-detail.png)
 </Frame>
 
 Click any conversation row to open the transcript modal. Expand the **Reasoning** panel on each assistant turn to read the LLM judge's explanation for that score.
@@ -144,7 +153,7 @@ Click **Invite Member** and enter your teammate's work email. They receive an in
 Roles determine what each member can do:
 
 | Role | What they can do |
-|---|---|
+| --- | --- |
 | **Owner** | Full access including member management and billing |
 | **Member** | Access to agents, scenarios, simulations, evaluations, knowledge, and metrics |
 
@@ -154,7 +163,7 @@ Once teammates are in, they can annotate evaluation turns in the **Annotations**
 
 ## Step 8: Monitor token usage and billing
 
-Navigate to **Settings > Billing** to view your current plan, token usage for the billing period, and upgrade options. See [Settings](/settings) for full billing details.
+Navigate to **Settings \> Billing** to view your current plan, token usage for the billing period, and upgrade options. See [Settings](/settings) for full billing details.
 
 ---
 

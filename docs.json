@@ -47,7 +47,11 @@
     "groups": [
       {
         "group": "Get Started",
-        "pages": ["overview", "quickstart"]
+        "pages": [
+          "overview",
+          "quickstart",
+          "faq"
+        ]
       },
       {
         "group": "Core Features",
