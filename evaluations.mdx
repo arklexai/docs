@@ -48,8 +48,6 @@ You can also run an evaluation directly from the Simulations page. Click the keb
 
 ## Evaluation detail page
 
-The detail page is divided into a stats strip, a sidebar, and a main content area.
-
 ### Stats strip
 
 At the top of the page:
@@ -61,7 +59,7 @@ At the top of the page:
 
 ### Sidebar navigation
 
-The sidebar links to six sections:
+Six sections are available:
 
 | Section | Description |
 |---|---|
@@ -101,7 +99,7 @@ Each card displays:
 
 For metrics that produce categorical labels (e.g. sentiment, tone, response type), this section shows the label distribution across all conversations.
 
-Each metric group shows one collapsible row per label. Expanding a row reveals the list of conversations and turn numbers where that label was assigned. Click a conversation link to open the conversation modal at that specific turn.
+Expand a label row to see the conversations and turns where that label was assigned, then click a link to open the conversation modal at that turn.
 
 ---
 
@@ -145,7 +143,7 @@ Click any row to open the conversation modal and see the full transcript with pe
 
 ### Conversation modal
 
-The modal shows the complete transcript with alternating user and assistant turns. For each assistant turn, the panel displays per-metric scores alongside a **Reasoning** section containing the LLM judge's explanation for that score. Expand the Reasoning section to understand why a turn was scored the way it was — useful for identifying prompt improvements or metric calibration issues.
+Expand the **Reasoning** section on any assistant turn to read the LLM judge's explanation for that score — useful for identifying prompt improvements or metric calibration issues.
 
 Use the **Previous** and **Next** arrows to cycle through all conversations in the evaluation without closing the modal.
 

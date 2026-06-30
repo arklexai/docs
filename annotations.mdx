@@ -9,7 +9,7 @@ Annotations let team members score evaluation results with their own judgment al
 
 ## How annotations work
 
-Every completed evaluation has an **Annotations** tab. The tab shows a spreadsheet with one row per conversation turn (or per conversation, depending on the mode selected) and one column per metric. Each cell displays the LLM judge's auto score as a reference alongside any human annotation entered for that cell.
+Every completed evaluation has an **Annotations** tab — a spreadsheet with one row per conversation turn (or per conversation) and one column per metric. Each cell displays the LLM judge's auto score alongside any human annotation entered for that cell.
 
 Reviewers annotate independently. Each team member sees the auto score and enters their own value without seeing other reviewers' scores first, which prevents anchoring bias. Admins can switch to a view that shows all reviewers' scores side by side and trigger resolution.
 
@@ -50,7 +50,7 @@ To comment on a full conversation, open the conversation modal and go to the Com
 
 To comment on a specific turn, click into that turn within the modal — the Comments tab header updates to show the turn number. Comments made in this context are scoped to that turn and shown separately from conversation-level comments.
 
-Each comment shows the author's name and the date and time it was posted. Comments are visible to all team members with access to the evaluation.
+Comments are visible to all team members with access to the evaluation.
 
 ---
 
@@ -88,8 +88,8 @@ This is the recommended way to share annotation results with stakeholders — su
 The spreadsheet in the Annotations tab provides a full overview of annotation progress across the evaluation:
 
 - Each row is one conversation turn (Turn mode) or one conversation (Conversation mode).
-- Each metric column shows the auto score, the current reviewer's annotation, and — in admin view — all other reviewers' annotations stacked below with their initials.
-- A **majority** indicator appears when enough annotations have been collected for a majority value to emerge, giving admins a preview of what the resolved score will be before they formally resolve.
+- In admin view, each metric column also shows other reviewers' annotations with their initials.
+- A **majority** indicator previews the resolved score once enough annotations agree, before an admin formally resolves.
 - Rows with unresolved disagreements are visually distinguishable from rows where all reviewers agree.
 
 Use the turn scope for granular auditing and the conversation scope for a higher-level pass rate view.

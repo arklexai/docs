@@ -22,7 +22,7 @@ Click any card to open the agent detail page.
 
 ## Connecting an agent
 
-Click **Connect Agent** on the Agents list page. The form opens as a full-page view.
+Click **Connect Agent** on the Agents list page.
 
 ### Agent name and description
 
@@ -98,20 +98,18 @@ A table of all simulations run against this agent, with columns for name, status
 
 Click any row to open that simulation's detail page.
 
-If no simulations have been run yet, the empty state links to the Scenarios page to help you get started.
-
 ### Evaluations tab
 
 A table of all evaluations that scored simulations run against this agent. Columns match the main Evaluations list: name, simulations evaluated, status, errors, and date. Click any row to open the evaluation detail page.
 
 ### Configuration tab
 
-The same fields from the Connect Agent form, pre-populated with the saved values. Edit any field and an **unsaved changes** banner appears at the top with **Discard** and **Save** buttons.
+The same fields from the Connect Agent form, pre-populated with the saved values. Edit any field and click **Save** to apply, or **Discard** to revert.
 
 - **Save** — sends only the changed fields to the API.
 - **Discard** — resets all fields to the last saved values.
 - **Test Connection** — tests using the saved configuration (no body needed).
-- **Delete agent** — a destructive action at the bottom of the form. Deletion is blocked if any simulations or evaluations still reference this agent. Delete those first, then return here to delete the agent. A confirmation dialog appears before the final deletion.
+- **Delete agent** — a destructive action at the bottom of the form. Deletion is blocked if any simulations or evaluations still reference this agent. Delete those first, then return here to confirm deletion.
 
 ---
 
