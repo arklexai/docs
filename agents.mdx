@@ -35,7 +35,7 @@ Arkdock currently supports **API Endpoint** as the integration method. Direct Ar
 ### API type
 
 | Type | Use when |
-|---|---|
+| --- | --- |
 | Chat Completions | Your agent exposes an endpoint that accepts a standard `messages` array and returns a completion response. Compatible with OpenAI, Anthropic, and most LLM-backed agents. |
 | A2A | Your agent uses the Agent-to-Agent protocol. |
 
@@ -47,7 +47,7 @@ The full URL Arkdock will call when running simulations. For local development t
 
 Add any HTTP headers your endpoint requires. Common examples:
 
-```
+```text
 Authorization: Bearer sk-...
 X-Api-Key: your-key
 Content-Type: application/json
@@ -90,11 +90,11 @@ The detail page has three tabs: **Simulations**, **Evaluations**, and **Configur
 A table of all simulations run against this agent, with columns for name, status, scenario count, success rate, errors, and creation date.
 
 | Status | Color |
-|---|---|
-| Completed | <span style={{display:'inline-block', width:'12px', height:'12px', borderRadius:'3px', background:'#16a34a', marginRight:'6px'}}></span> Green |
-| Running | <span style={{display:'inline-block', width:'12px', height:'12px', borderRadius:'3px', background:'#2563eb', marginRight:'6px'}}></span> Blue |
-| Failed | <span style={{display:'inline-block', width:'12px', height:'12px', borderRadius:'3px', background:'#dc2626', marginRight:'6px'}}></span> Red |
-| Pending | <span style={{display:'inline-block', width:'12px', height:'12px', borderRadius:'3px', background:'#9ca3af', marginRight:'6px'}}></span> Gray |
+| --- | --- |
+| Completed |  |  |  |
+| Running |  |  |  |
+| Failed |  |  |  |
+| Pending |  |  |  |
 
 Click any row to open that simulation's detail page.
 
@@ -119,9 +119,11 @@ The same fields from the Connect Agent form, pre-populated with the saved values
   <Accordion title="Can I connect the same agent endpoint multiple times?">
     Yes. There is no uniqueness constraint on the endpoint URL. This is useful for representing different configurations of the same agent (e.g. different system prompts or temperatures) as separate agents for side-by-side comparison.
   </Accordion>
+
   <Accordion title="Can I delete an agent that has existing simulations or evaluations?">
     No. The backend rejects deletion if any simulations or evaluations still reference the agent. Delete the associated simulations and evaluations first, then delete the agent.
   </Accordion>
+
   <Accordion title="Can I update headers without losing the saved encrypted values?">
     Yes. Leave a header value blank when editing to keep the existing encrypted value. Only rows with a value entered are updated on save.
   </Accordion>
