@@ -72,6 +72,10 @@
       {
         "group": "Advanced",
         "pages": ["metric-alignment"]
+      },
+      {
+        "group": "Help",
+        "pages": ["support"]
       }
     ]
   }
