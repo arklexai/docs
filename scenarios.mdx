@@ -121,19 +121,37 @@ Generating scenarios is a multi-step wizard, and your progress is saved as a **d
 
 Open a group's **Drafts** tab to see them. Each draft shows its mode (Create a Scenario, Generate at Scale, or From Conversation History), a status badge, and how many scenarios it will produce:
 
+<Tabs>
+  <Tab title="Draft">
+    <Frame caption="A draft still being configured — resume the wizard to continue.">
+      ![Draft Only](/images/draft-only.jpg)
+    </Frame>
+  </Tab>
+  <Tab title="Generating">
+    <Frame caption="A Generate at Scale or From Conversation History run in progress.">
+      ![Drafts Status 1](/images/drafts-status-1.jpg)
+    </Frame>
+  </Tab>
+  <Tab title="Failed">
+    <Frame caption="A run that errored — discard it and start over.">
+      ![Draft Failed](/images/draft-failed.jpg)
+    </Frame>
+  </Tab>
+</Tabs>
+
 | Status | Meaning |
 | --- | --- |
 | **Draft** | Still being configured — resume the wizard to continue. |
 | **Queued / Generating** | A Generate at Scale or From Conversation History run is in progress. |
 | **Failed** | The run errored — discard it and start over. |
 
-- **Resume** — click a draft to reopen the wizard at your last step.
-- **Discard** — remove a draft you no longer need. Available for drafts and failed runs.
+- **Continue** — click a draft to reopen the wizard at your last step.
+- **Delete** — remove a draft you no longer need. Available for drafts and failed runs.
 - **Cancel** — stop a run that's queued or generating.
 
-A group can't be deleted while it has a draft or an in-progress (queued or generating) generation — discard or cancel those first. Completed and failed runs don't block deletion.
-
----
+<Warning>
+  A group can't be deleted while it has a draft or an in-progress (queued or generating) generation — discard or cancel those first. Completed and failed runs don't block deletion.
+</Warning>
 
 ## Anatomy of a scenario
 
