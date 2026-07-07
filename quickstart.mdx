@@ -54,9 +54,23 @@ Click **Test Connection** to verify the endpoint responds, then **Connect Agent*
 
 ## Step 2: Add scenarios
 
-A scenario represents one type of simulated user — who they are, what they want, and what they know. Navigate to **Scenarios** and click **Generate Scenarios** (or **Import** if you already have a scenario file).
+A scenario represents one type of simulated user — who they are, what they want, and what they know. Before generating scenarios, each one needs at least one **knowledge base** to draw on, so the simulated user has realistic information to work with during the conversation.
+
+Navigate to **Scenarios** and click **Generate Scenarios** (or **Import** if you already have a scenario file).
 
 <Steps>
+  <Step title="Add a knowledge base">
+    Add at least one knowledge source for the simulated user to draw on. Arklex supports two types:
+
+    | Type | Description |
+    | --- | --- |
+    | **Documents** | Uploaded files (PDFs, text documents, and similar formats). |
+    | **Websites** | Web pages crawled and indexed from a URL. |
+
+    Both types are chunked and indexed so the simulated user can reference their contents when forming conversation turns. For our example, upload the bank's policy and FAQ documents so simulated customers ask grounded, realistic questions.
+
+    <iframe src="https://app.supademo.com/embed/cmr0zggzj0imcqm84yysskpst?embed_v=2&utm_source=embed" loading="lazy" title="Add a knowledge base for the Banking Assistant" allow="clipboard-write" frameBorder="0" allowFullScreen style={{ width: "100%", aspectRatio: "1.6", border: 0, borderRadius: "8px" }} />
+  </Step>
   <Step title="Describe your agent">
     Describe your agent and the kinds of users it serves — for our example, "a banking assistant for a retail bank, used by customers checking balances, making transfers, and resolving card issues."
   </Step>
@@ -67,6 +81,12 @@ A scenario represents one type of simulated user — who they are, what they wan
     Edit any you want to adjust, then save them to a scenario group. Groups organize related scenarios together — e.g. all scenarios for transfers, card support, or fraud reports.
   </Step>
 </Steps>
+
+**You'll know it worked when** your new scenario group appears with its personas listed underneath.
+
+<iframe src="https://app.supademo.com/embed/cmraph1yh17xeqmhxlh6qao52?embed_v=2&utm_source=embed" loading="lazy" title="Generate scenarios for the Banking Assistant" allow="clipboard-write" frameBorder="0" allowFullScreen style={{ width: "100%", aspectRatio: "1.6", border: 0, borderRadius: "8px" }} />
+
+---
 
 **You'll know it worked when** your new scenario group appears with its personas listed underneath.
 
@@ -100,11 +120,11 @@ Arklex opens the simulation detail page. Each row in the conversations table is 
 
 **You'll know it worked when** the simulation status reaches **Completed** and the conversations table fills with transcripts.
 
-{/* PASTE_SUPADEMO_EMBED — Step 3: run a simulation */}
+<iframe src="https://app.supademo.com/embed/cmraqpgyb1co0qmhxp3lqgquj?embed_v=2&utm_source=embed" loading="lazy" title="Run simulations against your AI Banking Assistant Agent" allow="clipboard-write" frameBorder="0" allowFullScreen style={{ width: "100%", aspectRatio: "1.6", border: 0, borderRadius: "8px" }} />
 
 ---
 
-## Step 4: Run an evaluation
+## Step 4: Run an evaluation and review results
 
 An evaluation scores your transcripts with an LLM judge. Once the simulation shows **Completed**, navigate to **Evaluations** and click **New Evaluation**.
 
@@ -118,33 +138,24 @@ An evaluation scores your transcripts with an LLM judge. Once the simulation sho
   <Step title="Select metrics">
     Choose the metrics to score. **Goal Completion is always included.** Add Helpfulness, Coherence, or any custom metrics you care about.
   </Step>
-  <Step title="Run">
-    Click **Run Evaluation**.
+  <Step title="Run the evaluation">
+    Click **Run Evaluation**. Arklex scores each conversation turn and updates the status to **Completed** when done.
+  </Step>
+  <Step title="Review the results">
+    Click the completed evaluation to open its detail page, which breaks results into four sections:
+
+    - **Quantitative Metrics** — numeric scores per metric, grouped into turn-level and conversation-level, with band labels (Excellent, Good, Needs Improvement, Poor).
+    - **Qualitative Metrics** — label distributions for categorical metrics.
+    - **Unique Errors** — behavioral failures detected by the judge, grouped by severity with suggested fixes.
+    - **Conversations** — the full list of scored conversations with per-conversation scores and status.
+
+    Click any conversation row to open the transcript modal, then expand the **Reasoning** panel on an assistant turn to read the judge's explanation for that score.
   </Step>
 </Steps>
 
-Arklex scores each conversation turn and updates the status to **Completed** when done.
-
-**You'll know it worked when** the evaluation status reaches **Completed** — click the row to open the results.
-
-{/* PASTE_SUPADEMO_EMBED — Step 4: run an evaluation */}
-
----
-
-## Step 5: Review results
-
-The evaluation detail page breaks results into four sections:
-
-- **Quantitative Metrics** — numeric scores per metric, grouped into turn-level and conversation-level, with band labels (Excellent, Good, Needs Improvement, Poor).
-- **Qualitative Metrics** — label distributions for categorical metrics.
-- **Unique Errors** — behavioral failures detected by the judge, grouped by severity with suggested fixes.
-- **Conversations** — the full list of scored conversations with per-conversation scores and status.
-
-Click any conversation row to open the transcript modal, then expand the **Reasoning** panel on an assistant turn to read the judge's explanation for that score.
-
 **You'll know it worked when** you can point to a specific finding — for example, "the agent discussed account details before verifying the customer's identity" — and trace it back to the turns that triggered it.
 
-{/* PASTE_SUPADEMO_EMBED — Step 5: review results */}
+<iframe src="https://app.supademo.com/embed/cmrasahck1hw1qmhxqwm30zfg?embed_v=2&utm_source=embed" loading="lazy" title="Evaluate your AI Banking Assistant Agent" allow="clipboard-write" frameBorder="0" allowFullScreen style={{ width: "100%", aspectRatio: "1.6", border: 0, borderRadius: "8px" }} />
 
 ---
 
