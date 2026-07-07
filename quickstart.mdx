@@ -1,47 +1,159 @@
 ---
 title: "Quickstart"
-description: "Begin with a guide on the fastest path to a successful outcome"
+description: "Connect an agent and run your first evaluation in under 10 minutes."
 ---
 
-Describe how someone begins using your product. What is the first thing they need to do? Are there any prerequisites?
+This guide takes you from sign-up to your first scored evaluation. We'll follow one running example: a **Banking Assistant** that helps customers check balances, make transfers, and resolve card issues. Every step works the same for any conversational agent you connect.
 
-A quickstart should take someone from zero to using your product. They'll get a quick win and a sense of what they can accomplish.
+Each step maps directly to a page in the platform, so the workflow you learn here is the workflow you'll use every day.
+
+<Note>
+  **Onboarding checklist:** After your first login, you'll see an Onboarding Checklist in the left sidebar with five steps: Connect your agent, Generate scenarios, Run a simulation, Run an evaluation, and Set up metrics.
+
+  Each step is checked off automatically as you complete it. Once you've finished all five, the checklist disappears. Use it to track your progress as you work through this guide.
+</Note>
 
 ## Prerequisites
 
-Before you begin, you must have:
+- An Arklex account. [Sign up here](https://arklex.ai/signup) with your work email, or ask an admin for an invite link if your team already has an organization.
+- An agent with an HTTP endpoint that follows the **Chat Completions** (`/chat/completions`) schema or the **A2A** protocol.
+- Any auth headers your endpoint requires (e.g. an API key or bearer token).
 
-- Requirement one (for example, Node.js 18+, a free account, an API key)
-- Requirement two (for example, a compatible device, a compatible browser, a compatible operating system)
+---
 
-## Get started
+## Step 1: Connect an agent
+
+Navigate to **Agents** in the left sidebar and click **Connect Agent**.
+
+Fill in the form:
 
 <Steps>
-  <Step title="Install">
-    Describe how to install your product or sign up.
-
-    ```bash
-    npm install your-package
-    ```
+  <Step title="Name the agent">
+    Enter a descriptive **Agent name** — e.g. `Banking Assistant`.
   </Step>
-  <Step title="Configure">
-    Describe any setup or configuration needed before first use.
-
-    ```bash
-    your-cli init
-    ```
+  <Step title="Choose the API type">
+    Select **Chat Completions** for most agents, or **A2A** for the Agent-to-Agent protocol.
   </Step>
-  <Step title="Run it">
-    Show the first thing a user does to see it working.
-
-    ```bash
-    your-cli start
-    ```
+  <Step title="Add the endpoint URL">
+    Paste the full URL Arklex will POST conversations to.
+  </Step>
+  <Step title="Add auth headers">
+    Add any headers your endpoint requires (e.g. `Authorization: Bearer <token>`). Values are encrypted at rest.
+  </Step>
+  <Step title="Set the body">
+    Add the default parameters or system messages your endpoint expects.
   </Step>
 </Steps>
 
-<Tip>
-  Give people a way to get help. This could be a link to a support page, a chat with a customer support agent, or a forum for your product.
+Click **Test Connection** to verify the endpoint responds, then **Connect Agent** to save.
 
-  Example: Need help? Reach out to us at [support@yourcompany.com](mailto:support@yourcompany.com).
-</Tip>
+**You'll know it worked when** your agent appears in the Agents list with a green **Connected** status.
+
+<iframe src="https://app.supademo.com/embed/cmr0ujz4808u5qm8489jyoynn?embed_v=2&utm_source=embed" loading="lazy" title="Connect and Configure AI Banking Assistant Agent" allow="clipboard-write" frameBorder="0" allowFullScreen style={{ width: "100%", aspectRatio: "1.6", border: 0, borderRadius: "8px" }} />
+
+---
+
+## Step 2: Add scenarios
+
+A scenario represents one type of simulated user — who they are, what they want, and what they know. Navigate to **Scenarios** and click **Generate Scenarios** (or **Import** if you already have a scenario file).
+
+<Steps>
+  <Step title="Describe your agent">
+    Describe your agent and the kinds of users it serves — for our example, "a banking assistant for a retail bank, used by customers checking balances, making transfers, and resolving card issues."
+  </Step>
+  <Step title="Review generated scenarios">
+    Arklex generates a set of scenario personas, each with a user goal and profile — for instance, a customer disputing an unrecognized charge, or someone trying to send a transfer above their daily limit.
+  </Step>
+  <Step title="Save to a group">
+    Edit any you want to adjust, then save them to a scenario group. Groups organize related scenarios together — e.g. all scenarios for transfers, card support, or fraud reports.
+  </Step>
+</Steps>
+
+**You'll know it worked when** your new scenario group appears with its personas listed underneath.
+
+{/* PASTE_SUPADEMO_EMBED — Step 2: generate scenarios */}
+
+---
+
+## Step 3: Run a simulation
+
+A simulation runs your scenarios against the connected agent and produces full conversation transcripts. Navigate to **Simulations** and click **New Simulation**.
+
+<Steps>
+  <Step title="Select agent">
+    Select the agent you connected in Step 1.
+  </Step>
+  <Step title="Name the simulation">
+    Give it a descriptive name (e.g. "Banking Assistant — transfers & card support").
+  </Step>
+  <Step title="Select scenarios">
+    Choose the scenarios to include.
+  </Step>
+  <Step title="Configure conversation settings">
+    Set **Conversations per scenario** (default 1, capped so the total stays at or below 50) and **Max turns per conversation** (default 5, max 10).
+  </Step>
+  <Step title="Run">
+    Click **Run Simulation**.
+  </Step>
+</Steps>
+
+Arklex opens the simulation detail page. Each row in the conversations table is one simulated conversation — click any row to read the full transcript.
+
+**You'll know it worked when** the simulation status reaches **Completed** and the conversations table fills with transcripts.
+
+{/* PASTE_SUPADEMO_EMBED — Step 3: run a simulation */}
+
+---
+
+## Step 4: Run an evaluation
+
+An evaluation scores your transcripts with an LLM judge. Once the simulation shows **Completed**, navigate to **Evaluations** and click **New Evaluation**.
+
+<Steps>
+  <Step title="Select simulation">
+    Select the simulation you just ran.
+  </Step>
+  <Step title="Choose a judge">
+    Pick an **LLM Judge** provider and model (e.g. GPT-4o, Claude 3.5 Sonnet, Gemini 2.0 Flash).
+  </Step>
+  <Step title="Select metrics">
+    Choose the metrics to score. **Goal Completion is always included.** Add Helpfulness, Coherence, or any custom metrics you care about.
+  </Step>
+  <Step title="Run">
+    Click **Run Evaluation**.
+  </Step>
+</Steps>
+
+Arklex scores each conversation turn and updates the status to **Completed** when done.
+
+**You'll know it worked when** the evaluation status reaches **Completed** — click the row to open the results.
+
+{/* PASTE_SUPADEMO_EMBED — Step 4: run an evaluation */}
+
+---
+
+## Step 5: Review results
+
+The evaluation detail page breaks results into four sections:
+
+- **Quantitative Metrics** — numeric scores per metric, grouped into turn-level and conversation-level, with band labels (Excellent, Good, Needs Improvement, Poor).
+- **Qualitative Metrics** — label distributions for categorical metrics.
+- **Unique Errors** — behavioral failures detected by the judge, grouped by severity with suggested fixes.
+- **Conversations** — the full list of scored conversations with per-conversation scores and status.
+
+Click any conversation row to open the transcript modal, then expand the **Reasoning** panel on an assistant turn to read the judge's explanation for that score.
+
+**You'll know it worked when** you can point to a specific finding — for example, "the agent discussed account details before verifying the customer's identity" — and trace it back to the turns that triggered it.
+
+{/* PASTE_SUPADEMO_EMBED — Step 5: review results */}
+
+---
+
+## Next steps
+
+Your first evaluation is the loop you'll repeat as your agent evolves. From here:
+
+- [Invite your team](/settings) so reviewers can add **annotations** and calibrate judge scores against human judgment.
+- [Add more agents](/agents) to compare versions or A/B test prompts and models against the same scenarios.
+- [Customize metrics](/metrics) to score behaviors specific to your domain.
+- [Upload knowledge documents](/knowledge) to give simulated users access to your product docs or FAQs.

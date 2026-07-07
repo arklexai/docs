@@ -1,0 +1,64 @@
+---
+title: "FAQ"
+description: "Common questions about connecting agents, running simulations, evaluating performance, and team workflows in Arklex."
+---
+
+## Getting started
+
+<AccordionGroup>
+  <Accordion title="How long does it take to run my first simulation?">
+    Most teams connect an agent and run their first simulation within minutes. Point Arklex at your agent's endpoint, define a scenario, and run it — no setup or scripting required.
+  </Accordion>
+
+  <Accordion title="Does Arklex require changes to my agent code?">
+    No. Arklex calls your agent over HTTP. As long as your agent exposes a compatible endpoint, no changes are needed in your codebase.
+  </Accordion>
+
+  <Accordion title="What agent types does Arklex support?">
+    Arklex supports two integration types: **Chat Completions** (any endpoint following the OpenAI `/chat/completions` schema) and **A2A** (Agent-to-Agent protocol). Most agents built on popular frameworks — LangChain, CrewAI, the OpenAI Agents SDK, or custom code — connect via the Chat Completions endpoint with no code changes.
+  </Accordion>
+</AccordionGroup>
+
+## Simulations and evaluations
+
+<AccordionGroup>
+  <Accordion title="What's the difference between a simulation and an evaluation?">
+    A **simulation** is the execution layer: it runs scenarios against your agent and produces conversation transcripts. An **evaluation** is the scoring layer: it takes one or more completed simulations and scores the transcripts using an LLM judge.
+  </Accordion>
+
+  <Accordion title="Are simulations single-turn or multi-turn?">
+    Multi-turn. Each simulated user follows a persona and goal across a full conversation, producing transcripts that reflect realistic interaction patterns rather than one-shot prompts.
+  </Accordion>
+
+  <Accordion title="How is this different from testing my agent manually?">
+    Manual testing is slow, subjective, and hard to repeat. Arklex runs the same scenarios consistently across every agent version, scores them with a defined rubric, and keeps a record you can compare over time — so you catch regressions instead of rediscovering them in production.
+  </Accordion>
+</AccordionGroup>
+
+## Metrics
+
+<AccordionGroup>
+  <Accordion title="What metrics does Arklex measure?">
+    Seven built-in metrics cover general agent quality, spanning both quantitative and qualitative dimensions. You can also define **custom metrics** for behaviors specific to your domain.
+  </Accordion>
+
+  <Accordion title="How do custom metrics work?">
+    Write a scoring prompt in plain language describing what good and bad look like on a 1–5 scale. The LLM judge applies it from the next evaluation onward. Custom metrics are versioned, reusable across evaluations, and mix freely with built-ins.
+  </Accordion>
+
+  <Accordion title="Can I trust the LLM judge's scores?">
+    The judge is a starting point, not the final word. When your team disagrees with a score, reviewers add their own in the **Annotations** tab. The **Calibration** tab then shows agreement rates per metric and surfaces common disagreements, giving you the evidence to refine a metric's prompt and bring automated scoring in line with human judgment over time.
+  </Accordion>
+</AccordionGroup>
+
+## Team workflow and security
+
+<AccordionGroup>
+  <Accordion title="Can multiple team members annotate the same evaluation?">
+    Yes. Multiple reviewers can annotate turns independently. Admins can toggle to a view showing all reviewers' annotations alongside the auto-evaluation scores and the resolved values used for calibration.
+  </Accordion>
+
+  <Accordion title="How are API keys and headers stored?">
+    Header values — typically API keys and auth tokens — are encrypted at rest. The platform displays masked values and never returns the raw secret after it's saved.
+  </Accordion>
+</AccordionGroup>
