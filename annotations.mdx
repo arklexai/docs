@@ -1,0 +1,125 @@
+---
+title: "Annotations"
+description: "Add human judgment to evaluation results and calibrate LLM judge scores."
+---
+
+Annotations let team members score evaluation results with their own judgment alongside the LLM judge's automated scores. When there is doubt about a score, reviewers can enter their own values, admins can resolve disagreements, and the full annotation history is always accessible for audit. Results can be exported to CSV for stakeholders who are not on the platform.
+
+---
+
+## How annotations work
+
+Every completed evaluation has an **Annotations** tab — a spreadsheet with one row per conversation turn (or per conversation) and one column per metric. Each cell displays the LLM judge's auto score alongside any human annotation entered for that cell.
+
+Reviewers annotate independently. Each team member sees the auto score and enters their own value without seeing other reviewers' scores first, which prevents anchoring bias. Admins can switch to a view that shows all reviewers' scores side by side and trigger resolution.
+
+---
+
+## Annotation scope
+
+A toggle at the top of the Annotations tab switches between two annotation scopes:
+
+| Scope | What you annotate |
+|---|---|
+| **Turn** | Individual assistant turns within a conversation. Use this to pinpoint exactly which response was problematic. |
+| **Conversation** | The conversation as a whole. Use this for metrics that only make sense at the end of a full exchange, such as overall satisfaction or goal completion. |
+
+Turn-level and conversation-level annotations are independent. An evaluation can have annotations at both levels simultaneously.
+
+---
+
+## Disputing LLM judge scores
+
+When a reviewer believes the LLM judge scored a turn incorrectly, they open the Annotations tab, find the relevant turn, and enter their own score for the disputed metric. The auto score remains visible as a chip ("Auto: X.X") next to the input so the reviewer can compare directly.
+
+Score input controls adapt to the metric type:
+
+- **Quantitative metrics (1-5 scale)** — a row of numbered buttons; click a number to select it. Click it again to clear.
+- **Quantitative metrics (0-1 decimal scale)** — a numeric input field.
+- **Qualitative metrics** — a dropdown of the label options defined in the metric.
+
+Click **Save Annotation** to commit. Unsaved changes are tracked per turn and highlighted visually so nothing is accidentally lost.
+
+---
+
+## Adding comments
+
+Comments are separate from annotation scores and live in the **Comments** tab of the conversation modal. They support free-form discussion about a specific conversation or turn.
+
+To comment on a full conversation, open the conversation modal and go to the Comments tab. Write in the text box (up to 2,000 characters) and press Enter or click **Add Comment**.
+
+To comment on a specific turn, click into that turn within the modal — the Comments tab header updates to show the turn number. Comments made in this context are scoped to that turn and shown separately from conversation-level comments.
+
+Comments are visible to all team members with access to the evaluation.
+
+---
+
+## Resolving disagreements
+
+Resolving a turn or conversation produces a single **resolved score** for each metric by applying a strict majority vote across all annotations:
+
+- For quantitative and qualitative metrics, the value with the most annotations wins.
+- When there is a tie (no single value has more votes than the others), the metric is flagged in the resolve dialog and the admin must manually select the resolved value before confirming. The admin's choice is recorded with an override marker distinct from the majority-vote result.
+
+Only **account owners (admins)** can resolve annotations. Three resolution actions are available:
+
+| Action | Where | What it does |
+|---|---|---|
+| **Resolve Turn** | Turn row, admin-only button | Resolves a single turn using majority vote across all annotations for that turn. Turn is locked once resolved. |
+| **Resolve Conversation** | Conversation row, admin-only button | Resolves the conversation-level annotations using the same majority vote logic. |
+| **Resolve All** | Top of Annotations tab | Bulk-resolves every turn and conversation in the evaluation in one action. Turns and conversations with no annotations or tied scores are skipped and reported in a summary toast. |
+
+Resolved turns and conversations are locked — their cells become read-only for all reviewers. Admins can **Unresolve** any turn or conversation to re-open it for editing.
+
+Resolved scores feed directly into the **Annotation Calibration** tab, which computes agreement rates between auto-evaluation and human judgment per metric.
+
+---
+
+## Exporting annotations to CSV
+
+Click **Export CSV** at the top right of the Annotations tab to download all annotation data for the evaluation. The CSV includes the auto scores, every reviewer's scores, and the resolved scores for each turn and conversation.
+
+This is the recommended way to share annotation results with stakeholders — such as subject matter experts or compliance reviewers — who are not invited to the Arkdock platform. They can review the full scoring breakdown in any spreadsheet tool without needing an account.
+
+---
+
+## Annotations overview
+
+The spreadsheet in the Annotations tab provides a full overview of annotation progress across the evaluation:
+
+- Each row is one conversation turn (Turn mode) or one conversation (Conversation mode).
+- In admin view, each metric column also shows other reviewers' annotations with their initials.
+- A **majority** indicator previews the resolved score once enough annotations agree, before an admin formally resolves.
+- Rows with unresolved disagreements are visually distinguishable from rows where all reviewers agree.
+
+Use the turn scope for granular auditing and the conversation scope for a higher-level pass rate view.
+
+---
+
+## Annotation history
+
+Every annotation entered for a turn is stored with the reviewer's identity and timestamp. Within the conversation modal, expand the history panel on a turn to see all annotations that have been submitted — including past values that were later updated. The auto score history is also accessible, showing what the LLM judge scored at each evaluation run for that turn.
+
+This history is read-only and cannot be deleted, making it suitable for audit trails where you need to demonstrate how scores were arrived at and who reviewed them.
+
+---
+
+## FAQ
+
+<AccordionGroup>
+  <Accordion title="Who can annotate?">
+    Any team member with access to the evaluation can annotate. Admins can annotate and also resolve, unresolve, and bulk-resolve turns and conversations.
+  </Accordion>
+  <Accordion title="Can I change my annotation after saving it?">
+    Yes, as long as the turn or conversation has not been resolved. Enter the new value and click Save Annotation. The previous value is replaced and the history records the update.
+  </Accordion>
+  <Accordion title="What happens to annotations if the evaluation is re-run?">
+    Annotations are tied to the original evaluation. Re-running creates a new evaluation record with no annotations. The original evaluation and its annotations remain accessible.
+  </Accordion>
+  <Accordion title="Can I annotate without the LLM judge having already scored a turn?">
+    No. Annotations are anchored to the auto scores produced by the evaluation run. Turns with no auto scores do not appear in the annotation spreadsheet.
+  </Accordion>
+  <Accordion title="Is there a limit on the number of reviewers per evaluation?">
+    No. Any number of team members can annotate the same evaluation independently.
+  </Accordion>
+</AccordionGroup>

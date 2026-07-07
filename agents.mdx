@@ -1,0 +1,130 @@
+---
+title: "Agents"
+description: "Connect and manage the AI agents you want to test in Arkdock."
+---
+
+An agent in Arkdock represents the AI system you want to test. Connecting an agent stores its API configuration so you can run simulations against it repeatedly without re-entering connection details.
+
+---
+
+## Agent list
+
+Navigate to **Agents** in the sidebar to see all agents in your organization. Each card shows:
+
+- The agent name
+- Agent description (if provided)
+- Total number of simulations run against it
+- Total number of evaluations completed against it
+
+Click any card to open the agent detail page.
+
+---
+
+## Connecting an agent
+
+Click **Connect Agent** on the Agents list page.
+
+### Agent name and description
+
+Give the agent a descriptive name that makes it easy to identify in simulation results (e.g. "Customer Support v2", "Insurance Bot - Staging"). The description is optional but useful for documenting what changed between versions.
+
+### Integration method
+
+Arkdock currently supports **API Endpoint** as the integration method. Direct Arklex Agent integration is coming soon.
+
+### API type
+
+| Type | Use when |
+| --- | --- |
+| Chat Completions | Your agent exposes an endpoint that accepts a standard `messages` array and returns a completion response. Compatible with OpenAI, Anthropic, and most LLM-backed agents. |
+| A2A | Your agent uses the Agent-to-Agent protocol. |
+
+### Endpoint URL
+
+The full URL Arkdock will call when running simulations. For local development this is typically `http://localhost:<port>/your/path`. For deployed agents use the production or staging URL.
+
+### Headers
+
+Add any HTTP headers your endpoint requires. Common examples:
+
+```text
+Authorization: Bearer sk-...
+X-Api-Key: your-key
+Content-Type: application/json
+```
+
+Header values are encrypted at rest using AES-256. After saving, the platform displays masked values and never returns the raw secret. Use the lock icon indicator above the headers table as a reminder that values are stored securely.
+
+### Body configuration
+
+**Chat Completions agents** have two body sections:
+
+- **Parameters** — key/value pairs sent alongside the messages (e.g. `model`, `temperature`, `max_tokens`). Each parameter has a type (`str`, `int`, `float`, `bool`, `json`).
+- **Messages** — the initial message list, including a system prompt. The `system` role row is always present and cannot be removed. Add `user` or `assistant` rows to prime the conversation history before simulation turns begin.
+
+Click **Import from JSON** to paste a raw request body and have Arkdock split it into parameters and messages automatically.
+
+**A2A agents** use a single generic key/value/type table for the body.
+
+### Testing the connection
+
+Click **Test Connection** before saving. Arkdock sends a request using the current form values and shows:
+
+- A green checkmark with the response message and latency if the connection succeeds.
+- A red error message with details if the connection fails.
+
+The test uses the form values as-is, so you can test without saving first. This is useful for verifying credentials during initial setup.
+
+### Saving
+
+Click **Connect Agent**. On success you land on the new agent's detail page and a confirmation toast confirms the agent was created.
+
+---
+
+## Agent detail page
+
+The detail page has three tabs: **Simulations**, **Evaluations**, and **Configuration**.
+
+### Simulations tab
+
+A table of all simulations run against this agent, with columns for name, status, scenario count, success rate, errors, and creation date.
+
+| Status | Color |
+| --- | --- |
+| Completed |  |  |  |
+| Running |  |  |  |
+| Failed |  |  |  |
+| Pending |  |  |  |
+
+Click any row to open that simulation's detail page.
+
+### Evaluations tab
+
+A table of all evaluations that scored simulations run against this agent. Columns match the main Evaluations list: name, simulations evaluated, status, errors, and date. Click any row to open the evaluation detail page.
+
+### Configuration tab
+
+The same fields from the Connect Agent form, pre-populated with the saved values. Edit any field and click **Save** to apply, or **Discard** to revert.
+
+- **Save** — sends only the changed fields to the API.
+- **Discard** — resets all fields to the last saved values.
+- **Test Connection** — tests using the saved configuration (no body needed).
+- **Delete agent** — a destructive action at the bottom of the form. Deletion is blocked if any simulations or evaluations still reference this agent. Delete those first, then return here to confirm deletion.
+
+---
+
+## FAQ
+
+<AccordionGroup>
+  <Accordion title="Can I connect the same agent endpoint multiple times?">
+    Yes. There is no uniqueness constraint on the endpoint URL. This is useful for representing different configurations of the same agent (e.g. different system prompts or temperatures) as separate agents for side-by-side comparison.
+  </Accordion>
+
+  <Accordion title="Can I delete an agent that has existing simulations or evaluations?">
+    No. The backend rejects deletion if any simulations or evaluations still reference the agent. Delete the associated simulations and evaluations first, then delete the agent.
+  </Accordion>
+
+  <Accordion title="Can I update headers without losing the saved encrypted values?">
+    Yes. Leave a header value blank when editing to keep the existing encrypted value. Only rows with a value entered are updated on save.
+  </Accordion>
+</AccordionGroup>
