@@ -5,81 +5,68 @@ description: "Manage documents and websites that simulated users can reference d
 
 The Knowledge section manages documents and websites that simulated users can reference during a simulation. Attaching knowledge to a scenario gives the simulated user access to specific content — useful for testing whether your agent responds faithfully to its source material.
 
+<Tip>
+  Knowledge grounds what the **simulated user** knows and asks about — not the agent's answers. Attaching the same material your agent relies on is a good way to test whether the agent stays faithful to it.
+</Tip>
+
 ---
 
 ## Knowledge types
 
-Arkdock supports two types of knowledge sources:
+Arklex supports two types of knowledge sources, both chunked and indexed so the simulated user can draw on their contents when forming conversation turns:
 
 | Type | Description |
-|---|---|
+| --- | --- |
 | **Documents** | Uploaded files (PDFs, text documents, and similar formats). |
 | **Websites** | Web pages crawled and indexed from a URL. |
 
-Both types are chunked and indexed so the simulated user can draw on their contents when forming conversation turns.
-
 ---
 
-## Documents
+## Add documents
 
 Navigate to **Knowledge** and select the **Documents** tab.
 
-### Uploading a document
+<Frame>
+  ![Knowledge documents tab](/images/knowledge-documents.png)
+</Frame>
 
-Click **Upload Document** and select a file from your computer. Once uploaded, the document is processed and made available to attach to scenarios.
+**Upload** — Click **Upload Document** and select a file. Once uploaded, it's processed and made available to attach to scenarios. Each entry shows its name, upload date, and processing status (Pending, Processing, Ready, or Failed).
 
-Each document entry in the list shows:
+**View** — Click any row to see the document's content and metadata. A document that fails to process shows an error with guidance on supported formats.
 
-- Document name
-- Upload date
-- Processing status (Pending, Processing, Ready, Failed)
-
-### Viewing a document
-
-Click any document row to view its content and metadata. Documents that fail to process show an error message with guidance on supported formats.
-
-### Deleting a document
-
-Open the document detail page and use the delete action. Deleting a document removes it from the knowledge base. Scenarios that reference the deleted document will lose access to its content for future simulations.
+**Delete** — Open the document's detail page and use the delete action. Scenarios that reference it lose access to its content for future simulations.
 
 ---
 
-## Websites
+## Add websites
 
-Navigate to **Knowledge** and select the **Websites** tab.
+Navigate to **Knowledge** and select the **Websites** tab. Two options are available:
 
-### Adding a website
+<CardGroup cols={2}>
+  <Card title="Add Domain" icon="sitemap">
+    Crawl a domain and index content across multiple pages. Enter the domain URL and set a maximum page count (1–1,000). Best for multi-page docs sites or knowledge bases where Arklex should follow links.
+  </Card>
 
-Two buttons are available on the Websites tab:
+  <Card title="Add Link" icon="link">
+    Index a single URL or YouTube video. Best when you have one specific page or video to add.
+  </Card>
+</CardGroup>
 
-- **Add Domain** — Crawl a domain and index content from multiple pages. Enter the domain URL and set a maximum page count (1–1,000). Use this for multi-page documentation sites or knowledge bases where you want Arkdock to follow links and extract content from many pages.
-- **Add Link** — Index a single URL or YouTube video. Use this when you have one specific page or video to add.
+<Frame>
+  ![Knowledge websites tab](/images/knowledge-websites.png)
+</Frame>
 
-Each website entry shows:
-
-- The URL
-- When it was added
-- Processing status
-
-### Viewing a website
-
-Click any website row to view the indexed content and metadata.
-
-### Deleting a website
-
-Open the link detail page and use the delete action.
+Each website entry shows its URL, when it was added, and its processing status. Click any row to view the indexed content and metadata, or open its detail page to delete it.
 
 ---
 
-## Attaching knowledge to scenarios
+## Attach knowledge to scenarios
 
-Once documents or websites are in the knowledge base, you can attach them to individual scenarios on the scenario detail page.
+Once documents or websites are in the knowledge base, attach them to individual scenarios on the scenario detail page. A simulated user with attached knowledge references its contents when relevant during a conversation — which powers three kinds of testing:
 
-A simulated user with attached knowledge documents will reference their contents when relevant during a conversation. This is particularly useful for:
-
-- **Faithfulness testing** — verifying that the agent's responses align with what a knowledgeable user would expect based on documented facts.
-- **Grounded evaluation** — ensuring agents don't hallucinate information that contradicts the documents the user has access to.
-- **Edge case coverage** — giving simulated users specific product specs, pricing tables, or policy details that can reveal gaps in agent knowledge.
+- **Faithfulness testing** — verifying the agent's responses align with what a knowledgeable user would expect from documented facts.
+- **Grounded evaluation** — ensuring the agent doesn't hallucinate information that contradicts the documents the user has access to.
+- **Edge-case coverage** — giving simulated users specific product specs, pricing tables, or policy details that reveal gaps in agent knowledge.
 
 ---
 
@@ -87,15 +74,18 @@ A simulated user with attached knowledge documents will reference their contents
 
 <AccordionGroup>
   <Accordion title="What file formats are supported for document uploads?">
-    Commonly supported formats include PDF, TXT, and DOCX. If a document fails to process, check that it is not password-protected and is within the supported file size limit.
+    Commonly supported formats include PDF, TXT, and DOCX. If a document fails to process, check that it isn't password-protected and is within the supported file size limit.
   </Accordion>
+
   <Accordion title="Does adding a website crawl linked pages?">
-    It depends on which option you use. **Add Domain** crawls a domain and indexes content from multiple pages up to the maximum page count you configure. **Add Link** indexes only the single URL or YouTube video you provide.
+    It depends on the option. **Add Domain** crawls a domain and indexes multiple pages up to the maximum page count you set. **Add Link** indexes only the single URL or YouTube video you provide.
   </Accordion>
+
   <Accordion title="How current is the indexed website content?">
-    Content is indexed at the time you add the URL. Arkdock does not automatically re-crawl URLs when the source page changes. Delete and re-add the URL to refresh the indexed content.
+    Content is indexed when you add the URL. Arklex doesn't automatically re-crawl when the source page changes — delete and re-add the URL to refresh it.
   </Accordion>
+
   <Accordion title="Can I share knowledge items across multiple scenarios?">
-    Yes. A single document or website can be attached to as many scenarios as needed. Updating the source document does not affect simulations that have already been run.
+    Yes. A single document or website can be attached to as many scenarios as needed. Updating the source document doesn't affect simulations that have already run.
   </Accordion>
 </AccordionGroup>
