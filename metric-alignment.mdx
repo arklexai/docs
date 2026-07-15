@@ -5,91 +5,88 @@ description: "Use human annotations to automatically improve a metric's scoring 
 
 Metric Alignment uses your team's human annotations to automatically improve a metric's scoring prompt. When the LLM judge and your reviewers consistently disagree on a metric, run Alignment to distill those disagreements into a refined rubric — without writing the new prompt by hand.
 
-Alignment is available for both built-in and custom metrics. For built-in metrics, accepting an alignment result produces a new custom metric (a fork). For custom metrics, it bumps the metric to a new version.
+<Note>
+  Alignment builds on resolved annotations, so annotate and resolve at least one evaluation first. See [Annotations](/annotations) for that workflow, and [Metrics](/metrics) for how metrics are defined.
+</Note>
+
+Alignment works on both built-in and custom metrics, and accepting a result behaves differently for each:
+
+- **Built-in metric** — creates a new custom metric (a fork) containing the distilled guidelines. The original built-in metric is unchanged.
+- **Custom metric** — bumps the metric to a new version with the refined prompt.
 
 ---
 
-## Starting an alignment run
+## Start an alignment run
 
-Open a metric's detail page. At the bottom you will find the **Alignment** section. Click **Start Alignment**.
+Open a metric's detail page, find the **Alignment** section at the bottom, and click **Start Alignment**. Configure the run:
 
-In the Start Alignment dialog, configure:
+<ParamField path="Source evaluations" type="array" required>
+  One or more completed evaluations that have resolved annotations for this metric. Only evaluations with resolved annotation data appear in the list.
+</ParamField>
 
-| Field | Description |
-|---|---|
-| **Source evaluations** | One or more completed evaluations that have resolved annotations for this metric. Only evaluations with resolved annotation data appear in this list. |
-| **Reflection LM** | The provider and model used to analyze disagreements and distill guidelines. Defaults to the platform default if left blank. |
-| **Judge model** | The model used to verify the distilled guidelines. Optional. |
-| **Delta threshold** | Minimum score gap between the LLM judge and a human annotation for the pair to be counted as a disagreement. |
+<ParamField path="Reflection LM" type="string">
+  The provider and model used to analyze disagreements and distill guidelines. Uses the platform default if left blank.
+</ParamField>
 
-Click **Start**. The run enters the queue immediately.
+<ParamField path="Judge model" type="string">
+  The model used to verify the distilled guidelines. Optional.
+</ParamField>
 
----
+<ParamField path="Delta threshold" type="number">
+  The minimum score gap between the judge and a human annotation for the pair to count as a disagreement.
+</ParamField>
 
-## Alignment phases
-
-An in-progress run moves through these phases:
-
-1. Loading annotations
-2. Building disagreement traces
-3. Distilling guidelines
-4. Finalizing
-
-Each run typically completes within a few minutes depending on the number of conversations and the reflection model chosen.
-
----
-
-## Alignment statuses
+Click **Start** — the run enters the queue immediately and moves through four phases: loading annotations, building disagreement traces, distilling guidelines, and finalizing. Most runs finish within a few minutes, depending on the number of conversations and the reflection model.
 
 | Status | Meaning |
-|---|---|
-| Pending | Queued, not yet started |
-| Running | In progress |
-| Aligned | Completed successfully — guidelines are ready to review |
-| Error | Run failed — view the error detail and retry |
-| Cancelled | Run was cancelled before completion |
+| --- | --- |
+| **Pending** | Queued, not yet started. |
+| **Running** | In progress. |
+| **Aligned** | Completed successfully — guidelines are ready to review. |
+| **Error** | The run failed; view the detail and retry. |
+| **Cancelled** | Cancelled before completion. |
+
+<Tip>
+  Cancel any in-flight run with **Cancel**. Cancellation is idempotent — cancelling an already-completed run does nothing.
+</Tip>
 
 ---
 
-## Reviewing and accepting results
+## Review and accept results
 
-When a run reaches **Aligned** status, expand it to view:
-
-- The full guidelines text (what the LLM judge should look for, in plain language)
-- The number of disagreements found across the source evaluations
-- How many agreeing rows were skipped
+When a run reaches **Aligned**, expand it to see the distilled guidelines (in plain language), how many disagreements were found across the source evaluations, and how many agreeing rows were skipped.
 
 If the guidelines look good, click **Accept**:
 
-- For a **built-in metric**: a new custom metric is created containing the distilled guidelines as its scoring prompt. The original built-in metric is unchanged.
-- For a **custom metric**: the current metric is updated to a new version with the refined prompt. All future evaluations using this metric will apply the new rubric.
+- On a **built-in metric**, a new custom metric is created with the distilled guidelines as its scoring prompt — the built-in stays untouched.
+- On a **custom metric**, the metric updates to a new version, and all future evaluations using it apply the new rubric.
 
-If the guidelines do not look useful (e.g. the run found zero disagreements or the output is too generic), discard the run and try again with different source evaluations or a different reflection model.
-
----
-
-## Cancelling a run
-
-Click **Cancel** on any in-flight alignment run to stop it. Cancellation is idempotent — cancelling an already-completed run has no effect.
+If a run found zero disagreements or the output is too generic, discard it and try again with different source evaluations or a different reflection model.
 
 ---
 
 ## Alignment history
 
-The Alignment section shows all past runs for the metric, newest first. Each row shows the status, creation time, and source evaluations used. Expand any completed run to view its guidelines, even after accepting.
+The Alignment section lists all past runs for the metric, newest first, with each run's status, creation time, and source evaluations. Expand any completed run to view its guidelines — even after accepting.
 
 ---
 
 ## FAQ
 
 <AccordionGroup>
-  <Accordion title="What is the difference between Alignment and editing the scoring prompt manually?">
-    Editing a prompt manually requires you to write the new rubric yourself. Alignment derives the rubric automatically by analyzing disagreements between the LLM judge's scores and your team's resolved annotations. It is most useful when you have a pattern of disagreement but are not sure exactly how to express the correction in the prompt.
+  <Accordion title="How is Alignment different from editing the scoring prompt myself?">
+    Editing means writing the new rubric by hand. Alignment derives it automatically by analyzing disagreements between the judge's scores and your team's resolved annotations — most useful when you see a pattern of disagreement but aren't sure how to express the correction in the prompt.
   </Accordion>
+
+  <Accordion title="How is Alignment different from Annotation Calibration?">
+    **Annotation Calibration** (on the evaluation detail page) _shows_ you where the judge and your reviewers agree or disagree, per metric. **Metric Alignment** goes a step further and _acts_ on those disagreements, rewriting the metric's rubric to close the gap. Use Calibration to spot the problem, Alignment to fix it.
+  </Accordion>
+
   <Accordion title="Can I run Alignment on a built-in metric?">
-    Yes. Accepting an alignment result on a built-in metric creates a new custom metric (a fork) that contains the distilled guidelines. The original built-in metric is not modified.
+    Yes. Accepting the result forks it into a new custom metric containing the distilled guidelines; the original built-in metric isn't modified.
   </Accordion>
-  <Accordion title="How many resolved annotations do I need before running Alignment?">
-    There is no hard minimum, but more resolved annotations give the reflection model more signal. Runs based on fewer than 5-10 resolved disagreements tend to produce generic or low-confidence guidelines. Aim to annotate and resolve at least one full evaluation before starting.
+
+  <Accordion title="How many resolved annotations do I need?">
+    No hard minimum, but more resolved annotations give the reflection model more signal. Fewer than 5–10 resolved disagreements tends to produce generic, low-confidence guidelines — aim to annotate and resolve at least one full evaluation first.
   </Accordion>
 </AccordionGroup>
