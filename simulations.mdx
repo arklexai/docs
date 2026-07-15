@@ -5,118 +5,119 @@ description: "Run scenarios against a connected agent and record full conversati
 
 A simulation runs a set of scenarios against a connected agent and records the full conversation transcript for each run. Simulations are the execution layer — they produce the raw data that evaluations then score.
 
+<Note>
+  New here? The [Quickstart](/quickstart) walks you through running your first simulation end to end. This page is the full reference for every option.
+</Note>
+
 ---
 
-## Simulations list
+## See your simulations
 
-Navigate to **Simulations** in the sidebar to see all simulations in your organization. The table shows:
-
-| Column | Description |
-| --- | --- |
-| Simulation Name | The name you gave the simulation |
-| Agent | The agent it ran against |
-| Scenario Groups | The groups the selected scenarios belong to |
-| Created By | The team member who created it |
-| Last Run | When the simulation was created |
-| Status | Current status (see below) |
-
-### Status
+Navigate to **Simulations** in the sidebar to see every simulation in your organization. Each row shows the simulation **name**, the **agent** it ran against, the **scenario groups** and **model** it used, who **created** it, when it **last ran**, and its current **status**.
 
 | Status | Meaning |
 | --- | --- |
-| Completed | The run finished. |
-| Running | Conversations are being generated. |
-| Pending | Queued, not started yet. |
-| Failed | The run errored. |
-| Cancelled | The run was cancelled before it started. |
+| **Completed** | The run finished. |
+| **Running** | Conversations are being generated. |
+| **Pending** | Queued, not started yet. |
+| **Failed** | The run errored. |
+| **Cancelled** | The run was cancelled before it started. |
 
-Use the **Filter** button to narrow results by agent, creator, or status (Completed, Running, or Failed). Use the **Search** bar to filter by simulation name or agent name.
+Use **Filter** to narrow by agent, creator, or status, and **Search** to filter by simulation or agent name.
 
 ---
 
-## Creating a simulation
+## Create a simulation
 
 Click **New Simulation** to open the creation sheet.
 
-### Prerequisites
+<Note>
+  Before you start, you need at least one connected agent (see [Agents](/agents)) and at least one scenario (see [Scenarios](/scenarios)). If either is missing, the sheet links you to the right page to create it first.
+</Note>
 
-Before creating a simulation you need:
+<ParamField path="Agent" type="string" required>
+  The agent to run the simulation against.
+</ParamField>
 
-- At least one connected agent (see [Agents](/agents))
-- At least one scenario (see [Scenarios](/scenarios))
+<ParamField path="Name" type="string" required>
+  A descriptive name for this run — e.g. "Banking Assistant — Transfers — May 20."
+</ParamField>
 
-If no agents are connected, an inline banner links to the Agents page; if no scenarios exist, the sheet prompts you to create some first.
+<ParamField path="Description" type="string">
+  Optional notes about what this simulation is testing or what changed.
+</ParamField>
 
-### Simulation form
+<ParamField path="Scenarios" type="array" required>
+  The scenarios to include, grouped by scenario group in the selector. Toggle a whole group with **Select Group**, or use **Select All**. Search to narrow a long list, and expand a group to preview and pick individual scenarios.
+</ParamField>
 
-**Agent** — Select the agent to run the simulation against. If you have not connected any agents yet, an inline banner links to the Agents page.
+<ParamField path="Conversations per scenario" default="1" type="integer">
+  How many independent conversations to generate for each selected scenario (max **50** total across all selected scenarios). Higher counts produce more variation and reliability but take longer to run.
+</ParamField>
 
-**Name** — A descriptive name for this run (e.g. "Insurance Bot v3 - Home Deductibles - May 20").
+<ParamField path="Max turns per conversation" default="5" type="integer">
+  The maximum number of exchange turns before a conversation ends (max **10**). Set this to match the typical interaction length for your agent.
+</ParamField>
 
-**Description** — Optional notes about what this simulation is testing or what changed.
+<ParamField path="Model" type="string" required>
+  The LLM used to drive the simulated user's side of the conversation.
+</ParamField>
 
-**Scenarios** — Select the scenarios to include. Scenarios are grouped by their scenario group in the selector. Toggle a whole group with its group checkbox, or use **Select All** / **Deselect All**. Use the search input and the **Created by me** filter to narrow a long list. Click a scenario name to preview its goal, profile, and knowledge base before selecting.
+<Frame>
+  ![New Simulation form — choose an agent, name the run, select scenarios, set conversations and turns, and pick a model.](/images/run-simulation.png)
+</Frame>
 
-**Conversations per scenario** — How many independent conversations Arkdock should generate for each selected scenario. Default is 1. The maximum per scenario is dynamic: the total conversation count across all selected scenarios is capped at 50, so the per-scenario limit decreases as you select more scenarios. Higher counts produce more variation and statistical reliability but take longer to run.
-
-**Max turns per conversation** — The maximum number of exchange turns before a conversation ends. Default is 5. Maximum is 10. Set this to match the typical interaction length for your agent.
-
-### Running the simulation
-
-The **Run Simulation** button is disabled until an agent is selected, a name is entered, and at least one scenario is selected.
-
-Click the button to start. You are navigated directly to the new simulation's detail page.
-
----
-
-## Simulation detail page
-
-### Header
-
-- Simulation name and status badge
-- Agent name, creation date, and conversation count
-
-### Conversations table
-
-Each row is one conversation generated during the simulation.
-
-| Column | Description |
-| --- | --- |
-| Scenario | The scenario ID that generated this conversation |
-| Summary | A short label derived from the scenario goal |
-| Goal | The full goal text from the scenario |
-| Turns | Number of exchange turns in the conversation |
-| Status | Done, Running, Pending, Failed, or Cancelled |
-
-Click any row to open the **Conversation Modal** and read the full transcript.
-
-### Conversation modal
-
-Use the **Previous** and **Next** arrows to navigate between all conversations without closing the modal.
+<Note>
+  **Run Simulation** stays disabled until you've selected an agent, entered a name, and selected at least one scenario. Once enabled, click it to start — you'll land on the new simulation's detail page.
+</Note>
 
 ---
 
-## Cancelling a simulation
+## Read a simulation's results
 
-A simulation that is queued but has not started yet (**Pending**) can be cancelled. Open the kebab menu on that row and select **Cancel**; a toast confirms the cancellation.
+The detail page header shows the simulation name and status badge, the agent name, the creation date, and the conversation count. Below it, the **conversations table** lists one row per generated conversation — click any row to open the full transcript.
 
-Cancel is only offered for Pending simulations — once a run is Running it can no longer be cancelled.
+<Tabs>
+  <Tab title="Detail header">
+    <Frame>
+      ![Simulation detail header showing name, status, agent, and conversation count](/images/simulation-table.png)
+    </Frame>
+  </Tab>
+  <Tab title="Conversations table">
+    <Frame>
+      ![Conversations table with one row per generated conversation](/images/simulations-convo-table.png)
+    </Frame>
+
+    | Column | Description |
+    | --- | --- |
+    | Scenario | The scenario that generated this conversation |
+    | Summary | A short label derived from the scenario goal |
+    | Goal | The full goal text from the scenario |
+    | Turns | Number of exchange turns in the conversation |
+    | Status | The conversation's outcome, using the same status values as the simulations list |
+  </Tab>
+  <Tab title="Transcript view">
+    <Frame>
+      ![Conversation modal showing the full transcript with Previous and Next navigation](/images/simulation-convo-view.png)
+    </Frame>
+
+    Use the **Previous** and **Next** arrows to move between conversations without closing the modal.
+  </Tab>
+</Tabs>
 
 ---
 
-## Rerunning a simulation
+## Manage a simulation
 
-Open the kebab menu on a simulation row and select **Rerun**. Rerun is available once a simulation has started or finished — it is hidden while a run is still Pending and disabled while it is Running.
+Open the kebab menu on any simulation row for these actions:
 
-The rerun sheet pre-fills the simulation **name** (edit it to distinguish this run from the original) and notes that it reuses the same agent and the same set of scenarios. Click **Run Simulation** to start.
+**Rerun** — Creates a new simulation record (with a new ID) using the same agent and scenarios, generating fresh conversations. The sheet pre-fills the name so you can edit it to distinguish the run. Available once a simulation has started or finished; hidden while Pending, disabled while Running.
 
-The rerun creates a new simulation record with a new ID. It uses the same agent and the same set of scenarios but generates fresh conversations.
+**Delete** — Removes the simulation and its conversations after you confirm. Disabled while a simulation is Running.
 
----
-
-## Deleting a simulation
-
-Open the kebab menu and select **Delete**, then confirm. Delete is disabled while a simulation is Running. The simulation and its conversations are removed.
+<Tip>
+  **Updating your agent?** Create a new simulation rather than rerunning — that keeps a clear record of which agent version was tested. Use **Rerun** only to gather more samples from the _same_ configuration.
+</Tip>
 
 ---
 
@@ -124,22 +125,18 @@ Open the kebab menu and select **Delete**, then confirm. Delete is disabled whil
 
 <AccordionGroup>
   <Accordion title="How long does a simulation take to run?">
-    Run time depends on the number of scenarios, conversations per scenario, max turns, and your agent's response latency. A simulation with 10 scenarios, 1 conversation each, and 5 turns typically completes in a few minutes.
+    It depends on the number of scenarios, conversations per scenario, max turns, and your agent's response latency. A simulation with 10 scenarios, 1 conversation each, and 5 turns typically completes in a few minutes.
   </Accordion>
 
   <Accordion title='What does a "Failed" conversation mean?'>
-    A conversation is marked Failed when Arkdock could not complete it — for example, if the agent endpoint returned an error, timed out, or produced an unparseable response. Failed conversations are excluded from evaluation scoring but remain visible in the transcript view.
+    A conversation is marked Failed when Arklex couldn't complete it — for example, the agent endpoint returned an error, timed out, or produced an unparseable response. Failed conversations are excluded from evaluation scoring but remain visible in the transcript view.
   </Accordion>
 
-  <Accordion title="Can I run multiple simulations against the same agent at the same time?">
-    Yes. Simulations run independently and do not interfere with each other.
+  <Accordion title="Can I run multiple simulations against the same agent at once?">
+    Yes. Simulations run independently and don't interfere with each other.
   </Accordion>
 
   <Accordion title="How is completion rate calculated?">
-    Completion rate is the percentage of conversations that reached a `Done` status. Conversations with a `Failed` status are counted as incomplete. Running conversations are excluded from the calculation until they finish.
-  </Accordion>
-
-  <Accordion title="Should I run a new simulation or rerun an existing one when I update my agent?">
-    Create a new simulation after updating your agent. Rerun is best used to get more conversation samples from the same agent configuration. Running a fresh simulation preserves a clear record of which agent version was tested.
+    Completion rate is the percentage of conversations that reached `Done`. Conversations that `Failed` count as incomplete, and Running conversations are excluded until they finish.
   </Accordion>
 </AccordionGroup>
