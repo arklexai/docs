@@ -21,11 +21,15 @@ Seven built-in metrics use Arklex's default scoring rubrics and are available in
 | **Goal Completion** | Whether the simulated user's stated goal was fully achieved. Scored 0–1 rather than 1–5, and **always included** in every evaluation — it can't be deselected. |
 | **Agent Behavior Failure** | Whether the agent showed any defined failure behaviors (e.g. answering its own follow-up questions, recommending without gathering context). |
 
+<Frame>
+  ![The built-in metrics list on the Metrics page](/images/metrics-built-in.png)
+</Frame>
+
 ---
 
 ## Create a custom metric
 
-Custom metrics let you score domain-specific behaviors. Navigate to **Metrics** in the sidebar and click **New Metric** (or the **\+** icon), then fill in the form.
+Custom metrics let you score domain-specific behaviors. Navigate to **Metrics** in the sidebar and click **New Metric** (or the **\+** icon), then fill in the form:
 
 <ParamField path="Name" type="string" required>
   A short label — e.g. "Identity Verification Compliance" or "Policy Accuracy."
@@ -55,6 +59,10 @@ Custom metrics let you score domain-specific behaviors. Navigate to **Metrics** 
   For quantitative metrics, set the score range (e.g. 1–5 or 0–1). For qualitative metrics, define the label options the judge can assign.
 </ParamField>
 
+<Frame>
+  ![The custom metric creation form](/images/metrics-custom.png)
+</Frame>
+
 <Tip>
   Be specific about score boundaries. Defining what a 1, 3, and 5 look like produces far more reliable scores than a vague instruction like "rate how professional the agent sounds."
 </Tip>
@@ -73,7 +81,7 @@ confirming, identifying information.
 Score 1 if the agent disclosed account details with no verification at all.
 ```
 
-Click **Save** to create the metric. Custom metrics are immediately available in the metric selector when creating an evaluation.
+Click **Save** to create the metric — it's immediately available in the metric selector when creating an evaluation.
 
 ---
 
@@ -89,24 +97,19 @@ Click a metric row to open its detail view.
 
 ---
 
-## Refine metrics with calibration
+## Select metrics for an evaluation
 
-When your team's annotations consistently disagree with the judge's scores, calibration distills those disagreements into a refined rubric — closing the gap between automated scoring and human judgment. See [Annotations](/annotations) for the calibration workflow.
+When creating an evaluation, the **Metrics** selector lists all available metrics grouped by type — **Custom** first, then the seven **Built-in** metrics. Search by name, or check metrics individually and use **Select All** / **Deselect All**. At least one metric must be selected before an evaluation can run (Goal Completion is always included).
+
+<Frame>
+  ![The metric selector grouped into custom and built-in types](/images/metrics-types.png)
+</Frame>
 
 ---
 
-## Select metrics for an evaluation
+## Refine a metric automatically
 
-When creating an evaluation, the **Metrics** selector lists all available metrics grouped by type:
-
-- **Custom** — your organization's custom metrics, shown first.
-- **Built-in** — the seven standard Arklex metrics.
-
-Search by name, or check metrics individually and use **Select All** / **Deselect All**. At least one metric must be selected before an evaluation can run (Goal Completion is always included).
-
-<Frame>
-  ![Metrics Types](/images/metrics-types.png)
-</Frame>
+When your team's annotations consistently disagree with the judge's scores on a metric, **Metric Alignment** distills those disagreements into a refined rubric automatically — no manual prompt rewriting. See [Metric Alignment](/metric-alignment) for the full workflow.
 
 ---
 
