@@ -12,8 +12,8 @@
     "dark": "/favicon.svg"
   },
   "logo": {
-    "light": "/images/arklex-ai-light-logo.svg",
-    "dark": "/images/arklex-ai-dark-logo.svg",
+    "light": "/images/arklex-light-logo.svg",
+    "dark": "/images/arklex-dark-logo.svg",
     "href": "https://arklex.ai/"
   },
   "navbar": {
