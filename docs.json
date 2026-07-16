@@ -51,7 +51,8 @@
           "overview",
           "quickstart",
           "faq"
-        ]
+        ],
+        "icon": "rocket"
       },
       {
         "group": "Core Features",
@@ -63,19 +64,29 @@
           "annotations",
           "knowledge",
           "metrics"
-        ]
+        ],
+        "icon": "layers-3"
       },
       {
         "group": "Team Management",
-        "pages": ["settings"]
+        "pages": [
+          "settings"
+        ],
+        "icon": "users"
       },
       {
         "group": "Advanced",
-        "pages": ["metric-alignment"]
+        "pages": [
+          "metric-alignment"
+        ],
+        "icon": "settings-2"
       },
       {
         "group": "Help",
-        "pages": ["support"]
+        "pages": [
+          "support"
+        ],
+        "icon": "life-buoy"
       }
     ]
   }
