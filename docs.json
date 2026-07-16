@@ -103,5 +103,8 @@
   },
   "fonts": {
     "family": "DM Sans"
+  },
+  "thumbnails": {
+    "background": "/images/thumbnail-background.svg"
   }
 }
