@@ -65,7 +65,7 @@
           "knowledge",
           "metrics"
         ],
-        "icon": "layers-3"
+        "icon": "layers"
       },
       {
         "group": "Team Management",
@@ -79,14 +79,14 @@
         "pages": [
           "metric-alignment"
         ],
-        "icon": "settings-2"
+        "icon": "settings"
       },
       {
         "group": "Help",
         "pages": [
           "support"
         ],
-        "icon": "life-buoy"
+        "icon": "help-circle"
       }
     ]
   }
