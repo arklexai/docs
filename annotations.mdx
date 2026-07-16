@@ -15,7 +15,26 @@ Annotations let team members score evaluation results with their own judgment al
 
 Every completed evaluation has an **Annotations** tab — a spreadsheet with one row per conversation turn (or per conversation) and one column per metric. Each cell shows the LLM judge's auto score alongside any human annotation entered for it.
 
-Reviewers annotate **independently**: each person sees the auto score and enters their own value without seeing other reviewers' scores first, which prevents anchoring bias. A **majority** indicator previews the likely resolved score once enough annotations agree, and rows with unresolved disagreements are visually distinct from rows where everyone agrees. Admins can switch to a view showing all reviewers' scores side by side (with initials) and trigger resolution.
+Reviewers annotate **independently**: each person sees the auto score and enters their own value without seeing other reviewers' scores first, which prevents anchoring bias. A **majority** indicator previews the likely resolved score once enough annotations agree, and rows with unresolved disagreements are visually distinct from rows where everyone agrees.
+
+What you see on the tab depends on your role:
+
+<Tabs>
+  <Tab title="Owner view">
+    Owners see every reviewer's score side by side (with their initials) and can trigger resolution to settle disagreements.
+
+    <Frame>
+      ![Annotations tab in the owner view, showing all reviewers' scores side by side](/images/annotations-owner-view.png)
+    </Frame>
+  </Tab>
+  <Tab title="Member view">
+    Members can annotate but can't see other members' scores, which keeps their judgment unbiased. Once an owner resolves a row, the resolved score becomes visible to everyone.
+
+    <Frame>
+      ![Annotations tab in the member view, showing only the reviewer's own scores](/images/annotations-member-view.png)
+    </Frame>
+  </Tab>
+</Tabs>
 
 ---
 
@@ -46,37 +65,57 @@ Click **Save Annotation** to commit. Unsaved changes are tracked per turn and hi
 
 ## Resolve disagreements
 
+<Info>
+  Only **account owners** can resolve annotations. Members can annotate but not resolve.
+</Info>
+
 Resolving a turn or conversation produces a single **resolved score** per metric by strict majority vote:
 
 - The value with the most annotations wins.
-- On a tie, the metric is flagged in the resolve dialog and the admin manually selects the resolved value before confirming. That choice is recorded with an override marker distinct from a majority-vote result.
+- On a tie, the metric is flagged in the resolve dialog and the owner manually selects the resolved value before confirming. That choice is recorded with an override marker distinct from a majority-vote result.
 
-Only **account owners (admins)** can resolve. Three actions are available:
+Three resolution actions are available:
 
 | Action | Where | What it does |
 | --- | --- | --- |
-| **Resolve Turn** | Turn row (admin only) | Resolves one turn by majority vote. The turn locks once resolved. |
-| **Resolve Conversation** | Conversation row (admin only) | Resolves conversation-level annotations with the same logic. |
+| **Resolve Turn** | Turn row | Resolves one turn by majority vote. The turn locks once resolved. |
+| **Resolve Conversation** | Conversation row | Resolves conversation-level annotations with the same logic. |
 | **Resolve All** | Top of the tab | Bulk-resolves every turn and conversation. Rows with no annotations or tied scores are skipped and reported in a summary toast. |
 
-Resolved rows lock — their cells become read-only for everyone. Admins can **Unresolve** any turn or conversation to reopen it. Resolved scores feed directly into the **Annotation Calibration** tab, which computes agreement rates between auto-evaluation and human judgment per metric.
+Resolved rows lock — their cells become read-only for everyone. Owners can **Unresolve** any turn or conversation to reopen it. Resolved scores feed directly into the **Annotation Calibration** tab, which computes agreement rates between auto-evaluation and human judgment per metric.
 
 ---
 
 ## Add comments
 
-Comments are separate from scores and live in the **Comments** tab of the conversation modal, for free-form discussion.
+Comments are separate from scores and live in the **Comments** tab of the conversation modal, for free-form discussion. They're visible to all team members with access to the evaluation.
 
-- **On a whole conversation** — open the modal, go to the Comments tab, write in the box (up to 2,000 characters), and press Enter or click **Add Comment**.
-- **On a specific turn** — click into that turn first; the Comments tab header updates to show the turn number, and comments there are scoped to that turn.
+<Tabs>
+  <Tab title="Conversation comment">
+    Open the modal, go to the Comments tab, write in the box (up to 2,000 characters), and press Enter or click **Add Comment**.
 
-Comments are visible to all team members with access to the evaluation.
+    <Frame>
+      ![Adding a comment scoped to a whole conversation](/images/annotations-convo-comment.png)
+    </Frame>
+  </Tab>
+  <Tab title="Turn comment">
+    Click into a specific turn first — the Comments tab header updates to show the turn number, and comments there are scoped to that turn.
+
+    <Frame>
+      ![Adding a comment scoped to a specific turn](/images/annotations-turn-comment.png)
+    </Frame>
+  </Tab>
+</Tabs>
 
 ---
 
 ## Annotation history
 
 Every annotation is stored with the reviewer's identity and timestamp. In the conversation modal, expand the history panel on a turn to see all submitted annotations — including past values that were later updated — plus the auto-score history showing what the judge scored at each evaluation run.
+
+<Frame>
+  ![Annotation history panel showing past values with reviewer and timestamp](/images/annotations-history.png)
+</Frame>
 
 <Note>
   History is read-only and can't be deleted, making it suitable for audit trails where you need to show how a score was reached and who reviewed it.
@@ -96,7 +135,7 @@ This is the recommended way to share results with stakeholders who aren't invite
 
 <AccordionGroup>
   <Accordion title="Who can annotate?">
-    Any team member with access to the evaluation can annotate. Admins can also resolve, unresolve, and bulk-resolve turns and conversations.
+    Any team member with access to the evaluation can annotate. Owners can also resolve, unresolve, and bulk-resolve turns and conversations.
   </Accordion>
 
   <Accordion title="Can I change my annotation after saving it?">
