@@ -21,6 +21,10 @@
       {
         "label": "Support",
         "href": "mailto:support@arklex.ai"
+      },
+      {
+        "href": "https://share.hsforms.com/1mFEWFL8PQ8W187wN56i6Egpxk20",
+        "label": "Schedule Demo"
       }
     ],
     "primary": {
@@ -97,5 +101,11 @@
   "icons": {
     "library": "lucide"
   },
-  "description": "Test, simulate, and evaluate AI agents. Connect any agent, run multi-turn simulations, and score performance with LLM-judged and human-calibrated metrics."
+  "description": "Test, simulate, and evaluate AI agents. Connect any agent, run multi-turn simulations, and score performance with LLM-judged and human-calibrated metrics.",
+  "background": {
+    "decoration": "grid"
+  },
+  "fonts": {
+    "family": "DM Sans"
+  }
 }
