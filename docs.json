@@ -1,16 +1,20 @@
 {
   "$schema": "https://mintlify.com/docs.json",
   "theme": "mint",
-  "name": "Arkdock",
+  "name": "Arklex Platform",
   "colors": {
     "primary": "#035e7b",
     "light": "#e6f2f6",
     "dark": "#024d65"
   },
-  "favicon": "/favicon.svg",
+  "favicon": {
+    "light": "/favicon.svg",
+    "dark": "/favicon.svg"
+  },
   "logo": {
-    "light": "/logo/light.svg",
-    "dark": "/logo/dark.svg"
+    "light": "/images/arklex-ai-light-logo.svg",
+    "dark": "/images/arklex-ai-dark-logo.svg",
+    "href": "https://arklex.ai/"
   },
   "navbar": {
     "links": [
@@ -92,5 +96,6 @@
   },
   "icons": {
     "library": "lucide"
-  }
+  },
+  "description": "Test, simulate, and evaluate AI agents. Connect any agent, run multi-turn simulations, and score performance with LLM-judged and human-calibrated metrics."
 }
