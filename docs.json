@@ -86,8 +86,11 @@
         "pages": [
           "support"
         ],
-        "icon": "help-circle"
+        "icon": "circle-help"
       }
     ]
+  },
+  "icons": {
+    "library": "lucide"
   }
 }
