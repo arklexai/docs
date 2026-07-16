@@ -3,113 +3,132 @@ title: "Metrics"
 description: "Define what the LLM judge evaluates. Use built-in metrics or create custom ones with your own rubric."
 ---
 
-Metrics define what the LLM judge evaluates during an evaluation run. Arkdock includes seven built-in metrics and supports custom metrics that you define with a natural-language rubric.
+Metrics define what the LLM judge evaluates during an evaluation run. Arklex includes seven built-in metrics and supports custom metrics you define with a natural-language rubric.
 
 ---
 
 ## Built-in metrics
 
+Seven built-in metrics use Arklex's default scoring rubrics and are available in every evaluation without configuration:
+
 | Metric | What it measures |
-|---|---|
-| **Helpfulness** | Whether the agent's responses actually help the user accomplish their goal. |
-| **Coherence** | Whether the agent's responses are logically consistent and well-structured across the conversation. |
+| --- | --- |
+| **Helpfulness** | Whether responses actually help the user accomplish their goal. |
+| **Coherence** | Whether responses are logically consistent and well-structured across the conversation. |
 | **Relevance** | Whether the agent stays on topic and addresses what the user asked. |
-| **Verbosity** | Whether the agent's response length is appropriate — not too terse or unnecessarily long. |
+| **Verbosity** | Whether response length is appropriate — not too terse or unnecessarily long. |
 | **Faithfulness** | Whether the agent's claims are grounded in the knowledge it was given, without hallucination. |
-| **Goal Completion** | Whether the simulated user's stated goal was fully achieved by the end of the conversation. Scored 0-1 rather than 1-5. **Always required** — this metric is automatically included in every evaluation and cannot be deselected. |
-| **Agent Behavior Failure** | Whether the agent exhibited any defined failure behaviors (e.g. answering its own follow-up questions, recommending without gathering context). |
+| **Goal Completion** | Whether the simulated user's stated goal was fully achieved. Scored 0–1 rather than 1–5, and **always included** in every evaluation — it can't be deselected. |
+| **Agent Behavior Failure** | Whether the agent showed any defined failure behaviors (e.g. answering its own follow-up questions, recommending without gathering context). |
 
-Built-in metrics use Arkdock's default scoring rubrics and are available in all evaluations without any configuration.
+<Frame>
+  ![The built-in metrics list on the Metrics page](/images/metrics-built-in.png)
+</Frame>
 
 ---
 
-## Custom metrics
+## Create a custom metric
 
-Custom metrics let you define domain-specific behaviors to score. Navigate to **Metrics** in the sidebar to create and manage them.
+Custom metrics let you score domain-specific behaviors. Navigate to **Metrics** in the sidebar and click **New Metric** (or the **\+** icon), then fill in the form:
 
-### Creating a custom metric
+<ParamField path="Name" type="string" required>
+  A short label — e.g. "Identity Verification Compliance" or "Policy Accuracy."
+</ParamField>
 
-Click **New Metric** or the **+** icon on the Metrics page.
+<ParamField path="Description" type="string">
+  A one-sentence description that appears as a tooltip in evaluation results.
+</ParamField>
 
-**Name** — A short label for the metric (e.g. "Upsell Appropriateness", "Policy Compliance").
+<ParamField path="Type" type="string" required>
+  Whether the metric produces a numeric score (**Quantitative**) or a category label (**Qualitative**).
+</ParamField>
 
-**Description** — A one-sentence description that appears as a tooltip in evaluation results.
+<ParamField path="Scope" type="string" required>
+  Whether to score each assistant turn independently (**Turn**) or the full conversation once (**Conversation**).
+</ParamField>
 
-**Type** — Whether the metric produces a numeric score (`Quantitative`) or a category label (`Qualitative`).
+<ParamField path="System Prompt" type="string" required>
+  The fixed instruction the judge receives, describing its role and how to apply this metric.
+</ParamField>
 
-**Scope** — Whether to score each assistant turn independently (`Turn`) or the full conversation once (`Conversation`).
+<ParamField path="User Prompt Template" type="string" required>
+  The per-turn or per-conversation prompt the judge uses to produce a score. Reference the conversation content here, and for quantitative metrics, define the scale and what each level means.
+</ParamField>
 
-**System Prompt** — The fixed instruction the LLM judge receives describing its role and how to apply this metric.
+<ParamField path="Type-specific config" type="object">
+  For quantitative metrics, set the score range (e.g. 1–5 or 0–1). For qualitative metrics, define the label options the judge can assign.
+</ParamField>
 
-**User Prompt Template** — The per-turn or per-conversation prompt the judge uses to produce a score. Reference the conversation content here. For quantitative metrics, define the numeric scale and what each score level means.
+<Frame>
+  ![The custom metric creation form](/images/metrics-custom.png)
+</Frame>
 
-**Type-specific config** — For quantitative metrics, set the score range (e.g. 1–5 or 0–1). For qualitative metrics, define the label options the judge can assign.
+<Tip>
+  Be specific about score boundaries. Defining what a 1, 3, and 5 look like produces far more reliable scores than a vague instruction like "rate how professional the agent sounds."
+</Tip>
 
-**Example scoring rubric (quantitative, turn-level):**
+Here's an example quantitative, turn-level rubric for a banking agent:
 
+```text
+Evaluate whether the agent verified the customer's identity before sharing
+any account-specific information.
+
+Score 5 if the agent verified identity with at least two factors before
+disclosing any account detail.
+Score 3 if the agent verified with only one factor before disclosing.
+Score 2 if the agent disclosed account details after asking for, but not
+confirming, identifying information.
+Score 1 if the agent disclosed account details with no verification at all.
 ```
-Evaluate whether the agent gathered sufficient information from the user
-before making a product recommendation.
 
-Score 5 if the agent asked at least two clarifying questions about budget,
-use case, or preferences before recommending.
-Score 3 if the agent asked one clarifying question.
-Score 2 if the agent made a recommendation without asking any questions.
-Score 1 if the agent's recommendation directly contradicted the user's
-stated preferences.
-```
-
-Click **Save** to create the metric. Custom metrics are immediately available in the metric selector when creating an evaluation.
-
-### Editing a custom metric
-
-Click a metric row to open its detail view. Edit the name, description, or prompt and click **Save**. The updated prompt is used for all future evaluations. Previous evaluation results are not retroactively rescored.
-
-### Metric versions
-
-Each time you save changes to a custom metric, a new version is created. You can view version history from the metric detail page to see what changed between runs and understand score differences over time.
-
-### Deleting a custom metric
-
-Open the metric detail page and use the delete action. Deleting a metric removes it from future evaluations. Historical evaluation results that used this metric remain unchanged.
+Click **Save** to create the metric — it's immediately available in the metric selector when creating an evaluation.
 
 ---
 
-## Metric Alignment
+## Manage custom metrics
 
-When your team's annotations consistently disagree with LLM judge scores, Metric Alignment can automatically distill those disagreements into a refined rubric. See [Metric Alignment](/metric-alignment) for the full workflow.
+Click a metric row to open its detail view.
+
+**Edit** — Change the name, description, or prompt and click **Save**. The updated prompt applies to all future evaluations; previous results aren't retroactively rescored.
+
+**Version history** — Each save creates a new version. View the history from the detail page to see what changed between runs and understand score differences over time.
+
+**Delete** — Use the delete action on the detail page. The metric is removed from future evaluations, while historical results that used it stay unchanged.
 
 ---
 
-## Selecting metrics for an evaluation
+## Select metrics for an evaluation
 
-When creating an evaluation, the **Metrics** selector lists all available metrics grouped by type:
+When creating an evaluation, the **Metrics** selector lists all available metrics grouped by type — **Custom** first, then the seven **Built-in** metrics. Search by name, or check metrics individually and use **Select All** / **Deselect All**. At least one metric must be selected before an evaluation can run (Goal Completion is always included).
 
-- **Custom** — your organization's custom metrics, shown first.
-- **Built-in** — the seven standard Arkdock metrics.
+<Frame>
+  ![The metric selector grouped into custom and built-in types](/images/metrics-types.png)
+</Frame>
 
-Use the search input to find a specific metric by name. Check individual metrics or use **Select All** / **Deselect All** to quickly configure the set.
+---
 
-At least one metric must be selected before an evaluation can run.
+## Refine a metric automatically
+
+When your team's annotations consistently disagree with the judge's scores on a metric, **Metric Alignment** distills those disagreements into a refined rubric automatically — no manual prompt rewriting. See [Metric Alignment](/metric-alignment) for the full workflow.
 
 ---
 
 ## FAQ
 
 <AccordionGroup>
-  <Accordion title="How do I choose which metrics to include in an evaluation?">
-    Start with the built-in metrics that are most relevant to your agent's purpose. For a customer support agent, Helpfulness, Goal Completion, and Faithfulness are usually the most informative. Add custom metrics for behaviors specific to your use case.
+  <Accordion title="How do I choose which metrics to include?">
+    Start with the built-in metrics most relevant to your agent's purpose — for a banking assistant, Helpfulness, Goal Completion, and Faithfulness are usually the most informative. Add custom metrics for behaviors specific to your use case, like identity verification or policy accuracy.
   </Accordion>
+
   <Accordion title="Can I use custom metrics alongside built-in ones?">
-    Yes. Mix and match freely. Each metric is scored independently.
+    Yes — mix and match freely. Each metric is scored independently.
   </Accordion>
+
   <Accordion title="Does the choice of LLM judge affect scores?">
-    Yes. Different models interpret scoring rubrics differently. For consistency across evaluation runs, use the same judge and model. If you change judges, treat the results as a separate baseline rather than a direct comparison to prior runs.
+    Yes. Different models interpret rubrics differently. Use the same judge and model for consistency across runs; if you change judges, treat the results as a separate baseline rather than a direct comparison.
   </Accordion>
-  <Accordion title="How specific should a custom metric prompt be?">
-    Be as specific as possible about the score boundaries. A vague prompt like "Rate how professional the agent sounds" produces inconsistent scores. A prompt that defines what a 1, 3, and 5 look like will produce much more reliable results.
-  </Accordion>
-  <Accordion title="How many custom metrics can I create?">
-    There is no hard limit on custom metrics. Practically, evaluations with more than 10-12 metrics can become harder to interpret. Focus on the 3-5 metrics that best capture the behaviors you care about.
+
+  <Accordion title="How many custom metrics should I create?">
+    There's no hard limit, but evaluations with more than 10–12 metrics get hard to interpret. Focus on the 3–5 that best capture the behaviors you care about.
   </Accordion>
 </AccordionGroup>

@@ -51,7 +51,8 @@
           "overview",
           "quickstart",
           "faq"
-        ]
+        ],
+        "icon": "rocket"
       },
       {
         "group": "Core Features",
@@ -63,20 +64,33 @@
           "annotations",
           "knowledge",
           "metrics"
-        ]
+        ],
+        "icon": "layers"
       },
       {
         "group": "Team Management",
-        "pages": ["settings"]
+        "pages": [
+          "settings"
+        ],
+        "icon": "users"
       },
       {
         "group": "Advanced",
-        "pages": ["metric-alignment"]
+        "pages": [
+          "metric-alignment"
+        ],
+        "icon": "settings"
       },
       {
         "group": "Help",
-        "pages": ["support"]
+        "pages": [
+          "support"
+        ],
+        "icon": "headset"
       }
     ]
+  },
+  "icons": {
+    "library": "lucide"
   }
 }
