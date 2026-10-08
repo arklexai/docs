@@ -3,131 +3,160 @@ title: "Annotations"
 description: "Add human judgment to evaluation results and calibrate LLM judge scores."
 ---
 
-Annotations let team members score evaluation results with their own judgment alongside the LLM judge's automated scores. When a score is in doubt, reviewers enter their own values, admins resolve disagreements, and the full history stays accessible for audit. Results export to CSV for stakeholders who aren't on the platform.
+Annotations let your team score evaluation results with their own judgment, alongside the LLM judge's automated scores. Reviewers enter their own values, Owners resolve disagreements, and the resolved scores show how well the judge agrees with your team. You can export the results to CSV for stakeholders who aren't on the platform.
 
 <Note>
-  Annotations live on the **Annotations** tab of any completed evaluation. See [Evaluations](/evaluations) for how to produce one.
+  Annotations are available on evaluations that score your agent. Simulated-user evaluations don't support annotations. See [Evaluations](/evaluations) for how to run one.
 </Note>
 
 ---
 
 ## How annotations work
 
-Every completed evaluation has an **Annotations** tab — a spreadsheet with one row per conversation turn (or per conversation) and one column per metric. Each cell shows the LLM judge's auto score alongside any human annotation entered for it.
+An agent evaluation has an **Annotations** section: a spreadsheet with one row per agent turn (or per conversation) and one column per metric. Each cell shows the judge's score below the input where you enter your own.
 
-Reviewers annotate **independently**: each person sees the auto score and enters their own value without seeing other reviewers' scores first, which prevents anchoring bias. A **majority** indicator previews the likely resolved score once enough annotations agree, and rows with unresolved disagreements are visually distinct from rows where everyone agrees.
+Reviewers annotate **independently**. Each person sees the judge's score and enters their own value without seeing other reviewers' scores, which prevents anchoring bias.
 
-What you see on the tab depends on your role:
+What you see depends on your role:
 
 <Tabs>
   <Tab title="Owner view">
-    Owners see every reviewer's score side by side (with their initials) and can trigger resolution to settle disagreements.
+    Owners see other reviewers' scores in each cell: the first two reviewers by name or initials, and the rest under **+N more**. When more than half of the reviewers chose the same value, Owners also see a **Majority** value. Owners can resolve rows to settle disagreements.
 
     <Frame>
-      ![Annotations tab in the owner view, showing all reviewers' scores side by side](/images/annotations-owner-view.png)
+      ![Annotations section in the Owner view, showing reviewers' scores side by side](/images/annotations-owner-view.png)
     </Frame>
   </Tab>
   <Tab title="Member view">
-    Members can annotate but can't see other members' scores, which keeps their judgment unbiased. Once an owner resolves a row, the resolved score becomes visible to everyone.
+    Members see only their own scores, which keeps their judgment unbiased. Once an Owner resolves a row, the resolved score is visible to everyone.
 
     <Frame>
-      ![Annotations tab in the member view, showing only the reviewer's own scores](/images/annotations-member-view.png)
+      ![Annotations section in the Member view, showing only the reviewer's own scores](/images/annotations-member-view.png)
     </Frame>
   </Tab>
 </Tabs>
+
+Resolved rows turn green and show a **resolved** badge. Rows you've edited but not saved show **unsaved**, or **incomplete** if some metrics are still empty.
 
 ---
 
 ## Choose an annotation scope
 
-A toggle at the top of the tab switches between two scopes, which are independent — an evaluation can carry annotations at both levels at once:
+A toggle at the top of the section switches between two scopes. They're independent, so an evaluation can have annotations at both levels:
 
 | Scope | What you annotate |
 | --- | --- |
-| **Turn** | Individual assistant turns within a conversation. Use this to pinpoint exactly which response was problematic, and for granular auditing. |
-| **Conversation** | The conversation as a whole. Use this for metrics that only make sense across a full exchange — overall satisfaction, goal completion — and for a higher-level pass-rate view. |
+| **Turn** | Individual agent turns. Use this to pinpoint exactly which response was a problem. Only turns the judge scored appear. |
+| **Conversation** | The conversation as a whole. Use this for metrics that only make sense across a full exchange. |
+
+Large evaluations load in pages. Click **Load More** to see more conversations.
 
 ---
 
 ## Dispute a judge score
 
-When a reviewer thinks the judge scored a turn wrong, they find the turn on the Annotations tab and enter their own score for that metric. The auto score stays visible as a chip ("Auto: X.X") next to the input for direct comparison.
+When you think the judge scored something wrong, find the row and enter your own score for each metric. The input depends on the metric:
 
-The input adapts to the metric type:
+- **Whole-number scale**, such as 1 to 5: a row of numbered buttons. Click a number to select it, and click it again to clear it.
+- **0 to 1 scale**: a text box that accepts one decimal place.
+- **Labels**: a dropdown of the metric's labels.
 
-- **Quantitative, 1–5 scale** — a row of numbered buttons; click a number to select, click again to clear.
-- **Quantitative, 0–1 decimal scale** — a numeric input field.
-- **Qualitative** — a dropdown of the metric's label options.
+You must score every metric in a row before you can save it. When you're done, click **Save Annotation** at the bottom right. It saves all the rows you edited in the current scope. Unsaved changes stay in your browser tab until you save, and the browser warns you before you leave the page.
 
-Click **Save Annotation** to commit. Unsaved changes are tracked per turn and highlighted so nothing is lost by accident.
+### Annotate from a conversation
+
+You can also annotate while you read a transcript. Open a conversation from the **Conversations** section. Under each agent turn, click the annotation link (**not annotated**, **annotated**, or **resolved**) to open the **Annotate** tab for that turn. To annotate the whole conversation, click the link beside **Metrics** at the top. Score the metrics, then click **Save Annotation**.
 
 ---
 
 ## Resolve disagreements
 
 <Info>
-  Only **account owners** can resolve annotations. Members can annotate but not resolve.
+  Only Owners can resolve annotations. If you belong to several organizations, your role can differ in each one.
 </Info>
 
-Resolving a turn or conversation produces a single **resolved score** per metric by strict majority vote:
-
-- The value with the most annotations wins.
-- On a tie, the metric is flagged in the resolve dialog and the owner manually selects the resolved value before confirming. That choice is recorded with an override marker distinct from a majority-vote result.
-
-Three resolution actions are available:
+Resolving produces one resolved score per metric. A value wins only when more than half of the reviewers chose it.
 
 | Action | Where | What it does |
 | --- | --- | --- |
-| **Resolve Turn** | Turn row | Resolves one turn by majority vote. The turn locks once resolved. |
-| **Resolve Conversation** | Conversation row | Resolves conversation-level annotations with the same logic. |
-| **Resolve All** | Top of the tab | Bulk-resolves every turn and conversation. Rows with no annotations or tied scores are skipped and reported in a summary toast. |
+| **Resolve** | Each row in the spreadsheet | Resolves the turn or conversation by majority. Enabled once every metric in the row has at least one annotation. |
+| **Resolve Turn** | **Annotate** tab of a conversation | Opens **Resolve by Majority Vote** with the majority values filled in. Metrics with a tie are marked **Tie - required**, and you pick their value. You can change any value before you click **Confirm Resolution**. |
+| **Resolve Conversation** | **Annotate** tab of a conversation | Resolves conversation-level annotations by majority. |
+| **Resolve All** | Top of the section | Resolves every turn and conversation at once. On a tie, it picks one of the tied values at random. It skips rows that are missing an annotation for any metric, and reports what it skipped. |
 
-Resolved rows lock — their cells become read-only for everyone. Owners can **Unresolve** any turn or conversation to reopen it. Resolved scores feed directly into the **Annotation Calibration** tab, which computes agreement rates between auto-evaluation and human judgment per metric.
+<Tip>
+  To settle a tie on a turn yourself, use **Resolve Turn** instead of **Resolve All**.
+</Tip>
+
+Resolved rows are read-only for everyone, including Owners. To change one, click **Unresolve**, edit the scores, and resolve the row again.
+
+---
+
+## Annotation calibration
+
+The **Annotation Calibration** section shows how well the judge agrees with your team's resolved scores:
+
+- **Overall Agreement**: the share of resolved scores where the judge agreed with your team.
+- **Need Attention**: how many metrics have less than 75% agreement.
+- **Coverage**: how many turns and conversations your team has resolved.
+- **Evaluator Calibration**: agreement for each metric, lowest first. Quantitative metrics also show the mean absolute error (**MAE**).
+
+For quantitative metrics, the judge agrees when its score is within 1 of the resolved score. For label metrics, the labels must match exactly. Agreement uses resolved turns only. Resolved conversations count toward **Coverage** but not toward agreement. Reload the page to see the latest numbers after you resolve more rows.
+
+<Frame>
+  ![Annotation Calibration with agreement per metric](/images/annotation-calibration.png)
+</Frame>
+
+Use calibration to find the metrics whose prompts need work, then refine them on the [Metrics](/metrics) page.
 
 ---
 
 ## Add comments
 
-Comments are separate from scores and live in the **Comments** tab of the conversation modal, for free-form discussion. They're visible to all team members with access to the evaluation.
+Comments are separate from scores and are for free-form discussion. Everyone with access to the evaluation can see them. Open them from the **Comments** button at the top of a conversation.
 
 <Tabs>
   <Tab title="Conversation comment">
-    Open the modal, go to the Comments tab, write in the box (up to 2,000 characters), and press Enter or click **Add Comment**.
+    Type in the box (up to 2,000 characters) and press Enter. Press Shift+Enter for a new line.
 
     <Frame>
-      ![Adding a comment scoped to a whole conversation](/images/annotations-convo-comment.png)
+      ![Adding a comment on a whole conversation](/images/annotations-convo-comment.png)
     </Frame>
   </Tab>
   <Tab title="Turn comment">
-    Click into a specific turn first — the Comments tab header updates to show the turn number, and comments there are scoped to that turn.
+    Click **comments** under an agent turn. The header changes to that turn, and your comment applies to it.
 
     <Frame>
-      ![Adding a comment scoped to a specific turn](/images/annotations-turn-comment.png)
+      ![Adding a comment on a specific turn](/images/annotations-turn-comment.png)
     </Frame>
   </Tab>
 </Tabs>
+
+You can't edit or delete a comment after you post it.
 
 ---
 
 ## Annotation history
 
-Every annotation is stored with the reviewer's identity and timestamp. In the conversation modal, expand the history panel on a turn to see all submitted annotations — including past values that were later updated — plus the auto-score history showing what the judge scored at each evaluation run.
+In a conversation, the **History** tab for a turn shows:
+
+- The judge's scores.
+- The resolved scores, if the turn is resolved.
+- Each reviewer's latest annotation, with when it was last updated.
+
+Members see only their own annotations. Saving a new value replaces your previous one.
 
 <Frame>
-  ![Annotation history panel showing past values with reviewer and timestamp](/images/annotations-history.png)
+  ![Annotation history panel showing scores with reviewer and timestamp](/images/annotations-history.png)
 </Frame>
-
-<Note>
-  History is read-only and can't be deleted, making it suitable for audit trails where you need to show how a score was reached and who reviewed it.
-</Note>
 
 ---
 
 ## Export to CSV
 
-Click **Export CSV** at the top right of the Annotations tab to download all annotation data for the evaluation — auto scores, every reviewer's scores, and the resolved scores for each turn and conversation.
+Click **Export CSV** at the top right of the **Annotations** section to download the annotation data for the evaluation. The file has one row per reviewer annotation, with each reviewer's scores and the resolved scores. It doesn't include the judge's scores or comments.
 
-This is the recommended way to share results with stakeholders who aren't invited to Arklex, such as subject-matter experts or compliance reviewers. They can review the full breakdown in any spreadsheet tool without an account.
+Anyone in the organization can export the file, and it includes every reviewer's scores. Use it to share results with people who aren't on the platform, such as subject-matter experts or compliance reviewers.
 
 ---
 
@@ -135,19 +164,19 @@ This is the recommended way to share results with stakeholders who aren't invite
 
 <AccordionGroup>
   <Accordion title="Who can annotate?">
-    Any team member with access to the evaluation can annotate. Owners can also resolve, unresolve, and bulk-resolve turns and conversations.
+    Anyone in the organization can annotate. Only Owners can resolve, unresolve, and bulk-resolve.
   </Accordion>
 
   <Accordion title="Can I change my annotation after saving it?">
-    Yes, as long as the turn or conversation hasn't been resolved. Enter the new value and click Save Annotation — the previous value is replaced and the history records the update.
+    Yes, as long as the row isn't resolved. Enter the new value and click **Save Annotation**. The new value replaces the previous one.
   </Accordion>
 
-  <Accordion title="What happens to annotations if the evaluation is re-run?">
-    Annotations are tied to the original evaluation. Re-running creates a new evaluation record with no annotations; the original and its annotations remain accessible.
+  <Accordion title="What happens to annotations if I re-evaluate?">
+    Annotations belong to the original evaluation. **Re-evaluate** creates a new evaluation with no annotations, and the original and its annotations stay as they are.
   </Accordion>
 
   <Accordion title="Can I annotate a turn the judge hasn't scored?">
-    No. Annotations are anchored to the auto scores from the evaluation run, so turns with no auto score don't appear in the spreadsheet.
+    No. Only turns the judge scored appear in the **Annotations** section.
   </Accordion>
 
   <Accordion title="Is there a limit on reviewers per evaluation?">

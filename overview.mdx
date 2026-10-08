@@ -1,79 +1,101 @@
 ---
-title: "Platform Overview"
-description: "Arklex is a web platform for testing, simulating, and evaluating AI agents."
+title: "Platform overview"
+description: "Arklex Platform is a web platform for testing, simulating, and evaluating AI agents."
 ---
 
-Arklex helps you validate AI agents before they interact with real users. Connect your agent, create realistic test scenarios, simulate multi-turn conversations, and evaluate performance with LLM-powered metrics — all from a single platform, with no custom testing infrastructure required.
+Arklex Platform helps you validate AI agents before they interact with real users. Connect your agent, create realistic test scenarios, simulate multi-turn conversations, and evaluate the results. You do it all from one platform, with no custom testing infrastructure.
 
 It all comes together in a three-step workflow:
 
-<Frame>
-  ![Overview Diagram](/images/overview-diagram.png)
+1. **Scenarios** define who your simulated users are, what they want, and what they know. Each scenario can also carry **assertions** that decide whether a conversation passes.
+2. **Simulations** run those scenarios against a connected agent and record full multi-turn transcripts.
+3. **Evaluations** check each conversation against its scenario's assertions and score it with LLM-judged metrics. You can add **custom metrics** for domain-specific behaviors. Reviewers can use **annotations** to correct judge scores they disagree with.
+
+<Frame caption="Testing by hand compared with testing in Arklex Platform">
+  ![Without Arklex, teams handwrite test cases, run the agent by hand, and score transcripts in spreadsheets. With Arklex, scenarios, simulations, and evaluations run as one pipeline, followed by error reports, annotations, and fixes](/images/overview-diagram.png)
 </Frame>
 
-1. **Scenarios** define who your simulated users are, what they want, and what they know.
-2. **Simulations** run those scenarios against a connected agent, producing full multi-turn conversation transcripts.
-3. **Evaluations** score those transcripts with quantitative and qualitative metrics and surface behavioral failures. Teams can add **custom metrics** for domain-specific behaviors, and use **annotations** to correct any judge scores they disagree with — feeding a calibration loop that brings automated scoring closer to human judgment over time.
-
 <CardGroup cols={2}>
-  <Card title="Quick Start" icon="bolt" href="/quickstart">
-    Connect your first agent and run a simulation in minutes.
+  <Card title="Quickstart" icon="bolt" href="/quickstart">
+    Connect your first agent, then run your first simulation and evaluation.
   </Card>
 
-  <Card title="See Examples" icon="lightbulb" href="/agents">
-    See Arklex in action across different chat agents.
+  <Card title="Connect an agent" icon="bot" href="/agents">
+    See every way to connect the agent you want to test.
   </Card>
 </CardGroup>
 
 ---
 
+## Key terms
+
+| Term | Meaning |
+| --- | --- |
+| **Agent** | The AI system you test, connected by its HTTP endpoint. |
+| **Scenario** | One type of simulated user: their goal, profile, and knowledge. Scenarios live in **scenario groups**. |
+| **User goal checklist** | The items that tell the simulated user when it's done. It ends the conversation but doesn't grade the agent. |
+| **Assertion** | A check on a scenario that decides whether a conversation passes. |
+| **Simulation** | One run of selected scenarios against an agent. It produces conversations. |
+| **Conversation** | One simulated user talking to your agent, from the first message to the end. |
+| **Turn** | One exchange in a conversation: a simulated user message and the agent's reply. |
+| **Evaluation** | One grading run over a simulation's conversations. |
+| **Metric** | What the LLM judge scores, per turn or per conversation. |
+| **LLM judge** | The model that scores conversations against your metrics and LLM judge assertions. |
+| **Annotation** | A reviewer's own score for a turn or conversation, kept alongside the judge's score. |
+
+---
+
 ## Who is it for?
 
-Arklex is built for teams that build and operate AI agents:
+Arklex Platform is built for teams that build and operate AI agents:
 
 - **AI engineers** who want to catch regressions before deploying a new agent version.
 - **QA teams** who want structured, repeatable test coverage across the full range of user intents.
 - **Product teams** who want a clear view of how well their agent serves users in realistic conditions.
 
-No testing infrastructure or scripting experience required. Arklex handles scenario execution, conversation management, and evaluation scoring — all through the UI.
+You don't need your own testing infrastructure. Arklex runs the scenarios, manages the conversations, and scores the results in the app. Developers can also automate runs with the [API](/api).
 
 ---
 
 ## Common use cases
 
 - **Pre-release regression testing**: run a fixed set of scenarios against each new agent version and catch behavioral regressions before they reach users.
-- **Prompt and model comparison**: A/B test different prompts, models, or configurations against the same scenarios to see which performs best.
-- **Establishing a quality baseline**: use annotations to correct scores you disagree with and bring automated evaluation in line with your team's standards over time.
+- **Prompt and model comparison**: test different prompts, models, or configurations against the same scenarios to see which performs best.
+- **Establishing a quality baseline**: use annotations to correct scores you disagree with and bring automated evaluation in line with your team's standards.
 - **Edge-case and adversarial coverage**: simulate difficult users, off-topic requests, and jailbreak attempts to find where your agent breaks down before real users do.
 
 ---
 
-## Why Arklex Platform?
+## Why use Arklex Platform
 
 ### Any agent, any framework
 
-Connect agents built with LangChain, CrewAI, the OpenAI Agents SDK, or custom code through a standard Chat Completions or A2A endpoint. No SDK to install.
+Connect agents built with LangChain, CrewAI, the OpenAI Agents SDK, or custom code. Arklex calls your agent through a Chat Completions, A2A, or Custom HTTP endpoint. There's no SDK to install.
 
 ### Realistic, multi-turn testing
 
-Simulations play out as full conversations, not single-turn probes. Each simulated user follows a persona and goal across multiple turns, producing realistic transcripts.
+Simulations play out as full conversations, not single-turn probes. Each simulated user follows a scenario's goal and user profile across multiple turns.
 
-### LLM-judged evaluation
+### Clear pass or fail results
 
-An LLM judge scores conversations on built-in and custom metrics, at both the conversation and metric level — so you can compare runs, track regressions, and prioritize fixes.
+Assertions on each scenario decide whether a conversation passes. An LLM judge then adds scores on built-in and custom metrics, so you can compare runs, track regressions, and prioritize fixes.
 
 ### Custom metrics for domain-specific behaviors
 
-Seven built-in metrics cover general quality, but every product has behaviors no generic rubric captures. Define your own in plain language and the judge applies it from the next evaluation on. Custom metrics are versioned, reusable, and mix freely with built-ins.
+Built-in metrics cover general quality, but every product has behaviors no generic rubric captures. Define your own metric with a scoring prompt, and the judge applies it in your next evaluation. Custom metrics are versioned, reusable, and mix freely with built-in metrics.
+
+### See the tools your agent calls
+
+Turn on tool call capture to record every tool your agent calls during a simulation. Then check those calls with assertions and the **Tool call behavior** metric. See [Tool call tracing](/tool-tracing).
 
 ### Human-in-the-loop calibration
 
-Dispute a judge score and reviewers can add their own in the **Annotations** tab without overwriting it. The **Calibration** tab then shows agreement rates per metric, surfaces common disagreements, and links to each disputed turn — the evidence teams need to refine a prompt and close the gap with human judgment.
+When your team disputes a judge score, reviewers add their own in the **Annotations** section without overwriting it. The **Annotation Calibration** section then shows how often the judge agrees with your team for each metric. Use it to find the metrics whose prompts need work.
 
 <Frame>
-  ![Calibration Loop](/images/calibration-loop.png)
+  ![The calibration loop: the LLM judge scores, humans flag disagreements, the calibration section surfaces drift, and the team refines the metric prompt](/images/calibration-loop.png)
 </Frame>
 
-## Getting Started
+## Getting started
 
-Ready to test your AI agent? Follow our [Quickstart](/quickstart) guide to run your first simulation in under five minutes.
+Ready to test your AI agent? Follow the [Quickstart](/quickstart) to run your first simulation.

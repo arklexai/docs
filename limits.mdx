@@ -1,0 +1,94 @@
+---
+title: "Limits"
+description: "Size, count, and rate limits across Arklex Platform, in one place."
+---
+
+This page collects the limits that apply across Arklex Platform. Each section links to the page that explains the feature. For token allowances by plan, see [Billing](/settings#billing).
+
+---
+
+## Scenarios
+
+| Limit | Value |
+| --- | --- |
+| Scenarios written per assistant run | 100 |
+| Conversation history upload | 256 MB, `.json` or `.jsonl` |
+| Scenario import file | 10 MB, `.json` or `.csv` |
+| Scenario name | 100 characters |
+| Goal | 1,000 characters |
+| User profile | 3,000 characters |
+| Agent context | 2,000 characters |
+| Knowledge passages per scenario | 5 |
+| User goal checklist items | 4 |
+| Assertions per scenario | 50, including at most one **Tool calls** assertion |
+
+See [Scenarios](/scenarios).
+
+---
+
+## Simulations
+
+| Limit | Value |
+| --- | --- |
+| Conversations per scenario | 10 |
+| Max turns per conversation | 10 |
+| Max concurrent conversations | 50 (default 10) |
+| Conversations per simulation | 2,000 |
+| Trace wait time | 10 to 300 seconds (default 60) |
+| Simulations pending or running at once | 2 on the Free plan |
+
+See [Simulations](/simulations).
+
+---
+
+## Knowledge
+
+| Limit | Value |
+| --- | --- |
+| Document upload | 10 MB per file |
+| Links crawled per domain | 1 to 1,000 (default 50) |
+| Folder depth | 6 levels |
+
+See [Knowledge](/knowledge).
+
+---
+
+## Metrics and MCP servers
+
+| Limit | Value |
+| --- | --- |
+| Custom metric name | 100 characters |
+| Custom metric description | 512 characters |
+| Judge MCP tool calls | 5 per turn, 20 per conversation |
+| MCP connection test timeout | 10 seconds |
+| MCP tool call timeout | 30 seconds |
+| Tools listed per MCP server | 500 |
+
+See [Metrics](/metrics) and [MCP servers](/mcp).
+
+---
+
+## Annotations and settings
+
+| Limit | Value |
+| --- | --- |
+| Comment length | 2,000 characters |
+| Profile photo | 2 MB, JPEG, PNG, or WebP |
+| API key name | 100 characters |
+| Invitation lifetime | 7 days |
+
+See [Annotations](/annotations) and [Settings](/settings).
+
+---
+
+## API and tool call tracing
+
+| Limit | Value |
+| --- | --- |
+| Idempotency key lifetime | 24 hours after the first attempt completes |
+| Trace requests per organization | 600 per minute |
+| Trace data per organization | 64 MiB per minute |
+| Trace request size | 4 MiB compressed, 16 MiB uncompressed |
+| Spans per trace request | 2,000 |
+
+See [API reference](/api) and [Tool call tracing](/tool-tracing).

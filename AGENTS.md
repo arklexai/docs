@@ -2,7 +2,7 @@
 
 ## About this project
 
-- This is the Arkdock user documentation site built on [Mintlify](https://mintlify.com)
+- This is the Arklex Platform user documentation site built on [Mintlify](https://mintlify.com)
 - Pages are MDX files with YAML frontmatter
 - Configuration lives in `docs.json`
 - Run `mint dev` to preview locally
@@ -10,6 +10,7 @@
 
 ## Terminology
 
+- The product name is "Arklex Platform". Use the full name in titles, descriptions, and the first mention on a page, then "Arklex"
 - Use "Owner" not "Admin" for the highest-privilege role
 - Use "simulation" not "test run"
 - Use "evaluation" not "assessment" or "review"

@@ -1,5 +1,3 @@
-> **Customize this file**: Tailor this template to your project by noting specific contribution types you're looking for, adding a Code of Conduct, or adjusting the writing guidelines to match your style.
-
 # Contribute to the documentation
 
 Thank you for your interest in contributing to our documentation! This guide will help you get started.
@@ -22,9 +20,11 @@ Thank you for your interest in contributing to our documentation! This guide wil
 6. Preview your changes at `http://localhost:3000`
 7. Commit your changes and submit a pull request
 
-For more details on local development, see our [development guide](development.mdx).
+Run `mint broken-links` before you open a pull request.
 
 ## Writing guidelines
+
+Follow the terminology, style, and content rules in [AGENTS.md](AGENTS.md). In short:
 
 - **Use active voice**: "Run the command" not "The command should be run"
 - **Address the reader directly**: Use "you" instead of "the user"

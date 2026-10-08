@@ -1,194 +1,238 @@
 ---
 title: "Scenarios"
-description: "Define the simulated users that interact with your agent during a simulation."
+description: "Define the simulated users that interact with your agent during a simulation, and the assertions that decide whether a conversation passes."
 ---
 
-Scenarios define the simulated users that interact with your agent during a simulation. Each scenario specifies a user **goal**, a **profile**, and a set of **knowledge** the simulated user can draw on during the conversation.
+Scenarios define the simulated users that interact with your agent during a simulation. Each scenario specifies what the user wants (the **goal**), who they are (the **user profile**), and what they know (**knowledge**). A scenario can also carry **assertions**, which decide whether a conversation passes.
 
 <Note>
-  New here? The [Quickstart](/quickstart) walks you through generating your first scenarios end to end. This page is the full reference for every mode and field.
+  New here? The [Quickstart](/quickstart) walks you through building your first scenarios end to end. This page is the full reference.
 </Note>
 
 ---
 
 ## Scenario groups
 
-Scenarios are organized into **scenario groups** — a logical collection of related scenarios, such as all scenarios for a product category, support topic, or user segment (e.g. a "Core Support" group covering balances, transfers, and card issues).
+Scenarios live in **scenario groups**. A group is a collection of related scenarios, such as all scenarios for a product area, support topic, or user segment. For example, a "Core Support" group could cover balances, transfers, and card issues.
 
-Navigate to **Scenarios** in the sidebar to see every group in your organization. Click a group to open it and view the scenarios it contains.
+Go to **Scenarios** in the sidebar to see every group in your organization. Each card shows the group name, when it was created, and who created it.
 
-You create a group **before** adding any scenarios to it: every way of adding scenarios — generating, importing, or saving — targets a group that already exists. Create a group with a name and an optional description, then open it to start adding scenarios.
+You create a group before you add scenarios to it:
+
+1. Click **Create group**.
+2. Enter a **Name**. If you leave it blank, the group is called "Untitled group".
+3. Click **Create**, then open the group.
+
+Inside a group, you can:
+
+- Rename the group with the pencil icon next to its name.
+- Click **Download all** to export the group's scenarios as a JSON file.
+- Click **Add Scenarios** to build, import, or generate more scenarios.
+- Switch between the **Scenarios** tab (saved scenarios) and the **Drafts** tab (work in progress).
+
+To delete a group, open the menu on its card and click **Delete**. You can't delete a group while any of its scenarios is used by a simulation. Deleting a group also deletes its unsaved drafts.
 
 ---
 
-## Create scenarios
+## Add scenarios
 
-There are four ways to add scenarios. Pick based on how much you have to start from:
+Open a group and click **Add Scenarios**. Choose one of three options:
 
-| Mode | Best when | Output |
-| --- | --- | --- |
-| **Create a Scenario** | You want one carefully crafted scenario | 1 scenario |
-| **Generate at Scale** | You want broad coverage from a description | Up to 20 scenarios |
-| **From Conversation History** | You have real conversation logs to learn from | Scenarios matching real user patterns |
-| **Import a File** | You already have scenarios in a file | Your existing scenarios |
+| Option | Best when |
+| --- | --- |
+| **Build with Assistant** | You want to describe what to test and let an assistant draft the scenarios. |
+| **From Conversation History** | You have real conversation logs and want scenarios that match how your users actually behave. |
+| **Import a File** | You already have scenarios in a JSON or CSV file. |
 
-Open the group you want to add to (creating one first if you haven't yet), click **Add Scenarios**, then choose a path. Whichever mode you pick saves into that group.
-
-### Create a Scenario
-
-Create one scenario at a time, in three steps.
-
-<Steps>
-  <Step title="Scenario details">
-    Enter a scenario name, a background description of the company and agent context, a user profile describing the simulated user, and the specific goal they're trying to accomplish.
-  </Step>
-  <Step title="Knowledge">
-    Attach up to **10** knowledge items from the Knowledge section. These give the simulated user access to specific documents or web content during the conversation.
-  </Step>
-  <Step title="Review">
-    Preview the scenario, make any final edits, and save it to the group.
-  </Step>
-</Steps>
+Every option saves scenarios into the group you opened.
 
 <Frame>
-  ![Create A Scenario](/images/create-a-scenario.jpg)
+  ![The Add Scenarios dialog with three options](/images/add-scenarios-picker.png)
 </Frame>
 
-### Generate at Scale
+### Build with the assistant
 
-Generate up to **20** scenarios at once by defining a matrix of user attributes.
-
-<Steps>
-  <Step title="Agent context">
-    Describe the company, the agent's role, and the use case. Arklex uses this to auto-detect the domain and pre-fill relevant demographic and business attribute fields.
-  </Step>
-  <Step title="Goals">
-    Define up to 10 user goals (capped at the number of scenarios you want to generate) — the tasks or intents your simulated users will pursue.
-  </Step>
-  <Step title="User attributes">
-    Configure the attributes that vary across generated personas, organized into tabs: Demographics, Business, Psychographics, and a Custom tab. Each attribute takes a comma-separated list of values, and Arklex draws from these to generate diverse personas.
-  </Step>
-  <Step title="Knowledge">
-    Attach up to **100** knowledge items to ground the scenarios in real content. At least one knowledge source is required.
-  </Step>
-  <Step title="Review">
-    Preview the generated set, edit individual scenarios, and save the group.
-  </Step>
-</Steps>
-
-<Frame>
-  ![Generate At Scale](/images/generate-at-scale.jpg)
-</Frame>
-
-### From Conversation History
-
-<Note>
-  Available only where the **Adaptive Scenarios** feature is enabled. If you don't see it in the picker, contact your account team.
-</Note>
-
-Generate scenarios grounded in real conversation data. Instead of describing your use case from scratch, you upload past conversations and Arklex discovers user attributes from them.
+Choose **Build with Assistant**. The assistant asks you a few questions about your agent, then drafts scenarios you can review before you save them. The workspace has a chat on the left and two tabs on the right: **Plan** and **Scenarios**.
 
 <Steps>
-  <Step title="Upload conversation history">
-    Upload a file of past conversations (e.g. exported chat logs). Arklex extracts user attribute patterns from it.
+  <Step title="Describe your agent">
+    Tell the assistant what your agent does and what you want to test. You can also paste a link to a web page, and the assistant reads it and attaches it as a source.
   </Step>
-  <Step title="Review discovered attributes">
-    The run surfaces demographic, behavioral, and domain-specific attributes observed across the uploaded conversations. Review and edit the list before generating.
+  <Step title="Confirm the goals">
+    The assistant proposes the user goals to test and how many scenarios to write for each. It also suggests paths where things go wrong. Adjust the list, then click **Send answers**.
   </Step>
-  <Step title="Configure and generate">
-    Choose how many scenarios to generate. Arklex uses the discovered attributes as the persona matrix, producing scenarios that reflect the mix of real users in your data.
+  <Step title="Choose knowledge">
+    Pick what the scenarios are grounded in:
+
+    - **My whole knowledge base**: searched for each goal, including anything you add later.
+    - **Choose documents**: pick specific items. Search, or filter by tag.
+    - **Pasted records**: paste the orders, accounts, or policies your agent holds.
+    - **Nothing**: the scenarios exercise the conversation only.
+
+    Only knowledge items with the **Success** status are listed. See [Knowledge](/knowledge).
+  </Step>
+  <Step title="Describe your customers">
+    Choose **Describe your customer segments** to paste your own research, or click **Suggest some for me**. You can also choose **None**. Next, add any attributes that should vary between simulated users, such as plan type or age.
+  </Step>
+  <Step title="Generate">
+    Click **Generate** to write the scenarios. One run writes at most 100 scenarios. To write more, click **Generate** again. Click **Stop** to cancel a run in progress.
   </Step>
   <Step title="Review and save">
-    Preview the scenarios, make final edits, and save to the group.
+    The drafts appear on the **Scenarios** tab, already selected. Review them, clear any you don't want, and click **Save N selected**.
   </Step>
 </Steps>
 
-This mode is most useful once you have production traffic and want your test scenarios to reflect the actual variety of users interacting with your agent.
+<Note>
+  Building scenarios uses your plan's token allowance. If the allowance is used up, the assistant shows a **Go to billing** link. See [Settings](/settings#billing).
+</Note>
 
-### Import a File
+#### Edit the plan
 
-Choose **Import a File** to upload a JSON or CSV file of existing scenarios. The wizard parses the file, lets you review and map fields, and adds the scenarios to the current group.
+The **Plan** tab shows everything the assistant will use: knowledge, agent context, goals with their scenario counts, **Customer segments (optional)**, and **Persona attributes (optional)**. Edit any of them directly, then click **Save plan**. Set a goal's count to 0 to skip it. You can also click **Change the split** above the generate button to adjust the counts.
+
+#### Review drafts
+
+Each draft card shows the goal, the persona, the user goal checklist, the assertions, and the knowledge it is grounded in. Use the icons on a card to edit, regenerate, or discard it.
+
+The assistant also checks the drafts and flags problems on the card, for example a duplicate, a contradiction with your knowledge, or a goal that gives away the outcome. If you save a selection that includes flagged drafts, Arklex asks you to save again to confirm.
+
+If you didn't attach any knowledge, a warning says the scenarios will be invented rather than grounded in your documents. Click **Choose knowledge** to add some, or continue with **Generate N anyway**.
+
+You can also ask the assistant in the chat to change specific drafts, for example "make the second customer less patient". Or ask it to review the scenarios already saved in the group for duplicates and gaps.
+
+#### Choose a model
+
+The session header shows the model the assistant uses. Choose a different model before you send your first message. After the session starts, the model is fixed. To switch, click **Start over**. Scenarios you already saved are kept.
+
+#### Leave and come back
+
+The assistant saves your conversation as you go, and generation keeps running if you leave the page. To return, open the group's **Drafts** tab, or click **History** in the session header. Only you can see your unsaved sessions.
+
+### Build from conversation history
+
+Choose **From Conversation History** to start the same assistant session, but first reads your past conversations. The assistant proposes goals, scenario counts, customer segments, and attributes based on what it finds. Click **Use it as it is** to accept the proposal, or **Adjust the counts** to change it. The session then continues with the knowledge question.
+
+Upload a `.json` or `.jsonl` file of up to 256 MB:
+
+- **JSON**: a list of conversations.
+- **JSONL**: one conversation per line.
+
+Each conversation needs a `messages` list. Each message needs a `role` (`user`, `assistant`, or `bot`) and its `content`:
+
+```json
+[
+  {
+    "messages": [
+      { "role": "user", "content": "I want to dispute a charge on my card." },
+      { "role": "assistant", "content": "I can help with that. Which charge?" }
+    ]
+  }
+]
+```
+
+Reading a large file takes a few minutes. It keeps going if you leave the page.
+
+This option is most useful once you have production traffic and want your scenarios to reflect the real variety of users talking to your agent.
+
+### Import a file
+
+Choose **Import a File** to upload scenarios you already have. The import has three steps: **Upload**, **Edit**, and **Review**.
+
+1. **Upload**: select a `.json` or `.csv` file of up to 10 MB. Click **Download template** for an example file.
+2. **Edit**: review the parsed scenarios. Fix errors, add or delete scenarios, and edit fields.
+3. **Review**: check the summary and click **Import N Scenarios**. Rows with errors are skipped.
+
+Each scenario needs a goal, a user profile, and an agent context. The other fields are optional.
+
+| JSON key or CSV column | Required | Description |
+| --- | --- | --- |
+| `name` | No | Scenario name, up to 100 characters. |
+| `goal` | Yes | What the simulated user wants, up to 1,000 characters. |
+| `user_profile` | Yes | Who the simulated user is, up to 3,000 characters. |
+| `agent_context` | Yes | What the agent is and does, up to 2,000 characters. |
+| `knowledge_name`, `knowledge_content` | No | One knowledge passage. Add `_2` to `_5` for more, up to 5 per scenario. |
+| `checklist_description`, `checklist_satisfied_when`, `checklist_mandatory` | No | One user goal checklist item. Add `_2` to `_4` for more. |
+
+A JSON file can be a list of scenarios, or an object with the list under `scenarios`, `items`, or `data`. You can include assertions in JSON files only.
 
 <Frame>
-  ![Import A File](/images/import-a-file.jpg)
+  ![The Import a File wizard with the Upload, Edit, and Review steps](/images/import-a-file.jpg)
 </Frame>
 
 ---
 
 ## Drafts
 
-Generating scenarios is a multi-step wizard, and your progress is saved as a **draft** as you go — so you can leave and pick up exactly where you left off. Drafts belong to a group, and you can keep several in progress in the same group at once.
+The **Drafts** tab lists your unsaved assistant sessions in the group. Each row shows how the session started and how many drafts are saved and unsaved. Click a row to continue where you left off. Saved scenarios move to the **Scenarios** tab.
 
-Open a group's **Drafts** tab to see them. Each draft shows its mode (Create a Scenario, Generate at Scale, or From Conversation History), a status badge, and how many scenarios it will produce:
+Groups created before the assistant existed may also show **Unfinished runs from earlier generation methods**. You can't continue these runs.
 
-<Tabs>
-  <Tab title="Draft">
-    <Frame caption="A draft still being configured — resume the wizard to continue.">
-      ![Draft Only](/images/draft-only.jpg)
-    </Frame>
-  </Tab>
-  <Tab title="Generating">
-    <Frame caption="A Generate at Scale or From Conversation History run in progress.">
-      ![Drafts Status 1](/images/drafts-status-1.jpg)
-    </Frame>
-  </Tab>
-  <Tab title="Failed">
-    <Frame caption="A run that errored — discard it and start over.">
-      ![Draft Failed](/images/draft-failed.jpg)
-    </Frame>
-  </Tab>
-</Tabs>
-
-| Status | Meaning |
-| --- | --- |
-| **Draft** | Still being configured — resume the wizard to continue. |
-| **Queued / Generating** | A Generate at Scale or From Conversation History run is in progress. |
-| **Failed** | The run errored — discard it and start over. |
-
-- **Continue** — click a draft to reopen the wizard at your last step.
-- **Delete** — remove a draft you no longer need. Available for drafts and failed runs.
-- **Cancel** — stop a run that's queued or generating.
-
-<Warning>
-  A group can't be deleted while it has a draft or an in-progress (queued or generating) generation — cancel those first. Completed and failed runs don't block deletion.
-</Warning>
+---
 
 ## Anatomy of a scenario
 
-Every scenario contains three parts:
+Click a scenario in a group to open it. A scenario has these parts:
 
 | Field | Description |
 | --- | --- |
-| **Goal** | What the simulated user is trying to accomplish, written from their perspective — e.g. "You think there's a charge on your account you don't recognize and you want it reversed." |
-| **Profile** | A persona that shapes how the user communicates: their background, knowledge level, tone, and any relevant constraints. |
-| **Knowledge base** | Documents the simulated user can reference during the conversation. Attach files from the Knowledge section to give the user specific context to draw on. |
+| **User Profile** | Who the simulated user is: background, knowledge level, tone, and constraints. It can include a customer segment and attributes. |
+| **User Goal** | What the simulated user is trying to accomplish, written from their perspective. For example: "You think there's a charge on your account you don't recognize and you want it reversed." |
+| **User Goal Checklist** | Up to four items, each marked **Required** or **Optional**, that tell the simulated user when it's done. The checklist ends the conversation. It doesn't grade the agent. |
+| **Assertions** | The checks that decide whether a conversation passes. See [Assertions](#assertions). |
+| **Agent Context** | What the agent is and what it does, from the simulated user's point of view. |
+| **Knowledge** | Up to five passages the simulated user can draw on. |
+
+The knowledge passages are copied into the scenario when you create it. Later changes to your knowledge base, including deleting an item, don't change saved scenarios.
 
 <Tip>
-  The knowledge base grounds what the **simulated user** knows and asks about — not the agent's answers. Attaching the same source material the agent uses is a good way to test whether the agent's responses stay faithful to it.
+  Knowledge grounds what the **simulated user** knows and asks about, not the agent's answers. It also shapes the generated checklist and assertions. Grounding scenarios in the same material your agent uses is a good way to test whether the agent stays faithful to it.
 </Tip>
+
+---
+
+## Assertions
+
+Assertions are the checks that decide whether a conversation passes. A conversation passes only if every assertion passes. The goal checklist only decides when the simulated user is done. For example, an agent that correctly refuses to cancel a shipped order passes, even though the user wanted it cancelled.
+
+The assistant writes assertions for each scenario it drafts. To add or change them, open the scenario, click **Edit**, and click **Add assertion** in the **Assertions** section. There are three kinds:
+
+| Kind | What it checks |
+| --- | --- |
+| **LLM judge** | Reads the whole conversation and checks a behavior you describe. Best for refusals, steps, and policy. |
+| **Text match** | Checks agent replies for exact text, ignoring case. Choose **Any reply contains**, **No reply contains**, or **Any reply matches**. Best for IDs and secrets. |
+| **Tool calls** | Checks the tools the agent called. List the tools it **Must call** and the tools it **Must never call**. Under **Order and arguments**, choose **Exact order**, **Any order**, **At least these**, or **Only these tools**, and optionally match arguments. |
+
+**Tool calls** assertions need tool call capture. Turn on **Capture tool calls** when you start the simulation. See [Tool call tracing](/tool-tracing).
+
+<Frame>
+  ![A scenario with a Tool calls assertion](/images/scenario-assertions.png)
+</Frame>
+
+A scenario can have up to 50 assertions, including at most one **Tool calls** assertion. Changes to assertions apply to new simulations.
+
+Each conversation's result appears when you run an evaluation. See [Evaluations](/evaluations).
 
 ---
 
 ## Manage scenarios
 
-**View** — Click a scenario row within a group to see its goal, profile, and attached knowledge documents.
+**Edit**: open the scenario and click **Edit**. Change any field, then click **Save**. If your change affects generated fields, such as the checklist or assertions, Arklex asks whether to update them too. Choose **Save and regenerate** or **Save without regenerating**. If you edit the user profile, click **Sync attributes** to update the attributes to match.
 
-**Edit** — Open the scenario and click **Edit**. Changes save per-field, and **versions** are tracked so you can see what changed between simulation runs.
+**Versions**: each save that changes something creates a new version. Use the **Version** menu at the top of the scenario to view earlier versions. Earlier versions are read-only. Simulations record which version of each scenario they used, so past results stay accurate.
 
-**Delete** — Open the scenario and use the delete action. Scenarios used in completed simulations remain accessible in those historical records even after deletion.
+**Delete**: in the group's **Scenarios** tab, click the trash icon on the scenario's row and confirm. You can't delete a scenario that a simulation has used.
 
 ---
 
 ## Select scenarios for a simulation
 
-When creating a simulation, the **Scenarios** field lists all available scenarios grouped by scenario group. You can:
+When you create a simulation, the **Scenarios** field lists your scenarios by group. You can:
 
 - Select individual scenarios with their checkbox.
-- Select every scenario in a group with **Select Group**.
-- Select all scenarios across all groups with **Select All**.
-- Preview a scenario's goal, profile, and knowledge base by clicking its name or the chevron icon.
-
-Use the search box and the **Created by me** filter to narrow a long list.
+- Select every scenario in a group with **Select Group**, or clear it with **Deselect Group**.
+- Select every scenario with **Select All**, or clear the selection with **Deselect All**.
+- Search by goal text.
+- Click a scenario to preview its goal, profile, agent context, and knowledge.
 
 ---
 
@@ -196,15 +240,19 @@ Use the search box and the **Created by me** filter to narrow a long list.
 
 <AccordionGroup>
   <Accordion title="How many scenarios can I generate at once?">
-    Generate at Scale supports up to 20 scenarios per run. For a first pass, 10–15 scenarios covering your most important user intents is a good starting point — you can always add more groups or run additional rounds.
+    One run of the assistant writes up to 100 scenarios. Click **Generate** again to write more. For a first pass, 10 to 15 scenarios covering your most important user intents is a good starting point.
   </Accordion>
 
   <Accordion title="How many scenarios should I include in a simulation?">
-    Start with 5–15 scenarios covering your most important intents. Once you've reviewed the initial results, run a new simulation with a broader set.
+    Start with 5 to 15 scenarios covering your most important intents. Once you've reviewed the results, run a new simulation with a broader set.
   </Accordion>
 
-  <Accordion title="Can I leave a scenario generation half-finished and come back?">
-    Yes. Every step of the generation wizard is saved as a draft, so you can close it and resume later from the group's **Drafts** tab. You can keep several drafts in progress in the same group, and discard a draft (or a failed run) from that tab when you no longer need it.
+  <Accordion title="Can I leave the assistant and come back later?">
+    Yes. Your session is saved as you go, and generation keeps running in the background. Return to it from the group's **Drafts** tab or from **History** in the session header.
+  </Accordion>
+
+  <Accordion title="Do I need knowledge to build scenarios?">
+    No. Without knowledge, the assistant invents the details, which is fine for testing conversation flow. Grounded scenarios are better for checking whether your agent gets the facts right.
   </Accordion>
 
   <Accordion title="What makes a good scenario goal?">
@@ -215,11 +263,11 @@ Use the search box and the **Created by me** filter to narrow a long list.
     - **Good:** "You spotted a \$240 charge you don't recognize on last month's statement and want it investigated and refunded."
   </Accordion>
 
-  <Accordion title="Can scenarios reference documents the agent also has access to?">
-    Yes. Attaching a document to a scenario gives the simulated user knowledge of its contents, which is useful for testing whether the agent's responses align with its source material — especially relevant for faithfulness and relevance evaluations.
+  <Accordion title="What's the difference between the checklist and assertions?">
+    The user goal checklist tells the simulated user when it's done, so it controls when the conversation ends. Assertions grade the agent and decide whether the conversation passes.
   </Accordion>
 
   <Accordion title="How do scenario versions work?">
-    Each time you edit and save a scenario, a new version is created. Simulations record which version of each scenario they used, so historical results stay accurate even if the scenario changes later.
+    Each time you save a change to a scenario, a new version is created. Simulations record which version of each scenario they used, so historical results stay accurate even if the scenario changes later.
   </Accordion>
 </AccordionGroup>

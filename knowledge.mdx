@@ -1,91 +1,148 @@
 ---
 title: "Knowledge"
-description: "Manage documents and websites that simulated users can reference during a simulation."
+description: "Manage the documents and websites that ground your scenarios."
 ---
 
-The Knowledge section manages documents and websites that simulated users can reference during a simulation. Attaching knowledge to a scenario gives the simulated user access to specific content — useful for testing whether your agent responds faithfully to its source material.
+The **Knowledge** page holds the documents and websites that ground your scenarios. When you build scenarios, Arklex searches your knowledge for relevant passages and gives them to the simulated users. This makes their questions realistic and specific.
 
-<Tip>
-  Knowledge grounds what the **simulated user** knows and asks about — not the agent's answers. Attaching the same material your agent relies on is a good way to test whether the agent stays faithful to it.
-</Tip>
+Knowledge shapes what the **simulated user** knows and asks about. It doesn't change your agent's answers. Grounding scenarios in the same material your agent relies on is a good way to test whether the agent stays faithful to it.
 
 ---
 
 ## Knowledge types
 
-Arklex supports two types of knowledge sources, both chunked and indexed so the simulated user can draw on their contents when forming conversation turns:
+The page has two tabs, and it opens on **Websites**:
 
-| Type | Description |
+| Tab | Description |
 | --- | --- |
-| **Documents** | Uploaded files (PDFs, text documents, and similar formats). |
-| **Websites** | Web pages crawled and indexed from a URL. |
+| **Websites** | Web pages crawled from a domain or added one link at a time. |
+| **Documents** | Files you upload. |
 
----
+Each item goes through these statuses:
 
-## Add documents
+| Status | Meaning |
+| --- | --- |
+| **Pending** | Waiting to be processed. |
+| **Running** | Being read and indexed. |
+| **Success** | Indexed and ready to use in scenarios. |
+| **Error** | Processing failed. Open the item to see why. |
 
-Navigate to **Knowledge** and select the **Documents** tab.
-
-<Frame>
-  ![Knowledge documents tab](/images/knowledge-documents.png)
-</Frame>
-
-**Upload** — Click **Upload Document** and select a file. Once uploaded, it's processed and made available to attach to scenarios. Each entry shows its name, upload date, and processing status (Pending, Processing, Ready, or Failed).
-
-**View** — Click any row to see the document's content and metadata. A document that fails to process shows an error with guidance on supported formats.
-
-**Delete** — Open the document's detail page and use the delete action. Scenarios that reference it lose access to its content for future simulations.
+Only items with **Success** status can be used to build scenarios.
 
 ---
 
 ## Add websites
 
-Navigate to **Knowledge** and select the **Websites** tab. Two options are available:
+On the **Websites** tab, you can add a whole domain or a single link.
 
 <CardGroup cols={2}>
-  <Card title="Add Domain" icon="sitemap">
-    Crawl and index a domain across linked pages. Set a domain URL and page limit (1–1,000).
+  <Card title="Add Domain" icon="network">
+    Discover the pages under a URL, then choose which ones to add.
   </Card>
 
   <Card title="Add Link" icon="link">
-    Index a single URL or YouTube video. Best when you have one specific page or video to add.
+    Add a single web page.
   </Card>
 </CardGroup>
 
-<Frame>
-  ![Knowledge websites tab](/images/knowledge-websites.png)
-</Frame>
+To add pages from a domain:
 
-Each website entry shows its URL, when it was added, and its processing status. Click any row to view the indexed content and metadata, or open its detail page to delete it.
+1. Click **Add Domain**.
+2. Enter the **Domain URL** and the **Number of Links to Crawl** (1 to 1,000, default 50). Optionally add **Tags** and choose a **Folder**.
+3. Click **Add Domain**. Arklex starts discovering pages. Discovery only follows links that start with the URL you entered, and it skips links to files such as PDFs and images.
+4. When the domain shows **Success**, click **Review URLs**.
+5. Select the pages you want and click **Add N Pages**.
+
+The tab has two tables. **Domains** lists your domain discoveries. **Links** lists the pages you added, from a domain or one at a time. Deleting a domain from the **Domains** table removes only the discovery. Pages you already added from it stay under **Links**.
+
+<Frame>
+  ![The Websites tab with the Domains and Links tables](/images/knowledge-websites.png)
+</Frame>
 
 ---
 
-## Attach knowledge to scenarios
+## Add documents
 
-Once documents or websites are in the knowledge base, attach them to individual scenarios on the scenario detail page. A simulated user with attached knowledge references its contents when relevant during a conversation — which powers three kinds of testing:
+On the **Documents** tab, click **Upload Document**. Select one or more files, or drag them into the dialog. Optionally add **Tags** and choose a **Folder**, then confirm the upload.
 
-- **Faithfulness testing** — verifying the agent's responses align with what a knowledgeable user would expect from documented facts.
-- **Grounded evaluation** — ensuring the agent doesn't hallucinate information that contradicts the documents the user has access to.
-- **Edge-case coverage** — giving simulated users specific product specs, pricing tables, or policy details that reveal gaps in agent knowledge.
+Supported formats: PDF, DOC, DOCX, TXT, MD, CSV, JSON, XLS, XLSX, PPTX, JPG, JPEG, and PNG. Each file can be up to 10 MB. Arklex reads the text in images and PowerPoint files with OCR, so text-based PDFs work better than scans.
+
+The documents table shows each document's name, tags, status, and when it was last updated.
+
+<Frame>
+  ![The Documents tab with each document's tags and status](/images/knowledge-documents.png)
+</Frame>
+
+---
+
+## Organize with folders
+
+The folder panel next to the tabs shows **All items**, **Unfiled**, and your **Folders**.
+
+- **Create a folder**: click **+** next to **FOLDERS**. If a folder is selected, the new folder goes inside it. Folders can be up to six levels deep.
+- **Filter by folder**: click a folder to show only its items. Turn **Include subfolders** on or off to include or exclude items in subfolders.
+- **File new items**: choose a **Folder** when you add knowledge. If you leave it as **No folder**, the item goes to **Unfiled**.
+- **Move items**: select items and click **Move to folder**, or drag rows onto a folder. An item lives in one folder at a time.
+- **Rename or delete a folder**: use the pencil and trash icons on the folder. When you delete a folder, you choose whether to keep its contents (moved up a level) or delete the folder and everything under it. Deleting folders never deletes your documents.
+
+---
+
+## Find and manage knowledge
+
+**Search**: the search box matches item names and document text.
+
+**Filter**: click **Filter** to narrow by status or tag.
+
+**Tags**: add tags when you add knowledge, or later with **Edit tags** in an item's menu. Tags also filter the list of documents when you choose knowledge for scenarios.
+
+**Bulk actions**: select rows with their checkboxes to **Reprocess**, **Tag**, **Move to folder**, or **Delete** them together. Your selection is kept as you move between pages.
+
+**View an item**: click a row to open its detail page. It shows the item's status, when it was added, its tags, folder, and source, plus an AI summary of what it covers. When the status is **Success**, you can click **Edit** to change the extracted content. Saving re-indexes the item.
+
+**Rename**: choose **Rename** in an item's menu. Only the name shown in Arklex changes.
+
+**Reprocess**: re-reads the file or re-crawls the page. Use it to pick up changes to a web page, or to retry an item that failed. Reprocessing replaces any content you edited by hand. Arklex doesn't re-crawl pages automatically.
+
+**Delete**: choose **Delete** in an item's menu, on its detail page, or from the bulk actions. Deleting frees the item's knowledge tokens.
+
+If an item shows **Error**, open it to see why it failed. For example, Arklex couldn't extract any text, or your plan's knowledge allowance is used up. Fix the cause, then click **Reprocess**.
+
+---
+
+## Use knowledge in scenarios
+
+You choose knowledge when you build scenarios with the assistant. Select **My whole knowledge base** to search everything, or **Choose documents** to pick specific items. You can filter the list by tag. See [Scenarios](/scenarios#build-with-the-assistant).
+
+Each scenario stores a copy of the passages it uses. Later edits, reprocessing, or deletion don't change scenarios you've already saved, or their simulations. A deleted item just isn't found for new scenarios.
+
+Grounding scenarios in your knowledge supports three kinds of testing:
+
+- **Faithfulness testing**: check that the agent's answers match what a knowledgeable user would expect from your documents.
+- **Grounded evaluation**: make sure the agent doesn't make up information that contradicts the documents the user has access to.
+- **Edge-case coverage**: give simulated users specific product specs, pricing tables, or policy details that reveal gaps in what your agent knows.
 
 ---
 
 ## FAQ
 
 <AccordionGroup>
-  <Accordion title="What file formats are supported for document uploads?">
-    Commonly supported formats include PDF, TXT, and DOCX. If a document fails to process, check that it isn't password-protected and is within the supported file size limit.
+  <Accordion title="What file formats can I upload?">
+    PDF, DOC, DOCX, TXT, MD, CSV, JSON, XLS, XLSX, PPTX, JPG, JPEG, and PNG, up to 10 MB per file. If a document fails, check that it isn't password-protected and contains real text rather than a scanned image.
   </Accordion>
 
-  <Accordion title="Does adding a website crawl linked pages?">
-    It depends on the option. **Add Domain** crawls a domain and indexes multiple pages up to the maximum page count you set. **Add Link** indexes only the single URL or YouTube video you provide.
+  <Accordion title="Does adding a domain index every page on the site?">
+    No. **Add Domain** discovers up to the number of pages you set, under the URL you enter. You then choose which pages to add. **Add Link** adds only the single page you provide.
   </Accordion>
 
-  <Accordion title="How current is the indexed website content?">
-    Content is indexed when you add the URL. Arklex doesn't automatically re-crawl when the source page changes — delete and re-add the URL to refresh it.
+  <Accordion title="How do I refresh a web page that changed?">
+    Click **Reprocess** on the page. Arklex doesn't re-crawl automatically.
   </Accordion>
 
-  <Accordion title="Can I share knowledge items across multiple scenarios?">
-    Yes. A single document or website can be attached to as many scenarios as needed. Updating the source document doesn't affect simulations that have already run.
+  <Accordion title="Can I use one knowledge item in many scenarios?">
+    Yes. A single document or web page can ground any number of scenarios.
+  </Accordion>
+
+  <Accordion title="Does knowledge count toward my plan?">
+    Yes. Indexed knowledge uses knowledge tokens, which have a fixed limit on every plan. Deleting items frees their tokens. See [Settings](/settings#billing).
   </Accordion>
 </AccordionGroup>
