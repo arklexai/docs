@@ -1,210 +1,431 @@
 ---
 title: "Scenarios"
-description: "Define the simulated users that interact with your agent during a simulation."
+description: "Define who the simulated user is, what they want, when the conversation ends, and the assertions that decide whether it passes."
 ---
 
-Scenarios define the simulated users that interact with your agent during a simulation. Each scenario specifies a user **goal**, a **profile**, and a set of **knowledge** the simulated user can draw on during the conversation.
+import {
+  scenariosPerRun,
+  historyUploadMb,
+  importFileMb,
+  scenarioNameChars,
+  goalChars,
+  userProfileChars,
+  agentContextChars,
+  knowledgePerScenario,
+  knowledgeNameChars,
+  knowledgeContentChars,
+  checklistItems,
+  checklistItemChars,
+  assertionsPerScenario,
+} from "/snippets/limits.mdx";
+
+A scenario describes one kind of conversation to test: who the simulated user is, what they want, when they're done, and what your agent must do for the conversation to pass. A [simulation](/simulations) runs scenarios against your agent, and an [evaluation](/evaluations) grades the conversations.
 
 <Note>
-  New here? The [Quickstart](/quickstart) walks you through generating your first scenarios end to end. This page is the full reference for every mode and field.
+  New here? The [Quickstart](/quickstart) walks you through building your first scenarios end to end. This page is the full reference.
 </Note>
+
+---
+
+## How a scenario works
+
+This page uses one example throughout: a customer of a retail bank who lost their debit card.
+
+| Part | What it does | In the example |
+| --- | --- | --- |
+| **User goal** | What the simulated user is trying to accomplish. | You lost your debit card ending 4821 and want it blocked and replaced. |
+| **User goal checklist** | The goal broken into items. The conversation ends when every Required item is met. | Card blocked (Required), replacement ordered (Required), delivery time (Optional). |
+| **Assertions** | What the agent must do for the conversation to pass. | Verifies identity before blocking the card. Calls `block_card`, never `close_account`. |
+| **User profile** | Who the simulated user is. It sets their voice and their patience. | Jordan Lee, a nurse finishing a night shift, who wants this sorted fast. |
+| **Agent context** | What your agent is and does. | A support assistant for a retail bank. |
+| **Knowledge** | The facts the agent's answers are checked against. | Lost cards are blocked right away. Replacements arrive in 5 business days. |
+
+During a simulation, the simulated user works through the checklist in the voice of its profile. After each agent reply, a judge checks which checklist items are met, and the conversation ends when every Required item is. The evaluation then grades the conversation with its assertions.
+
+### User goal
+
+The goal says what the user wants, in their own words. For example: "You lost your debit card ending 4821 yesterday. You want it blocked and a replacement sent."
+
+The simulated user doesn't read the goal itself. The checklist breaks the goal into items, and the simulated user works through those. The goal is used to write the checklist and assertions, and the **User Goal Completion** metric scores conversations against it. So when you change a goal, update the checklist too. See [Save and regenerate](#save-and-regenerate).
+
+### User goal checklist
+
+The checklist splits the goal into up to {checklistItems} items. Each item has:
+
+- **Description**: what the user wants, for example "You want the card ending 4821 blocked." The simulated user sees the descriptions of the items that aren't met yet.
+- **Satisfied when**: what must happen for the item to be met. Only the judge sees it, so the simulated user can't steer toward it. If you leave it blank, the description is used.
+- **Required** or **Optional**: the conversation ends when every Required item is met. The simulated user also pursues Optional items, but they don't keep the conversation going. Every scenario needs at least one Required item.
+
+The example checklist:
+
+| Description | Satisfied when | |
+| --- | --- | --- |
+| You want the card ending 4821 blocked. | The agent confirms the card ending 4821 is blocked. | Required |
+| You want a replacement card. | The agent confirms a replacement is ordered to the address on file. | Required |
+| You want to know when the replacement arrives. | The agent gives a delivery time. | Optional |
+
+After each agent reply, the judge marks each open item as not met, partly met, or met. It checks whether the agent addressed the item, not whether the answer was correct. Checking correctness is the job of assertions.
+
+### Assertions
+
+Assertions are the checks that decide whether a conversation passes. A conversation passes only if every assertion passes.
+
+A completed checklist means the user got a response to everything they wanted. It doesn't mean the agent behaved correctly. In the example, an agent could block the card without verifying who it's talking to. The checklist completes, but the assertion "Verifies the customer's identity before blocking the card" fails, so the conversation fails. It also works the other way. If Jordan asked to send the replacement to a new address, and policy allows only the address on file, an agent that correctly refuses passes, even though Jordan never got what they asked for.
+
+There are three kinds of assertion:
+
+| Kind | What it checks | Best for |
+| --- | --- | --- |
+| **LLM judge** | A behavior you describe. The judge reads the whole conversation, including tool calls, with the scenario's agent context and knowledge. | Refusals, steps, and policy. |
+| **Text match** | Every agent reply, ignoring case, without AI. Choose **Any reply contains**, **No reply contains**, or **Any reply matches**, which takes an RE2 regular expression. | IDs, exact wording, and secrets. |
+| **Tool calls** | The tools the agent called, against a **Must call** list and a **Must never call** list. Under **Order and arguments**, choose how strictly to match. See [Assertion fields](#assertion-fields). | Required and forbidden actions. |
+
+**Tool calls** assertions need tool call capture. Turn on **Capture tool calls** when you start the simulation. See [Tool call tracing](/tool-tracing).
+
+<Frame>
+  ![A scenario with a Tool calls assertion](/images/scenario-assertions.png)
+</Frame>
+
+Each assertion's result is **Pass**, **Fail**, or **Inconclusive**. Inconclusive means it couldn't be judged, for example because the conversation never reached the point it checks, or tool call data was missing. A conversation fails if any assertion fails. It's inconclusive if nothing failed but something was inconclusive. A scenario with no assertions gets **No assertions** instead of a result. See [Overview: results](/evaluations#overview-results).
+
+A scenario can have up to {assertionsPerScenario} assertions, including at most one **Tool calls** assertion. Use assertions for must-have behaviors, and [metrics](/metrics) for quality you want to track over time. Metrics add scores but don't change whether a conversation passes.
+
+### User profile and patience
+
+The profile is who the simulated user is: their background, tone, and situation, written to them as "You are...". It's the only description of itself the simulated user gets, along with the open checklist items. The simulated user doesn't invent details beyond those. If the agent asks for something they don't have, they say so. So put the details your agent will ask for, such as the last digits of a card or a date of birth, in the profile or the checklist.
+
+The profile also sets the simulated user's **patience**, a number from 2 to 5. When the assistant writes a scenario, it reads the patience from the profile: 2 for an impatient or busy persona, 3 by default. Patience changes on each agent reply:
+
+- A reply that moves a checklist item forward restores one point, up to the starting value.
+- A reply that asks the user for information costs nothing.
+- Any other reply costs one point. A reply that contradicts something the agent said earlier costs one more.
+
+When patience reaches 0, the simulated user gives up. Patience isn't shown in the app. It appears as `behavior.patience` when you export scenarios. Scenarios you import or write yourself start with a patience of 3.
+
+### How a conversation ends
+
+A conversation ends at the first of these:
+
+1. Every Required checklist item is met.
+2. The agent refuses, says it can't help, or hands off to a human.
+3. The simulated user runs out of patience.
+4. The conversation reaches the simulation's **Max turns per conversation**.
+
+How a conversation ended doesn't decide whether it passes. A conversation that ends because the agent refused can pass, if refusing was right. The conversation's JSON download records why it ended.
+
+### Agent context and knowledge
+
+**Agent context** says what your agent is and does, for example "A support assistant for a retail bank. It can block cards and order replacements." The simulated user doesn't see it. The judge uses it, with the knowledge, to grade **LLM judge** assertions.
+
+**Knowledge** is up to {knowledgePerScenario} passages that hold the facts for the scenario. The simulated user doesn't see them either. The assistant uses them to write the checklist and assertions, and judges check the agent's answers against them. The passages are copied into the scenario when you create it, so later changes to your knowledge base don't change saved scenarios. See [Knowledge](/knowledge).
+
+<Tip>
+  Ground scenarios in the same documents your agent uses. The judge can then check that the agent's answers stay faithful to them.
+</Tip>
 
 ---
 
 ## Scenario groups
 
-Scenarios are organized into **scenario groups** — a logical collection of related scenarios, such as all scenarios for a product category, support topic, or user segment (e.g. a "Core Support" group covering balances, transfers, and card issues).
+Scenarios live in **scenario groups**. A group is a collection of related scenarios, such as all scenarios for a product area, support topic, or user segment. For example, a "Core Support" group could cover balances, transfers, and card issues.
 
-Navigate to **Scenarios** in the sidebar to see every group in your organization. Click a group to open it and view the scenarios it contains.
+Go to **Scenarios** in the sidebar to see every group in your organization. To create one, click **Create group**, enter a **Name**, and click **Create**. If you leave the name blank, the group is called "Untitled group".
 
-You create a group **before** adding any scenarios to it: every way of adding scenarios — generating, importing, or saving — targets a group that already exists. Create a group with a name and an optional description, then open it to start adding scenarios.
+Inside a group, you can:
+
+- Rename the group with the pencil icon next to its name.
+- Click **Add Scenarios** to add more scenarios.
+- Click **Download all** to export the group's scenarios. See [Export scenarios](#export-scenarios).
+- Switch between the **Scenarios** tab (saved scenarios) and the **Drafts** tab (unsaved assistant sessions).
+
+To delete a group, open the menu on its card and click **Delete**. You can't delete a group while any of its scenarios is used by a simulation. Deleting a group also deletes its unsaved drafts.
 
 ---
 
-## Create scenarios
+## Add scenarios
 
-There are four ways to add scenarios. Pick based on how much you have to start from:
+Open a group and click **Add Scenarios**. Choose one of four options:
 
-| Mode | Best when | Output |
+| Option | Best when | What Arklex writes for you |
 | --- | --- | --- |
-| **Create a Scenario** | You want one carefully crafted scenario | 1 scenario |
-| **Generate at Scale** | You want broad coverage from a description | Up to 20 scenarios |
-| **From Conversation History** | You have real conversation logs to learn from | Scenarios matching real user patterns |
-| **Import a File** | You already have scenarios in a file | Your existing scenarios |
+| **Build with Assistant** | You want to describe what to test and review drafts. | Every field, including the checklist, patience, and **LLM judge** assertions. |
+| **From Conversation History** | You have real conversation logs to base scenarios on. | The same as **Build with Assistant**. |
+| **Import a File** | You already have scenarios in a JSON or CSV file. | Nothing. The file supplies every field. |
+| **Write Manually** | You want to write a few specific scenarios yourself. | Nothing. You fill in every field. |
 
-Open the group you want to add to (creating one first if you haven't yet), click **Add Scenarios**, then choose a path. Whichever mode you pick saves into that group.
-
-### Create a Scenario
-
-Create one scenario at a time, in three steps.
-
-<Steps>
-  <Step title="Scenario details">
-    Enter a scenario name, a background description of the company and agent context, a user profile describing the simulated user, and the specific goal they're trying to accomplish.
-  </Step>
-  <Step title="Knowledge">
-    Attach up to **10** knowledge items from the Knowledge section. These give the simulated user access to specific documents or web content during the conversation.
-  </Step>
-  <Step title="Review">
-    Preview the scenario, make any final edits, and save it to the group.
-  </Step>
-</Steps>
+The assistant writes **LLM judge** assertions only. Add **Text match** and **Tool calls** assertions yourself, by [editing the scenario](#edit-a-scenario).
 
 <Frame>
-  ![Create A Scenario](/images/create-a-scenario.jpg)
+  ![The Add Scenarios dialog with its options](/images/add-scenarios-picker.png)
 </Frame>
 
-### Generate at Scale
+### Build with the assistant
 
-Generate up to **20** scenarios at once by defining a matrix of user attributes.
-
-<Steps>
-  <Step title="Agent context">
-    Describe the company, the agent's role, and the use case. Arklex uses this to auto-detect the domain and pre-fill relevant demographic and business attribute fields.
-  </Step>
-  <Step title="Goals">
-    Define up to 10 user goals (capped at the number of scenarios you want to generate) — the tasks or intents your simulated users will pursue.
-  </Step>
-  <Step title="User attributes">
-    Configure the attributes that vary across generated personas, organized into tabs: Demographics, Business, Psychographics, and a Custom tab. Each attribute takes a comma-separated list of values, and Arklex draws from these to generate diverse personas.
-  </Step>
-  <Step title="Knowledge">
-    Attach up to **100** knowledge items to ground the scenarios in real content. At least one knowledge source is required.
-  </Step>
-  <Step title="Review">
-    Preview the generated set, edit individual scenarios, and save the group.
-  </Step>
-</Steps>
-
-<Frame>
-  ![Generate At Scale](/images/generate-at-scale.jpg)
-</Frame>
-
-### From Conversation History
-
-<Note>
-  Available only where the **Adaptive Scenarios** feature is enabled. If you don't see it in the picker, contact your account team.
-</Note>
-
-Generate scenarios grounded in real conversation data. Instead of describing your use case from scratch, you upload past conversations and Arklex discovers user attributes from them.
+Choose **Build with Assistant**. The assistant asks you a few questions about your agent, then drafts scenarios you can review before you save them. The workspace has a chat on the left and two tabs on the right: **Plan** and **Scenarios**.
 
 <Steps>
-  <Step title="Upload conversation history">
-    Upload a file of past conversations (e.g. exported chat logs). Arklex extracts user attribute patterns from it.
+  <Step title="Describe your agent">
+    Tell the assistant what your agent does and what you want to test. You can also paste a link to a public web page, and the assistant reads it and attaches it as a source.
   </Step>
-  <Step title="Review discovered attributes">
-    The run surfaces demographic, behavioral, and domain-specific attributes observed across the uploaded conversations. Review and edit the list before generating.
+  <Step title="Confirm the goals">
+    The assistant proposes the user goals to test and how many scenarios to write for each. It also suggests paths where things go wrong. Adjust the list, then click **Send answers**.
   </Step>
-  <Step title="Configure and generate">
-    Choose how many scenarios to generate. Arklex uses the discovered attributes as the persona matrix, producing scenarios that reflect the mix of real users in your data.
+  <Step title="Choose knowledge">
+    Pick what the scenarios are grounded in:
+
+    - **My whole knowledge base**: searched for each goal, including anything you add later.
+    - **Choose documents**: pick specific items. Search, or filter by tag.
+    - **Pasted records**: paste the orders, accounts, or policies your agent holds.
+    - **Nothing**: the scenarios exercise the conversation only.
+
+    Only knowledge items with the **Success** status are listed. If an Owner has approved tools on your [MCP servers](/mcp), you can also pick them as a source.
+  </Step>
+  <Step title="Describe your customers">
+    Choose **Describe your customer segments** to paste your own research, or click **Suggest some for me**. You can also choose **None**. Next, add any attributes that should vary between simulated users, such as plan type or age.
+  </Step>
+  <Step title="Generate">
+    Click **Generate** to write the scenarios. One run writes at most {scenariosPerRun} scenarios. To write more, click **Generate** again. Click **Stop** to cancel a run in progress.
   </Step>
   <Step title="Review and save">
-    Preview the scenarios, make final edits, and save to the group.
+    The drafts appear on the **Scenarios** tab, already selected. Review them, clear any you don't want, and click **Save N selected**.
   </Step>
 </Steps>
 
-This mode is most useful once you have production traffic and want your test scenarios to reflect the actual variety of users interacting with your agent.
+<Note>
+  **Cloud only.** Building scenarios uses your plan's token allowance. If the allowance is used up, the assistant shows a **Go to billing** link. See [Billing](/settings#billing).
+</Note>
 
-### Import a File
+**Edit the plan**: the **Plan** tab shows everything the assistant will use: knowledge, agent context, goals with their scenario counts, **Customer segments (optional)**, and **Persona attributes (optional)**. Edit any of them, then click **Save plan**. Set a goal's count to 0 to skip it.
 
-Choose **Import a File** to upload a JSON or CSV file of existing scenarios. The wizard parses the file, lets you review and map fields, and adds the scenarios to the current group.
+**Review drafts**: each draft card shows the goal, the persona, the checklist, the assertions, and the knowledge. Use the icons on a card to edit, regenerate, or discard it. The assistant also flags problems on a card, for example a duplicate, a contradiction with your knowledge, or a goal that gives away the outcome. You can also ask in the chat for changes, for example "make the second customer less patient".
+
+**Choose a model**: the session header shows the model the assistant uses. You can change it before you send your first message. After that, click **Start over** to switch. Scenarios you already saved are kept.
+
+**Leave and come back**: the assistant saves your session as you go, and generation keeps running if you leave the page. To return, click **History** in the session header, or open the group's **Drafts** tab and click the session. Only you can see your unsaved sessions.
+
+### Build from conversation history
+
+Choose **From Conversation History** to start the same assistant, but from your past conversations. The assistant proposes goals, scenario counts, customer segments, and attributes based on what it finds. Click **Use it as it is** to accept the proposal, or **Adjust the counts** to change it. The session then continues with the knowledge question.
+
+Upload a `.json` file with a list of conversations, or a `.jsonl` file with one conversation per line, up to {historyUploadMb} MB. Each conversation needs a `messages` list, and each message needs a `role` (`user`, `assistant`, or `bot`) and its `content`:
+
+```json
+[
+  {
+    "messages": [
+      { "role": "user", "content": "I lost my debit card yesterday." },
+      { "role": "assistant", "content": "I can block it for you. Can you confirm your date of birth?" }
+    ]
+  }
+]
+```
+
+Reading a large file takes a few minutes. It keeps going if you leave the page.
+
+### Import a file or write manually
+
+**Import a File** and **Write Manually** use the same three steps: **Upload**, **Edit**, and **Review**.
+
+1. **Upload**: select a `.json` or `.csv` file of up to {importFileMb} MB. See [File format](#file-format). **Write Manually** skips this step.
+2. **Edit**: fill in or fix each scenario. Click **Add scenario** for another one.
+3. **Review**: check the summary and click **Import N Scenarios**, or **Save N Scenarios** if you wrote them manually. Scenarios with errors are skipped.
+
+Each scenario needs a **User Goal**, a **Checklist** with at least one Required item, a **User Profile**, and an **Agent Context**. **Scenario Name**, **Assertions**, and knowledge are optional. Nothing is generated for you, so write the checklist and assertions yourself.
 
 <Frame>
-  ![Import A File](/images/import-a-file.jpg)
+  ![The Edit step of Write Manually, with the lost card scenario's goal and checklist](/images/import-edit-step.png)
 </Frame>
 
 ---
 
-## Drafts
+## Edit a scenario
 
-Generating scenarios is a multi-step wizard, and your progress is saved as a **draft** as you go — so you can leave and pick up exactly where you left off. Drafts belong to a group, and you can keep several in progress in the same group at once.
+Open the scenario and click **Edit**. You can change the **User Profile**, **User Goal**, **User Goal Checklist**, **Assertions**, **Agent Context**, and **Knowledge**. Then click **Save**.
 
-Open a group's **Drafts** tab to see them. Each draft shows its mode (Create a Scenario, Generate at Scale, or From Conversation History), a status badge, and how many scenarios it will produce:
+To add an assertion, click **Add assertion** in the **Assertions** section and choose its kind. To add a checklist item, click **Add checklist item**. Changes apply to new simulations.
 
-<Tabs>
-  <Tab title="Draft">
-    <Frame caption="A draft still being configured — resume the wizard to continue.">
-      ![Draft Only](/images/draft-only.jpg)
-    </Frame>
-  </Tab>
-  <Tab title="Generating">
-    <Frame caption="A Generate at Scale or From Conversation History run in progress.">
-      ![Drafts Status 1](/images/drafts-status-1.jpg)
-    </Frame>
-  </Tab>
-  <Tab title="Failed">
-    <Frame caption="A run that errored — discard it and start over.">
-      ![Draft Failed](/images/draft-failed.jpg)
-    </Frame>
-  </Tab>
-</Tabs>
+If the scenario has attributes and you edit the profile, click **Sync attributes** to update the attributes to match.
 
-| Status | Meaning |
-| --- | --- |
-| **Draft** | Still being configured — resume the wizard to continue. |
-| **Queued / Generating** | A Generate at Scale or From Conversation History run is in progress. |
-| **Failed** | The run errored — discard it and start over. |
+### Save and regenerate
 
-- **Continue** — click a draft to reopen the wizard at your last step.
-- **Delete** — remove a draft you no longer need. Available for drafts and failed runs.
-- **Cancel** — stop a run that's queued or generating.
+When you change the goal, the knowledge, or the profile, Arklex asks **Update the generated fields too?**
 
-<Warning>
-  A group can't be deleted while it has a draft or an in-progress (queued or generating) generation — cancel those first. Completed and failed runs don't block deletion.
-</Warning>
+- **Save and regenerate**: rebuilds the checklist from the new goal, knowledge, and profile. If you changed the profile, it also sets the patience again. It replaces any checklist edits you made in the same save. If regenerating fails, nothing is saved.
+- **Save without regenerating**: saves your edits and leaves the checklist and patience as they are.
 
-## Anatomy of a scenario
+Regenerating never changes assertions, agent context, or attributes.
 
-Every scenario contains three parts:
+The simulated user follows the checklist, not the goal text. So if you change the goal and save without regenerating, the simulated user behaves the same until you update the checklist yourself.
 
-| Field | Description |
-| --- | --- |
-| **Goal** | What the simulated user is trying to accomplish, written from their perspective — e.g. "You think there's a charge on your account you don't recognize and you want it reversed." |
-| **Profile** | A persona that shapes how the user communicates: their background, knowledge level, tone, and any relevant constraints. |
-| **Knowledge base** | Documents the simulated user can reference during the conversation. Attach files from the Knowledge section to give the user specific context to draw on. |
+### Versions
 
-<Tip>
-  The knowledge base grounds what the **simulated user** knows and asks about — not the agent's answers. Attaching the same source material the agent uses is a good way to test whether the agent's responses stay faithful to it.
-</Tip>
+Each save that changes something creates a new version. Use the **Version** menu at the top of the scenario to view earlier versions, which show a **Historical version** badge and can't be edited. Simulations record which version of each scenario they used, and evaluations grade with that version's assertions. So past results stay accurate, and to grade with new assertions, run a new simulation.
+
+To delete a scenario, click the trash icon on its row in the group's **Scenarios** tab and confirm. You can't delete a scenario that a simulation has used.
 
 ---
 
-## Manage scenarios
+## Import and export
 
-**View** — Click a scenario row within a group to see its goal, profile, and attached knowledge documents.
+### File format
 
-**Edit** — Open the scenario and click **Edit**. Changes save per-field, and **versions** are tracked so you can see what changed between simulation runs.
+A JSON file is a list of scenarios, or an object with the list under `scenarios`, `items`, or `data`. Click **Download template** in the import dialog for an example. This file holds the lost card scenario from this page:
 
-**Delete** — Open the scenario and use the delete action. Scenarios used in completed simulations remain accessible in those historical records even after deletion.
+```json
+{
+  "scenarios": [
+    {
+      "name": "Lost debit card",
+      "goal": "You lost your debit card ending 4821 yesterday. You want it blocked and a replacement sent.",
+      "user_profile": "You are Jordan Lee, a nurse finishing a night shift. You're tired and want this sorted fast. Your date of birth is 12 March 1990.",
+      "agent_context": "A support assistant for a retail bank. It can block cards and order replacements.",
+      "knowledge": [
+        {
+          "name": "Card policy",
+          "content": "Lost cards are blocked right away after an identity check. Replacements go to the address on file and arrive in 5 business days."
+        }
+      ],
+      "goal_checklist": [
+        {
+          "description": "You want the card ending 4821 blocked.",
+          "satisfied_when": "The agent confirms the card ending 4821 is blocked.",
+          "mandatory": true
+        },
+        {
+          "description": "You want a replacement card.",
+          "satisfied_when": "The agent confirms a replacement is ordered to the address on file.",
+          "mandatory": true
+        },
+        {
+          "description": "You want to know when the replacement arrives.",
+          "satisfied_when": "The agent gives a delivery time.",
+          "mandatory": false
+        }
+      ],
+      "assertions": [
+        {
+          "type": "llm_judge",
+          "expected": "Verifies the customer's identity before blocking the card."
+        },
+        {
+          "type": "text_match",
+          "op": "matches",
+          "value": "(5|five) business days"
+        },
+        {
+          "type": "tool_calls",
+          "match_mode": "contains",
+          "expected": [
+            { "name": "block_card", "arguments": { "last4": "4821" }, "arg_match_mode": "partial" },
+            { "name": "order_replacement_card" }
+          ],
+          "forbidden": [{ "name": "close_account" }]
+        }
+      ]
+    }
+  ]
+}
+```
+
+#### Scenario fields
+
+| Field | Required | Description |
+| --- | --- | --- |
+| `name` | No | Up to {scenarioNameChars} characters. |
+| `goal` | Yes | Up to {goalChars} characters. |
+| `user_profile` | Yes | Up to {userProfileChars} characters. |
+| `agent_context` | Yes | Up to {agentContextChars} characters. |
+| `knowledge` | No | Up to {knowledgePerScenario} passages, each with a `name` (up to {knowledgeNameChars} characters) and `content` (up to {knowledgeContentChars} characters). |
+| `goal_checklist` | Yes | 1 to {checklistItems} items. See below. |
+| `assertions` | No | Up to {assertionsPerScenario}. JSON files only. See below. |
+
+#### Checklist item fields
+
+| Field | Required | Description |
+| --- | --- | --- |
+| `description` | Yes | What the user wants. The simulated user sees it. Up to {checklistItemChars} characters. |
+| `satisfied_when` | No | What must happen for the item to be met. Only the judge sees it. Defaults to the description. |
+| `mandatory` | No | `true` for **Required** (the default), `false` for **Optional**. At least one item must be `true`. |
+
+#### Assertion fields
+
+Each assertion has a `type` and the fields for that kind.
+
+| `type` | Fields |
+| --- | --- |
+| `llm_judge` | `expected`: the behavior to check, up to 1,000 characters. |
+| `text_match` | `op` and `value` (up to 500 characters). Matching ignores case. |
+| `tool_calls` | `expected` and `forbidden`: lists of tools, each with a `name` and optional `arguments` and `arg_match_mode`. `match_mode`: how to compare the calls. At most one per scenario. |
+
+The JSON values map to these labels in the app:
+
+| Field | JSON value | In the app | Meaning |
+| --- | --- | --- | --- |
+| `op` | `contains` | **Any reply contains** | At least one agent reply contains `value`. |
+| `op` | `not_contains` | **No reply contains** | No agent reply contains `value`. |
+| `op` | `matches` | **Any reply matches** | At least one agent reply matches `value`, an [RE2](https://github.com/google/re2/wiki/Syntax) regular expression. RE2 doesn't support lookarounds or backreferences. |
+| `match_mode` | `strict` | **Exact order** | Exactly the `expected` calls, in order, and no others. |
+| `match_mode` | `unordered` | **Any order** | Exactly the `expected` calls, in any order, and no others. The default in JSON. |
+| `match_mode` | `contains` | **At least these** | The `expected` calls in any order. Other calls are allowed. The default in the app. |
+| `match_mode` | `within` | **Only these tools** | Only tools from `expected`, which the app labels **Allowed tools**. |
+| `arg_match_mode` | `ignore` | **Don't check arguments** | The default. |
+| `arg_match_mode` | `partial` | **Match listed arguments** | The arguments you list must match. Others are allowed. |
+| `arg_match_mode` | `exact` | **Match arguments exactly** | The arguments must match exactly. |
+
+`forbidden` is the **Must never call** list. If you give `arguments`, also set `arg_match_mode`, or the arguments aren't checked.
+
+#### CSV files
+
+A CSV file has one scenario per row, with the field names above as column headers.
+
+- **Knowledge**: use `knowledge_name` and `knowledge_content` for the first passage. For more, add `_2`, `_3`, and so on, for example `knowledge_name_2`, up to {knowledgePerScenario} passages.
+- **Checklist**: use `checklist_description`, `checklist_satisfied_when`, and `checklist_mandatory` for the first item. For more, add `_2`, `_3`, and so on, up to {checklistItems} items. In `checklist_mandatory`, `false`, `0`, `no`, or `n` means Optional. Anything else, including blank, means Required.
+
+CSV files can't include assertions. Add them in the **Edit** step, or after the import.
+
+### Export scenarios
+
+Click **Download all** in a group to save its scenarios as a JSON file. The file has the group under `scenario_group` and the scenarios under `scenarios`, with every field, including `behavior.patience` and each scenario's version.
+
+You can import the file into another group. The import creates new scenarios. It keeps the goal, profile, agent context, knowledge, checklist, and assertions, but not the patience, attributes, or version history.
 
 ---
 
-## Select scenarios for a simulation
+## Update scenarios after an upgrade
 
-When creating a simulation, the **Scenarios** field lists all available scenarios grouped by scenario group. You can:
+Upgrading Arklex doesn't add checklists or assertions to your existing scenarios.
 
-- Select individual scenarios with their checkbox.
-- Select every scenario in a group with **Select Group**.
-- Select all scenarios across all groups with **Select All**.
-- Preview a scenario's goal, profile, and knowledge base by clicking its name or the chevron icon.
+### Add checklists to older scenarios
 
-Use the search box and the **Created by me** filter to narrow a long list.
+Scenarios created before the checklist existed don't have one, and they can't run until they do. Their conversations fail with an error that says the scenario has no mandatory checklist item. Their page doesn't show the **User Goal Checklist** or **Assertions** section, so you can't add them by editing.
+
+- **Self-hosted**: your operator runs the scenario migration during the upgrade. See **UPGRADES** in the release README. The migration writes a checklist and patience for each older scenario from its goal, profile, and knowledge, as a new version. It doesn't add assertions.
+- **Any deployment**: click **Download all** in the group, then import the file. In the **Edit** step, add a checklist to each scenario. The import creates new scenarios, and the originals stay in the group.
+
+### Add assertions to existing scenarios
+
+No existing scenario gets assertions automatically. Until you add some, its conversations show **No assertions** instead of Pass or Fail.
+
+1. Open the scenario and click **Edit**.
+2. In the **Assertions** section, click **Add assertion** and choose its kind.
+3. Click **Save**.
+4. Run a new simulation with the scenario. Evaluations grade with the assertions of the scenario version the simulation used, so evaluating an older simulation still shows **No assertions**.
+
+### Fix a checklist with no Required item
+
+A checklist where every item is Optional can never be completed, so the scenario's conversations fail with the same error. Edit the scenario and mark at least one item **Required**.
 
 ---
 
 ## FAQ
 
 <AccordionGroup>
-  <Accordion title="How many scenarios can I generate at once?">
-    Generate at Scale supports up to 20 scenarios per run. For a first pass, 10–15 scenarios covering your most important user intents is a good starting point — you can always add more groups or run additional rounds.
+  <Accordion title="How many scenarios should I start with?">
+    Start with 10 to 15 scenarios covering your most important user intents. Once you've reviewed the results, run a new simulation with a broader set.
   </Accordion>
 
-  <Accordion title="How many scenarios should I include in a simulation?">
-    Start with 5–15 scenarios covering your most important intents. Once you've reviewed the initial results, run a new simulation with a broader set.
-  </Accordion>
-
-  <Accordion title="Can I leave a scenario generation half-finished and come back?">
-    Yes. Every step of the generation wizard is saved as a draft, so you can close it and resume later from the group's **Drafts** tab. You can keep several drafts in progress in the same group, and discard a draft (or a failed run) from that tab when you no longer need it.
+  <Accordion title="Do I need knowledge to build scenarios?">
+    No. Without knowledge, the assistant invents the details, which is fine for testing conversation flow. Grounded scenarios give the judge facts to check your agent's answers against.
   </Accordion>
 
   <Accordion title="What makes a good scenario goal?">
@@ -213,13 +434,5 @@ Use the search box and the **Created by me** filter to narrow a long list.
     - **Too vague:** "Talk to the agent about your account."
     - **Too prescriptive:** "Say 'I want to dispute charge #12345 on account #67890 from 2024-01-15 and I expect a refund within 3 days.'"
     - **Good:** "You spotted a \$240 charge you don't recognize on last month's statement and want it investigated and refunded."
-  </Accordion>
-
-  <Accordion title="Can scenarios reference documents the agent also has access to?">
-    Yes. Attaching a document to a scenario gives the simulated user knowledge of its contents, which is useful for testing whether the agent's responses align with its source material — especially relevant for faithfulness and relevance evaluations.
-  </Accordion>
-
-  <Accordion title="How do scenario versions work?">
-    Each time you edit and save a scenario, a new version is created. Simulations record which version of each scenario they used, so historical results stay accurate even if the scenario changes later.
   </Accordion>
 </AccordionGroup>

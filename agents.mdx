@@ -1,9 +1,9 @@
 ---
 title: "Agents"
-description: "Connect and manage the AI agents you want to test in Arklex."
+description: "Connect and manage the AI agents you want to test in Arklex Platform."
 ---
 
-An agent in Arklex represents the AI system you want to test. Connecting an agent stores its API configuration once, so you can run simulations against it repeatedly without re-entering connection details.
+An agent in Arklex Platform represents the AI system you want to test. Connecting an agent stores its API configuration once, so you can run simulations against it repeatedly without re-entering connection details.
 
 <Note>
   New here? The [Quickstart](/quickstart) walks you through connecting your first agent end to end. This page is the full reference for every field and option.
@@ -13,68 +13,98 @@ An agent in Arklex represents the AI system you want to test. Connecting an agen
 
 ## See your connected agents
 
-Navigate to **Agents** in the sidebar to see every agent in your organization. Each card shows the agent name, its description, and running totals of how many simulations and evaluations have used it. Click any card to open its detail page.
+Go to **Agents** in the sidebar to open the **Agent Manager**. Each card shows the agent name, its description, and how many simulations and evaluations have used it. Click a card to open the agent's detail page. Open the menu on a card to delete the agent.
 
 ---
 
 ## Connect a new agent
 
-Click **Connect Agent** on the Agents page, then fill in the form.
+Click **Connect Agent**, then fill in the form.
 
-<ParamField path="Agent name" type="string" required>
-  A descriptive name that's easy to spot in simulation results — e.g. `Banking Assistant` or `Banking Assistant — Staging`.
+<ParamField path="Agent Name" type="string" required>
+  A descriptive name that's easy to spot in simulation results, for example `Banking Assistant` or `Banking Assistant (staging)`.
 </ParamField>
 
 <ParamField path="Description" type="string">
   Optional, but handy for noting what changed between versions.
 </ParamField>
 
-<ParamField path="Integration method" type="string" required>
-  Arklex currently supports **API Endpoint**. Direct Arklex Agent integration is coming soon.
+<Tip>
+  You can connect the same endpoint as several agents with different settings, such as different system prompts or temperatures, and compare them side by side.
+</Tip>
+
+<ParamField path="Method" type="string" required>
+  Choose **API Endpoint**. The **Arklex Agent** option isn't available yet.
 </ParamField>
 
-<ParamField path="API type" type="string" required>
-  **Chat Completions** — for endpoints that accept a standard `messages` array and return a completion. Compatible with OpenAI, Anthropic, and most LLM-backed agents.
+<ParamField path="API Type" type="string" required>
+  **Chat Completions**: for endpoints that accept a standard `messages` array and return a completion. Works with OpenAI-compatible, Anthropic, and Gemini style responses.
 
-  **A2A** — for agents using the Agent-to-Agent protocol.
+  **Agent to Agent (A2A)**: for agents that use the A2A protocol.
+
+  **Custom HTTP**: for any other endpoint that takes and returns JSON.
 </ParamField>
 
 <ParamField path="Endpoint URL" type="string" required>
-  The full URL Arklex calls when running simulations. Local development is typically `http://localhost:<port>/your/path`; for deployed agents, use your production or staging URL.
+  The URL Arklex calls when running simulations. For A2A, enter the agent's base URL, where its agent card is served at `/.well-known/agent-card.json`.
 </ParamField>
+
+<Warning>
+  **Cloud:** your endpoint must be reachable from the public internet. Arklex blocks private, loopback (`localhost`), and link-local addresses. To test an agent running on your machine, expose it through a public tunnel.
+
+  **Self-hosted:** private and `localhost` addresses are allowed by default. Your operator can block them by setting `ARKDOCK_ALLOW_PRIVATE_ENDPOINTS` to `false`. Link-local and cloud metadata addresses are blocked on every deployment.
+</Warning>
 
 <ParamField path="Headers" type="object">
   Any HTTP headers your endpoint requires, for example:
 
   ```text
-    Authorization: Bearer sk-...
-    X-Api-Key: your-key
-    Content-Type: application/json
+  Authorization: Bearer sk-...
+  X-Api-Key: your-key
   ```
+
+  The **Values stored encrypted** label next to **Headers** is your reminder that header values are encrypted at rest with AES-256. Use the eye icon to show or hide a value while you type.
 </ParamField>
 
 <Note>
-  Header values are encrypted at rest with AES-256. After saving, the platform shows masked values and never returns the raw secret — the lock icon above the headers table is your reminder that values are stored securely.
+  Only header values are encrypted. Keep API keys and other secrets out of the request body.
 </Note>
 
 ### Configure the request body
 
-**Chat Completions agents** have two body sections:
+The body depends on the API type.
 
-- **Parameters** — key/value pairs sent alongside the messages (e.g. `model`, `temperature`, `max_tokens`). Each has a type: `str`, `int`, `float`, `bool`, or `json`.
-- **Messages** — the initial message list, including a system prompt. The `system` row is always present and can't be removed. Add `user` or `assistant` rows to prime the conversation before simulation turns begin.
+**Chat Completions** has two sections:
 
-Arklex expects the endpoint to return a standard completion response, with the assistant's reply in the usual `choices[0].message.content` field.
+- **Parameters**: key and value pairs sent with every request, for example `model`, `temperature`, or `max_tokens`. Each has a type: `str`, `int`, `float`, `bool`, or `json`.
+- **Messages**: the opening messages, including a system prompt. You can't delete a row while its role is `system`. Add `user` or `assistant` rows to prime the conversation before the simulation begins.
+
+On every turn, Arklex sends your messages followed by the full conversation so far. It reads the agent's reply from the response in OpenAI format (`choices[0].message.content`), Anthropic format, or Gemini format.
 
 <Tip>
-  Click **Import from JSON** to paste a raw request body and let Arklex split it into parameters and messages automatically.
+  Click **Import JSON** next to **Messages** and paste a raw request body. Arklex replaces the current parameters and messages with its contents.
 </Tip>
 
-**A2A agents** use a single generic key/value/type table for the body.
+**Agent to Agent (A2A)** agents don't use a body. The **Body** table starts with a `model` row, so delete every row before you save.
+
+**Custom HTTP** has these fields:
+
+- **Request Body Template**: the JSON body to send. It must include `{{message}}`, which Arklex replaces with the simulated user's message. Use the **Insert variable** buttons to add `{{chat_id}}` or `{{timestamp}}`. Each variable must be an entire string value, for example `"query": "{{message}}"`. **Import template** fills in the OpenAI (chat completions) template. It also replaces the **Endpoint URL**, **Headers**, and **Response Path**, and clears **Additional Fields**.
+- **Response Path**: the dot-path to the reply text in the response, for example `data.reply` or `choices.0.message.content`.
+- **Additional Fields**: optional. Other response fields to include in the reply, such as links. Each row has a **Path**, a **Label**, and a **Format**.
+
+Custom HTTP sends only the current message on each turn, not the conversation history. If your agent keeps state, use `{{chat_id}}` to identify the conversation. The endpoint must return a single JSON response, not a stream.
 
 ### Test and save
 
-Click **Test Connection** before saving. Arklex sends a request using the current form values (no need to save first) and shows either a green checkmark with the response message and latency, or a red error with details. When you're ready, click **Connect Agent** — you'll land on the new agent's detail page with a confirmation toast.
+Click **Test Connection** before saving. Arklex sends a test request using the current form values, so you don't need to save first.
+
+- On success, you see **Agent responded successfully**. For Custom HTTP, you also see the reply Arklex extracted and the full response body.
+- On failure, you see the error and what the server replied.
+
+For Chat Completions, any successful (2xx) response passes the test. For A2A, Arklex checks that it can read the agent card.
+
+When you're ready, click **Connect Agent**. Arklex opens the new agent's detail page.
 
 ---
 
@@ -84,56 +114,35 @@ Each agent's detail page has three tabs:
 
 <Tabs>
   <Tab title="Simulations">
-    A table of every simulation run against this agent, with columns for name, status, scenario count, success rate, errors, and creation date. Click any row to open that simulation.
-
-    | Status | Meaning |
-    | --- | --- |
-    | **Completed** | The simulation finished and transcripts are ready. |
-    | **Running** | The simulation is in progress. |
-    | **Failed** | The simulation stopped before completing. |
-    | **Pending** | The simulation is queued and hasn't started yet. |
+    A table of every simulation run against this agent, with the columns **Simulation Name**, **Scenario Groups**, **Model**, **Last Run**, and **Status**. See [Simulations](/simulations#see-your-simulations) for what each status means. Use the search box and **Filter** to narrow the list, and click **New Simulation** to start one. Click a row to open that simulation.
 
     <Frame>
-      ![Agent Simulations](/images/agent-simulations.jpg)
+      ![The Simulations tab of an agent's detail page](/images/agent-simulations.jpg)
     </Frame>
   </Tab>
   <Tab title="Evaluations">
-    A table of every evaluation that scored simulations for this agent — name, simulations evaluated, status, errors, and date. Click any row to open the evaluation.
+    A table of every evaluation of this agent's simulations, with the columns **Evaluation Name**, **Simulations Evaluated**, **Created By**, **Date**, and **Status**. A badge on each name shows whether the evaluation scored the **Agent** or the **Simulated user**. Click **New Evaluation** to evaluate one of this agent's simulations. Click a row to open an evaluation once it has finished running.
 
     <Frame>
-      ![Agent Evaluations](/images/agent-evaluations.jpg)
+      ![The Evaluations tab of an agent's detail page](/images/agent-evaluations.jpg)
     </Frame>
   </Tab>
   <Tab title="Configuration">
-    The same fields from the Connect Agent form, pre-filled with saved values. Edit any field, then:
+    The same fields as the **Connect Agent** form, except **Method**, filled in with the saved values. Edit any field, then:
 
-    - **Save** — sends only the changed fields to the API.
-    - **Discard** — resets everything to the last saved values.
-    - **Test Connection** — tests using the saved configuration (no body needed).
-    - **Delete agent** — a destructive action at the bottom of the form. Deletion is blocked while any simulation or evaluation still references this agent; delete those first, then return here to confirm.
+    - **Save**: saves your changes. **Save** and **Discard** appear after you edit a field.
+    - **Discard**: resets everything to the last saved values.
+    - **Test Connection**: tests the values currently in the form, including unsaved edits.
 
-    To change a header without losing its saved encrypted value, leave the value field blank — only rows where you enter a new value are updated on save.
+    Saved header values load as a masked placeholder. Leave it unchanged to keep the saved value, or type a new value to replace it. Renaming a header clears its value, so re-enter it. If you change the endpoint, **Save** keeps the saved values and sends them to the new endpoint, but **Test Connection** asks you to re-enter them first. Deleting a header row removes that header.
+
+    The **Tool call tracing** card at the bottom of the tab shows how to send your agent's tool calls to Arklex. See [Tool call tracing](/tool-tracing).
 
     <Frame>
-      ![Agent Config](/images/agent-config.jpg)
+      ![The Configuration tab with the agent's connection settings](/images/agent-config.jpg)
     </Frame>
   </Tab>
 </Tabs>
 
----
+To delete an agent, click the trash icon at the top right of its detail page, or choose **Delete** from the menu on its card. You can't delete an agent while simulations use it. Delete their evaluations first, then the simulations, then the agent.
 
-## FAQ
-
-<AccordionGroup>
-  <Accordion title="Can I connect the same agent endpoint more than once?">
-    Yes. There's no uniqueness constraint on the endpoint URL, so you can represent different configurations of the same agent — different system prompts, temperatures, and so on — as separate agents for side-by-side comparison.
-  </Accordion>
-
-  <Accordion title="Can I delete an agent that has simulations or evaluations?">
-    No. Deletion is rejected while any simulation or evaluation still references the agent. Delete those first, then delete the agent.
-  </Accordion>
-
-  <Accordion title="Can I update headers without losing the saved encrypted values?">
-    Yes. Leave a header value blank when editing to keep the existing encrypted value. Only rows where you enter a new value are updated on save.
-  </Accordion>
-</AccordionGroup>

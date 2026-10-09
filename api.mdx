@@ -1,0 +1,137 @@
+---
+title: "API overview"
+description: "Run simulations and evaluations from scripts and CI pipelines with the Arklex Platform API."
+---
+
+import {
+  idempotencyKeyHours,
+  apiRequestsPerMinute,
+  apiRequestBurst,
+  connectionTestsPerMinute,
+  freePlanConcurrentOps,
+} from "/snippets/limits.mdx";
+
+The Arklex Platform API runs the same simulation and evaluation engine as the app. Use it to test your agent from a script or a CI pipeline, for example on every pull request.
+
+This page covers how the API works. The full endpoint reference lives in the app: click **API Reference** in the sidebar to browse every endpoint, see request and response examples, and send test requests.
+
+---
+
+## Create an API key
+
+An Owner creates API keys on the **API keys** tab in **Settings**. Copy the key when it's created, because it's shown only once. See [API keys](/settings#api-keys) for what a key can access and how to revoke one.
+
+---
+
+## Authenticate
+
+Send the key on every request in the `Authorization` header:
+
+```text
+Authorization: Bearer ark_...
+```
+
+API requests go to `/api/v1` on the same host you use to sign in to Arklex Platform.
+
+To try requests in the app, open **API Reference**, paste your key into **Authentication**, and click **Test Request** on any endpoint. These requests are real, so anything you create appears in the platform.
+
+---
+
+## What you can do
+
+| Resource | Operations |
+| --- | --- |
+| **Connections** | Register, list, read, update, and delete the agents you test, and test their connection. Connections are called agents in the app. Reads return header names, never values. To change headers, use `POST /connections/{id}/rotate-credentials`, which replaces the whole set. |
+| **Scenario groups** and **scenarios** | Create, list, and delete groups. Create and list scenarios. |
+| **Simulations** | Start, list, read, cancel, and delete simulations. Read their conversations. |
+| **Evaluations** | Start, list, read, cancel, and delete agent evaluations. Read scored conversations. Each evaluation needs at least one metric. |
+| **Metrics** and **models** | List the metrics and models you can use. |
+
+Building scenarios with the assistant isn't available through the API.
+
+---
+
+## A typical flow
+
+1. `POST /connections` registers the agent to test.
+2. `GET /scenario-groups/{id}/scenarios` finds the scenarios to run.
+3. `POST /simulations` runs them against the connection. Poll `GET /simulations/{id}` until `status` is `success`, `error`, or `cancelled`.
+4. `POST /evaluations` scores the run with metrics from `GET /metrics`. Poll `GET /evaluations/{id}` for the results.
+
+Two shortcuts skip steps:
+
+- **Inline scenarios**: define scenarios in the `POST /simulations` request instead of creating them first. They're saved into the group you name, and sending the same definitions again reuses them.
+- **Inline transcripts**: send conversations you already have to `POST /evaluations` and score them without running a simulation.
+
+To capture tool calls, turn on trace capture when you create the simulation. See [Tool call tracing](/tool-tracing).
+
+### Example: start a simulation
+
+This request runs one saved scenario against a connected agent. Replace the host with the one you sign in to, and the IDs with your own.
+
+```bash
+curl -X POST "https://<your-arklex-host>/api/v1/simulations" \
+  -H "Authorization: Bearer $ARKLEX_API_KEY" \
+  -H "Content-Type: application/json" \
+  -H "Idempotency-Key: $(uuidgen)" \
+  -d '{
+    "name": "Nightly regression",
+    "connection_id": "YOUR_CONNECTION_ID",
+    "scenarios": {
+      "type": "stored",
+      "items": [{ "id": "YOUR_SCENARIO_ID" }]
+    },
+    "simulation_config": {
+      "max_turns": 5,
+      "num_conversations_per_scenario": 1,
+      "max_concurrency": 10
+    }
+  }'
+```
+
+The response is the new simulation, with its `id` and `status`. Poll `GET /api/v1/simulations/{id}` until the run finishes.
+
+### Statuses
+
+Simulations and evaluations share one set of statuses. The API names differ from the app:
+
+| API `status` | In the app | Final |
+| --- | --- | --- |
+| `pending` | **Pending** for simulations, **Running** for evaluations | No |
+| `running` | **Running** | No |
+| `success` | **Completed** | Yes |
+| `error` | **Failed** | Yes |
+| `cancelled` | **Cancelled** | Yes |
+
+New statuses may be added, so treat unknown values as not final.
+
+---
+
+## Conventions
+
+- **Errors**: every error returns `{"error": {"code": ..., "message": ...}}`. Branch on `error.code`, not on the HTTP status.
+- **Pagination**: lists return `{"data": [...], "pagination": {"total", "page", "page_size"}}`.
+- **Timestamps**: RFC 3339, in UTC.
+- **Nulls**: `null` means the field wasn't computed, which is different from zero.
+- **Compatibility**: within v1, fields, values, and endpoints may be added but aren't removed or renamed. Ignore fields you don't recognize.
+
+### Retries and idempotency
+
+Send an `Idempotency-Key` header on create requests so that a retry can't run twice. Generate one unique value, such as a UUID, per request, and send the same value on every retry.
+
+- Same key and body: you get the original response, with `Idempotent-Replay: true`.
+- Same key while the first attempt is still running: `409 IDEMPOTENCY_IN_PROGRESS`.
+- Same key with a different body: `422 IDEMPOTENCY_KEY_REUSED`.
+
+A request rejected with `400`, `402`, or `429` didn't run, so you can retry it with the same key. Keys expire {idempotencyKeyHours} hours after the first attempt completes.
+
+### Rate and concurrency limits
+
+Two different limits return `429`. Handle them differently:
+
+| Error | Cause | What to do |
+| --- | --- | --- |
+| `429 RATE_LIMITED` | The API key sent too many requests: more than {apiRequestsPerMinute} per minute, with bursts up to {apiRequestBurst}. Connection tests have a tighter limit of {connectionTestsPerMinute} per minute. | Wait the number of seconds in the `Retry-After` header, then retry. |
+| `429 CONCURRENCY_LIMIT_REACHED` | **Cloud only.** On the Free plan, {freePlanConcurrentOps} simulations or {freePlanConcurrentOps} evaluations are already pending or running. `error.details` has the `limit` and the number `pending`. | No `Retry-After` header is sent. Poll your running simulations or evaluations, and retry when one reaches a final status. |
+
+`402 QUOTA_EXCEEDED` means your plan's token allowance is used up. It's **cloud only**. See [Billing](/settings#billing).

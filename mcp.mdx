@@ -1,0 +1,109 @@
+---
+title: "MCP servers"
+description: "Connect Model Context Protocol servers so the LLM judge can check your agent's answers against live data, and scenarios can be built from it."
+---
+
+import {
+  judgeMcpCallsPerTurn,
+  judgeMcpCallsPerConversation,
+  mcpTestTimeoutSeconds,
+  mcpToolCallTimeoutSeconds,
+  mcpToolsPerServer,
+} from "/snippets/limits.mdx";
+
+The **MCP** page connects Model Context Protocol (MCP) servers to Arklex Platform. Once a server is connected and an Owner approves its read-only tools, custom metrics can call them during evaluations, and the scenario assistant can use them as a source. For example, the judge can look up an order's real status and check whether the agent reported it correctly.
+
+---
+
+## Add a server
+
+Go to **MCP** in the sidebar and click **Add Server**. Fill in the **Add MCP Server** dialog:
+
+<ParamField path="Display name" type="string" required>
+  A name for the server, for example "Orders API (production)". Names must be unique in your organization.
+</ParamField>
+
+<ParamField path="Transport" type="string" required>
+  **Streamable HTTP**, the only supported transport. Servers that offer only stdio or the older HTTP+SSE transport can't be connected.
+</ParamField>
+
+<ParamField path="Server URL" type="string" required>
+  The server's MCP endpoint, which often ends in `/mcp`, for example `https://example.com/mcp`. On cloud, it must be reachable from the public internet, because private and `localhost` addresses are blocked. Self-hosted deployments allow them by default. See the note under [Endpoint URL](/agents#connect-a-new-agent).
+</ParamField>
+
+<ParamField path="Auth header" type="object">
+  One header name and value for authentication. The name defaults to `Authorization`. If your server doesn't accept `Authorization`, use the header it expects, such as `X-API-Key`. The value is encrypted at rest and shows as `****` after you save.
+</ParamField>
+
+Click **Test connection** to check the server and list its tools, then click **Add and Connect**.
+
+You can't edit a server after you add it. To change its URL or credentials, delete the server and add it again.
+
+---
+
+## Read the server list
+
+The summary at the top shows **Reachable servers** and **Enabled tools**. The table lists each server:
+
+| Column | Description |
+| --- | --- |
+| **Server** | The server name. The last error, if any, appears below it. |
+| **Health** | **Reachable**, **Error**, or **Not checked**, from the last connection test. |
+| **Tools** | How many of the server's tools are enabled, out of the total. |
+| **Last checked** | When the server was last tested. |
+| **Enabled** | Turn the server on or off. |
+| **Actions** | **Test** the connection again, or delete the server. |
+
+---
+
+## Manage tools
+
+Click a server to open its details. The **Tools** tab lists every tool the server offers. Click **Re-run tools/list** to refresh the list.
+
+For each tool, you can see:
+
+- An **Enabled** switch. Only enabled tools can be used.
+- A safety label: **Read-only**, **Write-capable**, or **Unknown safety**.
+- A **Judges and scenario generation may call** switch, which approves the tool for evaluation judges and the scenario assistant. Only Owners can turn it on, and only for **Read-only** tools, so neither can change data in your systems.
+
+Tools that the server marks as read-only are enabled automatically. If a tool's definition changes on the server, Arklex removes its approval, and an Owner must approve it again.
+
+### Test a tool
+
+Owners can run a tool by hand to check what it returns. Click **Test this tool**, fill in the **Arguments** (or click **Edit as JSON**), and click **Run tool**. The server and the tool must both be enabled.
+
+<Warning>
+  **Run tool** really calls the tool, even a **Write-capable** one, so it can change data in your systems.
+</Warning>
+
+---
+
+## Use tools in evaluations and scenarios
+
+To use an approved tool in evaluations, add it to a custom metric. See [Check facts with MCP tools](/metrics#check-facts-with-mcp-tools).
+
+To build scenarios from live records, pick approved tools as a source when the assistant asks which knowledge to use. See [Build with the assistant](/scenarios#build-with-the-assistant).
+
+During the evaluation, the judge calls the tool and scores the agent against the results. In the conversation view, you can see the **Evidence used for this score**. When you re-evaluate, choose whether to reuse the saved tool results or fetch new ones. See [Re-evaluate](/evaluations#re-evaluate).
+
+---
+
+## Roles
+
+| Action | Owner | Member |
+| --- | --- | --- |
+| Add, test, enable, and delete servers | Yes | Yes |
+| Enable and disable tools | Yes | Yes |
+| Use approved tools in custom metrics and scenario sources | Yes | Yes |
+| Approve tools for judges and scenario generation | Yes | No |
+| Run a tool with **Test this tool** | Yes | No |
+
+---
+
+## Limits
+
+- Connection tests time out after {mcpTestTimeoutSeconds} seconds, and tool calls time out after {mcpToolCallTimeoutSeconds} seconds.
+- Each metric can make up to {judgeMcpCallsPerTurn} tool calls per turn and {judgeMcpCallsPerConversation} per conversation on turn scope, or {judgeMcpCallsPerTurn} in total on conversation scope.
+- Arklex lists up to {mcpToolsPerServer} tools per server.
+- On cloud, server URLs must be public.
+

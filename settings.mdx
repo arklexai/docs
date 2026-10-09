@@ -1,52 +1,82 @@
 ---
 title: "Settings"
-description: "Manage your profile, team members, usage, and billing."
+description: "Manage your profile, team members, API keys, usage, and billing."
 ---
 
-The Settings page manages your personal profile and your organization's team, usage, and billing. Navigate to **Settings** in the sidebar.
+import { profilePhotoMb, apiKeyNameChars, invitationDays, freePlanConcurrentOps } from "/snippets/limits.mdx";
+
+The **Settings** page manages your personal profile and your organization's team, API keys, usage, and billing. Go to **Settings** in the sidebar. The page has five tabs: **Profile**, **Members**, **API keys**, **Usage**, and **Billing**. **Billing** is cloud only, so self-hosted deployments show the first four.
 
 ---
 
 ## Profile
 
-The Profile tab updates your account details:
+The **Profile** tab updates your account details:
 
 | Field | Description |
 | --- | --- |
-| Profile Photo | A photo shown next to your name (JPEG, PNG, or WebP, max 2 MB). |
+| Profile photo | Click your photo, choose a JPEG, PNG, or WebP file under {profilePhotoMb} MB, crop it, and click **Apply**. |
 | Full Name | Your name as it appears in evaluation results and shared views. |
-| Company | Your organization name. Editable only by the account Owner. |
+| Company | The name of the organization you're working in. Only Owners of that organization can edit it. |
 | Email | Your account email. Read-only. |
-| Role | Your role in the organization. Read-only. |
+| Role | Your role in the current organization. Read-only. |
+
+Click **Save Changes** to save your edits.
 
 ---
 
 ## Members
 
-The Members tab shows everyone in your organization and lets Owners manage access.
+The **Members** tab shows everyone in your organization and lets Owners manage access.
 
 | Role | Permissions |
 | --- | --- |
-| **Owner** | Full access to all features, including member management, billing, and all team data. |
-| **Member** | Access to agents, scenarios, simulations, evaluations, knowledge, and metrics. <br />Can't manage members or billing. |
+| **Owner** | Full access, including inviting and removing members, creating API keys, changing the plan and spending cap (cloud only), editing the company name, running and approving MCP tools, and resolving annotations. |
+| **Member** | Access to agents, scenarios, simulations, evaluations, knowledge, metrics, and MCP servers. Can view the team list, usage, and billing (cloud only), but can't manage members, change billing, or create API keys. |
 
-**Invite a teammate** — Click **Invite Member** and enter an email. An invitation link is sent; recipients without an Arklex account are prompted to create one on accepting. Pending invites show a "Pending" status until accepted.
+**Invite a teammate**: click **Add New Member**, enter the **Email Address**, choose a **Role** (**Owner** or **Member**), and click **Send Invitation**. The invitee gets an email with a link to join. People without an account can sign up from the invite. Invitations expire after {invitationDays} days.
 
-**Change a role** — Owners can click the role dropdown on any member's row and select a new role.
+If your self-hosted deployment doesn't have email set up, the invitee gets no email. Open the menu on the invitation, click **Copy Invite Link**, and send the link yourself.
 
-**Remove a member** — Owners can remove a member from the kebab menu on their row. Access is revoked immediately, but their historical contributions (evaluations created, annotations added) remain in the platform.
+**Manage invitations**: Owners can open the **Invited** list to see pending and expired invitations. Open the menu on an invitation to **Copy Invite Link**, **Resend Invite** (which restarts the {invitationDays} days), or **Revoke Invite**.
+
+**Remove a member**: Owners can choose **Remove from organization** from the menu on a member's row. The member loses access right away. Their past work, such as evaluations and annotations, stays in the organization. API keys they created stop working. If this was their only organization, they get a new personal organization.
+
+**Leave an organization**: if you belong to more than one organization, click **Leave Organization** on the **Members** tab. You'll need a new invite to rejoin. An organization's only Owner can't leave it.
+
+---
+
+## API keys
+
+The **API keys** tab lets Owners create keys for the [Arklex Platform API](/api) and for [tool call tracing](/tool-tracing). Members see a message asking them to contact an Owner.
+
+1. Click **Create key**.
+2. Enter a **Name** (up to {apiKeyNameChars} characters) and click **Create key**.
+3. Copy the key from the **Copy your API key** dialog, then click **Done**. This is the only time the key is shown.
+
+The keys table shows each key's name, the start of the key, when it was created, and when it was last used. To revoke a key, click its trash icon, then click **Delete**. Revoking takes effect immediately.
+
+A key acts for your whole organization. It can't access billing, members, or key management. Keys don't expire, but a key stops working if the Owner who created it leaves or is removed from the organization.
 
 ---
 
 ## Usage
 
-The Usage tab shows your organization's consumption for the current billing period: simulations run, conversations generated, evaluations completed, and API calls made. Usage refreshes periodically — contact support if you believe there's a discrepancy.<br />
+The **Usage** tab shows how much your organization has used Arklex over a date range. Choose **Last 7 Days**, **Last 30 Days** (the default), or **Last 12 Months**.
+
+- **Tokens Consumed** and **Compute Time**: totals for the range.
+- **Token Usage Over Time**: a chart of input and output tokens.
+- **Breakdown by Type**: runs, input tokens, output tokens, and compute time for **Simulation**, **Scenario Generation**, and **Evaluation**.
 
 ---
 
 ## Billing
 
-The Billing tab shows your current plan, live token usage for the billing period, and overage controls.
+<Note>
+  **Cloud only.** Self-hosted deployments have no plans, token allowances, overage, or **Billing** tab.
+</Note>
+
+The **Billing** tab shows your current plan, your token usage for the billing period, and your overage controls. Only Owners can change the plan or the spending cap.
 
 ### Plans
 
@@ -54,54 +84,56 @@ The Billing tab shows your current plan, live token usage for the billing period
 | --- | --- | --- | --- |
 | **Price** | \$0/month | \$299/month | Custom |
 | **Best for** | New organizations | Production workloads | Custom scale, compliance, or on-prem |
-| **Input tokens** | 700K / period | 14M / period | Custom |
-| **Output tokens** | 100K / period | 2M / period | Custom |
+| **Input tokens** | 700K per period | 14M per period | Custom |
+| **Output tokens** | 100K per period | 2M per period | Custom |
 | **Knowledge tokens** | 5K (lifetime) | 100K (lifetime) | Custom |
-| **Concurrent operations** | Up to 2 | Higher | Custom |
-| **Overage** | None — operations pause at the limit | Custom rates |  |
-| **Overage ceiling** | — | \$2,000/month default, with custom cap | Custom |
-| **Extras** | — | — | Bring your own LLM, on-prem, dedicated CSM \+ SLA, SSO / SAML |
+| **Concurrent operations** | {freePlanConcurrentOps} at a time for each type of operation | No plan limit | No plan limit |
+| **Overage** | None. Operations pause at the limit. | \$0.01 per 1K input tokens, \$0.05 per 1K output tokens | Custom |
+| **Overage ceiling** | None | \$2,000/month default, with a custom spending cap | Custom |
+| **Support** | Community | Email | Dedicated CSM and SLA |
+| **Extras** | None | None | Bring your own LLM, on-prem deployment |
 
 ### Token usage
 
-Three meters track the current billing period. Each bar turns amber at 80% and red at 100%.
+The **Usage** section has three meters. Each bar turns amber at 80% (**Approaching limit**) and red at 100% (**Allowance exceeded**).
 
-| Dimension | Resets | Counts |
+| Meter | Resets | Counts |
 | --- | --- | --- |
-| Input tokens | Each billing period | Tokens sent to your agent and the LLM judge |
-| Output tokens | Each billing period | Tokens returned by your agent and the LLM judge |
-| Knowledge tokens | Never (lifetime hard limit) | Tokens consumed indexing documents and websites |
+| Input tokens | Each billing period | Tokens Arklex's models read: the simulated user, scenario generation, and the LLM judge |
+| Output tokens | Each billing period | Tokens Arklex's models write: the simulated user, scenario generation, and the LLM judge |
+| Knowledge tokens | Never | Tokens used by the documents and websites currently in your knowledge base |
+
+Your agent's own token usage isn't counted. The tab shows the current billing period's start and end dates. On the Free plan, each billing period lasts 30 days.
+
+Knowledge tokens are a hard limit on every plan, including Pro. When you reach it, you can't add more knowledge. Deleting documents or websites frees their tokens. Contact support to raise the limit.
 
 ### Overage and spending cap
 
-On the **Free** plan, operations pause when any token limit is reached — no overage is charged. On the **Pro** plan, operations continue past the included allowance and overage is billed at the rates above, capped by a \$2,000/month default ceiling. Use the **Spending Cap** control to set a lower limit and prevent unexpected charges.
+On the **Free** plan, operations pause when you reach any token limit. No overage is charged.
+
+On the **Pro** plan, operations continue past the included tokens, and overage is billed at the rates above. The tab shows the estimated extra charge for the current period, billed at the end of the period. Overage is capped at \$2,000 per month by default.
+
+To set a lower cap, click **Adjust cap** under **Spending cap**. Enter a monthly limit up to \$2,000. Enter \$0 to block all overage, or leave it empty to use the default. When your overage reaches the cap, new simulations, evaluations, and scenario generation pause until the next billing period.
 
 ### Manage your subscription
 
-- **Upgrade to Pro** — starts checkout on the Stripe payment page.
-- **Manage Billing** — opens the Stripe billing portal to update your payment method, download invoices, or cancel.
-- **Cancel Subscription** — cancels a Pro plan; it stays active through the end of the current billing period.
-
-For Enterprise pricing, contact support.
+- **Upgrade to Pro**: opens Stripe checkout.
+- **Manage subscription**: opens the Stripe billing portal, where you can update your payment method and download invoices.
+- **Cancel subscription**: click it, then **Continue to cancel** to finish in the Stripe portal. Your Pro plan stays active until the end of the current billing period. To undo a scheduled cancellation, click **Reactivate**.
+- **Contact us**: for Enterprise pricing.
 
 <Note>
-  Checkout, payment methods, and invoices are handled securely through Stripe — Arklex doesn't store your card details.
+  Stripe handles checkout, payment methods, and invoices. Arklex doesn't store your card details.
 </Note>
 
 ---
 
-## FAQ
+## Account menu
 
-<AccordionGroup>
-  <Accordion title="Can I belong to multiple organizations?">
-    Not currently. Each Arklex account belongs to one organization. If you need access to another, you'll need a separate account.
-  </Accordion>
+Click your organization name at the bottom of the sidebar to open the account menu. From there, you can:
 
-  <Accordion title="What happens to data when a member is removed?">
-    Evaluations, simulations, agents, and scenarios they created stay in the organization, and their annotations and comments remain attributed to their account. They simply lose access.
-  </Accordion>
+- Switch between your organizations under **Organizations**. Your role can differ in each one. To join another organization, accept an invite from it. You can't create new organizations yourself.
+- Choose a light, dark, or system **Theme** with the icons next to it.
+- **Log out**.
+- See the version of the app you're using. Include it when you contact support.
 
-  <Accordion title="Can a Member invite others?">
-    No — only Owners can send invitations. Members can view the team roster but can't add or remove people.
-  </Accordion>
-</AccordionGroup>
