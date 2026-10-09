@@ -11,8 +11,12 @@ import {
   goalChars,
   userProfileChars,
   agentContextChars,
+  agentContextEditChars,
   knowledgePerScenario,
+  knowledgeNameChars,
+  knowledgeContentChars,
   checklistItems,
+  checklistItemChars,
   assertionsPerScenario,
   conversationsPerScenarioMax,
   maxTurnsMax,
@@ -44,9 +48,17 @@ import {
   traceRequestMib,
   traceRequestMibUncompressed,
   spansPerTraceRequest,
+  traceRequestMibJson,
+  spansPerTurn,
+  traceMibPerTurn,
+  toolCallFieldKib,
+  toolCallErrorKib,
+  apiRequestsPerMinute,
+  apiRequestBurst,
+  connectionTestsPerMinute,
 } from "/snippets/limits.mdx";
 
-This page collects the limits that apply across Arklex Platform. Each section links to the page that explains the feature. For token allowances by plan, see [Billing](/settings#billing).
+This page collects the limits that apply across Arklex Platform. Each section links to the page that explains the feature. On cloud, token allowances depend on your plan. See [Billing](/settings#billing). On self-hosted deployments, your operator can change the API and tracing rate limits.
 
 ---
 
@@ -60,9 +72,9 @@ This page collects the limits that apply across Arklex Platform. Each section li
 | Scenario name | {scenarioNameChars} characters |
 | Goal | {goalChars} characters |
 | User profile | {userProfileChars} characters |
-| Agent context | {agentContextChars} characters |
-| Knowledge passages per scenario | {knowledgePerScenario} |
-| User goal checklist items | {checklistItems} |
+| Agent context | {agentContextChars} characters when you import or write scenarios, {agentContextEditChars} when you edit one or use the API |
+| Knowledge passages per scenario | {knowledgePerScenario}, each with a name up to {knowledgeNameChars} characters and content up to {knowledgeContentChars} |
+| User goal checklist items | 1 to {checklistItems}, at least one Required. Each description up to {checklistItemChars} characters. |
 | Assertions per scenario | {assertionsPerScenario}, including at most one **Tool calls** assertion |
 
 See [Scenarios](/scenarios).
@@ -78,7 +90,7 @@ See [Scenarios](/scenarios).
 | Max concurrent conversations | {concurrencyMax} (default {concurrencyDefault}) |
 | Conversations per simulation | {conversationsPerSimulation} |
 | Trace wait time | {traceWaitMin} to {traceWaitMax} seconds (default {traceWaitDefault}) |
-| Simulations pending or running at once | {freePlanConcurrentOps} on the Free plan |
+| Simulations pending or running at once | {freePlanConcurrentOps} on the cloud Free plan. No limit on other plans or on self-hosted. |
 
 See [Simulations](/simulations).
 
@@ -102,7 +114,7 @@ See [Knowledge](/knowledge).
 | --- | --- |
 | Custom metric name | {metricNameChars} characters |
 | Custom metric description | {metricDescriptionChars} characters |
-| Judge MCP tool calls | {judgeMcpCallsPerTurn} per turn, {judgeMcpCallsPerConversation} per conversation |
+| MCP tool calls per metric | Turn scope: {judgeMcpCallsPerTurn} per turn and {judgeMcpCallsPerConversation} per conversation. Conversation scope: {judgeMcpCallsPerTurn} in total. |
 | MCP connection test timeout | {mcpTestTimeoutSeconds} seconds |
 | MCP tool call timeout | {mcpToolCallTimeoutSeconds} seconds |
 | Tools listed per MCP server | {mcpToolsPerServer} |
@@ -128,10 +140,14 @@ See [Annotations](/annotations) and [Settings](/settings).
 
 | Limit | Value |
 | --- | --- |
+| API requests per key | {apiRequestsPerMinute} per minute, with bursts up to {apiRequestBurst} |
+| Connection tests per key | {connectionTestsPerMinute} per minute |
 | Idempotency key lifetime | {idempotencyKeyHours} hours after the first attempt completes |
 | Trace requests per organization | {traceRequestsPerMinute} per minute |
 | Trace data per organization | {traceMibPerMinute} MiB per minute |
-| Trace request size | {traceRequestMib} MiB compressed, {traceRequestMibUncompressed} MiB uncompressed |
+| Trace request size | {traceRequestMib} MiB compressed. Uncompressed, {traceRequestMibUncompressed} MiB for protobuf and {traceRequestMibJson} MiB for JSON. |
 | Spans per trace request | {spansPerTraceRequest} |
+| Trace data kept per turn | {spansPerTurn} spans and {traceMibPerTurn} MiB |
+| Tool call arguments, result, and error | {toolCallFieldKib} KiB, {toolCallFieldKib} KiB, and {toolCallErrorKib} KiB. Longer values are cut. |
 
 See [API overview](/api) and [Tool call tracing](/tool-tracing).

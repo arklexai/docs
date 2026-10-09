@@ -9,6 +9,11 @@ import {
   traceRequestMib,
   traceRequestMibUncompressed,
   spansPerTraceRequest,
+  traceRequestMibJson,
+  spansPerTurn,
+  traceMibPerTurn,
+  toolCallFieldKib,
+  toolCallErrorKib,
 } from "/snippets/limits.mdx";
 
 Tool call tracing records every tool your agent calls during a simulation: the tool name, its arguments, the result or error, and how long it took. You can then read the calls in transcripts, check them with assertions, and score them with the **Tool call behavior** metric.
@@ -100,7 +105,12 @@ An evaluation of a simulation that just finished waits for its tool calls first.
 
 ## Limits
 
-Each organization can send up to {traceRequestsPerMinute} requests and {traceMibPerMinute} MiB of traces per minute. Each request can be up to {traceRequestMib} MiB ({traceRequestMibUncompressed} MiB uncompressed) and hold up to {spansPerTraceRequest} spans.
+- Each organization can send up to {traceRequestsPerMinute} requests and {traceMibPerMinute} MiB of traces per minute. Traces that don't belong to a simulation count against a separate limit of the same size. Over the limit, Arklex returns `429` with a `Retry-After` header.
+- Each request can be up to {traceRequestMib} MiB compressed and hold up to {spansPerTraceRequest} spans. Uncompressed, it can be up to {traceRequestMibUncompressed} MiB for protobuf and {traceRequestMibJson} MiB for JSON.
+- Each turn keeps up to {spansPerTurn} spans and {traceMibPerTurn} MiB of trace data. Spans past that are dropped, and the transcript says some were dropped.
+- A tool call's arguments and result are cut at {toolCallFieldKib} KiB each, and its error at {toolCallErrorKib} KiB.
+
+On self-hosted deployments, your operator can change these limits.
 
 ---
 

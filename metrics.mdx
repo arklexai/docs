@@ -28,7 +28,7 @@ These metrics score your agent:
 | **Coherence** | Turn | 1 to 5 | The logical flow and clarity of the response. |
 | **Relevance** | Turn | 1 to 5 | How directly the response addresses the user's input. |
 | **Verbosity** | Turn | 1 to 5 | How concise the response is. Higher scores mean more concise responses. |
-| **Faithfulness** | Turn | 1 to 5 | Whether the response contradicts the knowledge the user has. |
+| **Faithfulness** | Turn | 1 to 5 | Whether the response contradicts the scenario's knowledge. |
 | **User Goal Completion** | Conversation | 0 or 1 | Whether the simulated user got what they asked for by the end of the conversation. A low score is expected when the agent correctly declines a request. |
 | **Agent Behavior Failure** | Turn | Labels | The type of failure in each turn: false information, disobey user request, lack of specific information, failure to ask for clarification, repetition, or no failure. |
 | **Tool call behavior** | Turn | Labels | Incorrect tool use in the turn's captured tool calls: wrong tool, wrong parameters, unnecessary calls, ignored results, or unsafe actions. Needs a simulation that captured tool calls. |
@@ -87,7 +87,7 @@ Custom metrics let you score behaviors specific to your domain. Go to **Metrics*
   For a qualitative metric, add at least one label with **Add label**. Each label has a value, an optional explanation, and a color. For a quantitative metric, choose a **Scoring System**: a 1 to 5 integer scale or a 0 to 1 decimal scale.
 </ParamField>
 
-You can't change a metric's type or scope after you create it.
+You can't change a metric's type or scope after you create it. If you change them in the **Edit Metric** form, saving returns an error.
 
 <Frame>
   ![The custom metrics list](/images/metrics-custom.png)
@@ -127,7 +127,7 @@ When a metric uses MCP tools:
 
 - The user prompt template must include `{mcp_evidence}`, which holds the tool results.
 - A turn-scope metric must also include `{current_turn}`.
-- The judge can make up to {judgeMcpCallsPerTurn} tool calls per turn and {judgeMcpCallsPerConversation} per conversation.
+- A turn-scope metric can make up to {judgeMcpCallsPerTurn} tool calls per turn and {judgeMcpCallsPerConversation} per conversation. Once it uses all {judgeMcpCallsPerConversation}, later turns are scored against what earlier turns found. A conversation-scope metric can make {judgeMcpCallsPerTurn} in total.
 - A turn with nothing to check isn't scored.
 - With more than one tool, use the **Required** switch to mark the tools the judge must call.
 
@@ -149,7 +149,9 @@ The **Custom** tab lists your custom metrics with their latest version.
 
 ## Select metrics for an evaluation
 
-When you create an evaluation, the **Metrics** list shows your **Custom** metrics first, then the **Built-in** metrics. **Helpfulness**, **Coherence**, and **Relevance** are selected by default. Search by name, check metrics individually, or use **Select All** and **Deselect All**. Click **Create Custom Metric** to make a new metric without leaving the form. You must select at least one metric.
+When you create an evaluation, the **Metrics** list shows your **Custom** metrics first, then the **Built-in** metrics. **Helpfulness**, **Coherence**, and **Relevance** are selected by default. Search by name, check metrics individually, or use **Select All** and **Deselect All**. **Create Custom Metric** closes the form and opens the **Metrics** page.
+
+For an agent evaluation, metrics are optional. Leave every metric unchecked to check assertions only. See [Assertions-only evaluations](/evaluations#assertions-only-evaluations).
 
 <Frame>
   ![The metric list grouped into custom and built-in metrics](/images/metrics-types.png)

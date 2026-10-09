@@ -28,6 +28,6 @@
 
 ## Content boundaries
 
-- Document only features visible in the current production UI
+- Document the features on `main` of the product repos, which is what the next release ships. Label features that work differently on cloud and self-hosted deployments
 - If a feature is behind a feature flag, add a Note component explaining the availability condition
 - Do not document backend implementation details unless they directly affect user behavior

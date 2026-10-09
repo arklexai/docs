@@ -11,7 +11,7 @@ description: "Common questions about connecting agents, running simulations, eva
   </Accordion>
 
   <Accordion title="Does Arklex require changes to my agent code?">
-    No. Arklex calls your agent over HTTP, so any endpoint the public internet can reach works without code changes. The one exception is tool call capture, which needs your agent to export OpenTelemetry traces. See [Tool call tracing](/tool-tracing).
+    No. Arklex calls your agent over HTTP, so any endpoint Arklex can reach works without code changes. On cloud, the endpoint must be public. The one exception is tool call capture, which needs your agent to export OpenTelemetry traces. See [Tool call tracing](/tool-tracing).
   </Accordion>
 
   <Accordion title="What agent types does Arklex support?">
@@ -47,7 +47,7 @@ description: "Common questions about connecting agents, running simulations, eva
   </Accordion>
 
   <Accordion title="Can I trust the LLM judge's scores?">
-    The judge is a starting point, not the final word. When your team disagrees with a score, reviewers add their own in the **Annotations** section. The **Annotation Calibration** section then shows how often the judge agrees with your team for each metric. Use it to find the metrics whose prompts need work.
+    The judge is a starting point, not the final word. When your team disagrees with a score, reviewers add their own on the **Annotations** tab. The **Annotation Calibration** tab then shows how often the judge agrees with your team for each metric. Use it to find the metrics whose prompts need work.
   </Accordion>
 </AccordionGroup>
 
@@ -59,6 +59,6 @@ description: "Common questions about connecting agents, running simulations, eva
   </Accordion>
 
   <Accordion title="How are API keys and headers stored?">
-    Agent header values, which typically hold API keys and auth tokens, are encrypted at rest. The platform shows masked values and never returns the raw secret after it's saved. Only header values are encrypted, so keep secrets out of request bodies.
+    Agent header values and MCP auth headers, which typically hold API keys and auth tokens, are encrypted at rest. The app shows masked values, and the API returns only header names. Neither returns the raw secret after it's saved. Only header values are encrypted, so keep secrets out of request bodies.
   </Accordion>
 </AccordionGroup>

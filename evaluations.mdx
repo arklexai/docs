@@ -1,9 +1,9 @@
 ---
 title: "Evaluations"
-description: "Check simulation conversations against their assertions and score them with an LLM judge."
+description: "Grade simulation conversations with their scenario assertions, and optionally score them with an LLM judge."
 ---
 
-An evaluation grades the conversations from one simulation. Each conversation passes or fails based on its scenario's assertions. An LLM judge then adds scores on the metrics you choose and flags behavioral failures. For evaluations of your agent, reviewers can also add their own scores with [annotations](/annotations).
+An evaluation grades the conversations from one simulation. Each conversation passes or fails based on its scenario's [assertions](/scenarios#assertions). You can also choose metrics for an LLM judge to score. Arklex then groups recurring problems into failure patterns, and reviewers can add their own scores with [annotations](/annotations).
 
 <Note>
   New here? The [Quickstart](/quickstart) walks you through running your first evaluation end to end. This page is the full reference for every section and option.
@@ -45,73 +45,101 @@ Click **New Evaluation** on the Evaluations page. You can also start one from an
   The simulation to evaluate. Only completed simulations can be evaluated. Search the list, or use **Filter** to show only simulations you created.
 </ParamField>
 
-<ParamField path="Metrics" type="array" required>
-  The metrics to score. **Helpfulness**, **Coherence**, and **Relevance** are selected by default. Add or remove any built-in or custom metric, or click **Create Custom Metric** to make a new one. See [Metrics](/metrics) for the full list. Each scenario's assertions always run, whatever metrics you pick. See [Assertions](/scenarios#assertions).
+<ParamField path="Metrics" type="array">
+  The metrics the LLM judge scores. **Helpfulness**, **Coherence**, and **Relevance** are selected by default. Add or remove any built-in or custom metric. **Create Custom Metric** closes the form and opens the **Metrics** page. See [Metrics](/metrics).
+
+  Each scenario's assertions always run and decide Pass or Fail, whatever metrics you pick. To check assertions only, clear every metric. See [Assertions-only evaluations](#assertions-only-evaluations).
 </ParamField>
 
 <ParamField path="Provider and Model" type="string" required>
-  The LLM the judge uses. Choose a **Provider** (Anthropic, OpenAI, or Google), then a **Model**. A default is selected for you.
+  The LLM the judge uses for metrics and **LLM judge** assertions. Choose a **Model**. If your deployment offers more than one provider, choose the **Provider** first. A default is selected for you.
 </ParamField>
 
-Click **Run Evaluation** to start. The status changes to **Completed** when scoring is done.
+Click **Run Evaluation** to start. The status changes to **Completed** when grading is done.
 
 <Note>
   If the simulation captured tool calls and just finished, the evaluation waits until all tool calls are collected. This can take up to 5 minutes.
 </Note>
 
----
+### Assertions-only evaluations
 
-## Understand the scores
+An agent evaluation with no metrics checks each conversation's assertions and nothing else. The form shows "No metrics selected: only assertions will run." The results have an **Overview** with **Results** and **Failure patterns**, and a **Conversations** tab. There are no metric scores and no annotation tabs.
 
-Before you read the detail page, it helps to know the scales in play:
-
-- Most built-in metrics are scored **1 to 5**, where 5 is best.
-- **User Goal Completion** is scored **0 or 1** per conversation.
-- Custom metrics use a 1 to 5 scale, a 0 to 1 scale, or labels you define.
-
-Every quantitative metric gets a band label based on its average as a percentage of the maximum score:
-
-| Band | Score range | Color |
-| --- | --- | --- |
-| **Excellent** | 80% of max or higher | Green |
-| **Good** | 60% to under 80% | Blue |
-| **Needs Improvement** | 40% to under 60% | Amber |
-| **Poor** | Below 40% | Red |
+Use this for a quick pass or fail check, for example after you change your agent. Simulated-user evaluations always score their fixed metrics. Through the [API](/api), an evaluation needs at least one metric.
 
 ---
 
 ## Read an evaluation's results
 
-The detail page header shows the evaluation name, an **Evaluating: Agent** badge, the number of conversations, the average turns per conversation, and the judge model. While the evaluation runs, the header has a **Cancel Evaluation** button. After it finishes, the header has a **Re-evaluate** button.
+The header shows the evaluation name and status. Below them, a line shows the agent and simulation (each links to its page), the judge model, and when the evaluation ran and who started it. While the evaluation runs, the header has a **Cancel Evaluation** button. After it finishes, the header has a **Re-evaluate** button.
 
-A left sidebar switches between the sections below.
+The results are split into tabs:
 
-### Quantitative metrics
+| Tab | What it shows |
+| --- | --- |
+| **Overview** | Pass and fail results, metric scores, and failure patterns. |
+| **Conversations** | Every conversation, with its result and scores. |
+| **Annotations** | Reviewers' own scores next to the judge's. |
+| **Annotation Calibration** | How often the judge agrees with your team. |
 
-The section opens with **Conversations passed**: how many conversations passed, plus how many failed, were inconclusive, weren't evaluated, or errored. A conversation passes when every assertion on its scenario passes. A **Did not pass** list links to each conversation that didn't pass.
+The **Annotations** and **Annotation Calibration** tabs appear only on agent evaluations that score at least one metric.
 
-Below it, there's a card for each numeric metric, split into **Turn-level** (scored per agent turn) and **Conversation-level** (scored once per conversation). Each card shows the average score, the median, a progress bar, and a band label. If any scenario has a **Tool calls** assertion, an **Expected tool calls** card shows how many of those checks passed.
+### Overview: results
+
+**Results** opens with **Conversations passed**: how many conversations passed out of the total. Below it, a line counts how many failed, were inconclusive, had no assertions, or errored. A conversation passes when every assertion on its scenario passes.
+
+Each conversation gets one of these results:
+
+| Result | Meaning |
+| --- | --- |
+| **Pass** | Every assertion passed. |
+| **Fail** | At least one assertion failed. |
+| **Inconclusive** | Nothing failed, but at least one assertion couldn't be judged. For example, the conversation never reached that point, or tool call data was missing. |
+| **No assertions** | The scenario has no assertions, so there's no Pass or Fail. Metrics can still score the conversation. |
+| **Error** | The conversation errored during the simulation or the evaluation, so it wasn't graded. |
+
+The **Failed** list shows each conversation that didn't pass, with its scenario name and how many assertions passed. When several kinds of assertion failed, use the **LLM judge**, **Text match**, and **Tool calls** chips to filter the list. Click a conversation to open it. If tool calls weren't captured on some turns, a warning says how many turns couldn't be checked.
+
+If no scenario in the simulation has assertions, **Results** is replaced by a note that says to add assertions to get a Pass or Fail. See [Add assertions to existing scenarios](/scenarios#add-assertions-to-existing-scenarios).
 
 <Frame>
-  ![Quantitative metrics cards with score bars and band labels](/images/evaluation-quant-metrics.png)
+  ![The Overview tab with the Results, Metrics, and Failure patterns sections](/images/evaluation-overview.png)
 </Frame>
 
-### Qualitative metrics
+### Overview: metrics
 
-For metrics that assign labels, such as **Agent Behavior Failure** or **Tool call behavior**, this section shows how often each label was assigned. Expand a label to see where it was assigned, then click through to open the conversation at that turn.
+**Metrics** appears when the evaluation scores at least one metric. Metric scores describe quality. They don't change whether a conversation passed.
+
+Metrics are grouped by scope:
+
+- **Conversation scoped**: scored once for the whole conversation, after it ends.
+- **Turn scoped**: scored on each agent reply. A conversation's score is the mean of its turns.
+
+Within each group, numeric metrics come first, lowest score first. Each one shows:
+
+- The average score out of the maximum, for example `3.4 /5`, and the median.
+- A bar colored by how the average compares with the maximum: green for 80% or higher, blue for 60% to under 80%, amber for 40% to under 60%, and red below 40%.
+- **Lowest**: up to three conversations that scored lowest. Click one to open it at its lowest turn.
+- A link to the metric's failure patterns, if it has any.
+
+Label metrics, such as **Agent Behavior Failure** or **Tool call behavior**, show how often each label was assigned. Expand a label to see where it was assigned, then click a conversation or a **Turn N** chip to open it.
+
+### Overview: failure patterns
+
+**Failure patterns** groups recurring problems across the conversations, so you can fix causes instead of single conversations. Patterns come from:
+
+- **Failed assertions**.
+- **Low metric scores**: a numeric score below 60% of the maximum (below 3 on a 1 to 5 scale), or a label that signals a problem.
+- **Agent Behavior Failure** labels, when you select that metric.
+
+Each pattern shows its severity (**Critical**, **High**, **Medium**, or **Low**), a description, its source and number of occurrences, and the conversations and turns where it appeared. Click a conversation to open it at the first flagged turn. Patterns from failed assertions are **High**.
+
+Patterns are sorted by severity, with assertion patterns first within each severity, then by occurrences. Use the chips at the top to show one source, such as **Assertions** or a single metric. The first five patterns are shown. Click **Show all** to see the rest.
+
+Assertions-only evaluations have failure patterns too, built from the failed assertions.
 
 <Frame>
-  ![Qualitative metrics label distribution](/images/evaluation-qualt-metrics.png)
-</Frame>
-
-### Unique errors
-
-Problems found in the conversations. Failed assertions come first, then the behavioral failures flagged by the **Agent Behavior Failure** metric, sorted by severity: **Critical**, **High**, **Medium**, and **Low**. Each entry shows its severity and category, how many times it occurred, a description, and links to the conversations and turns where it appeared.
-
-The judge flags behavioral failures only when you select the **Agent Behavior Failure** metric.
-
-<Frame>
-  ![Unique errors sorted by severity](/images/evaluation-unique-errors.png)
+  ![A label metric with its failure patterns link, and failure patterns sorted by severity](/images/evaluation-failure-patterns.png)
 </Frame>
 
 ### Conversations
@@ -121,38 +149,37 @@ A table of every conversation:
 | Column | Description |
 | --- | --- |
 | **Conv #** | The conversation number. |
-| **Result** | **Pass**, **Fail**, **Inconclusive**, **Not evaluated** (the scenario has no assertions), or **Error** (the conversation errored during the simulation or evaluation). |
-| **Simulation Evaluated** | The simulation the conversation came from. |
-| **Scenario Name** | The scenario that generated the conversation. |
+| **Result** | The conversation's [result](#overview-results). |
 | **Assertions** | How many of the scenario's assertions passed. |
-| **User goal completion** | The User Goal Completion score. Shown only when you select that metric. |
+| **Scenario Name** | The scenario that generated the conversation. |
+| **Turns** | The number of exchanges. |
+| **User Goal Completion** | Shown only when you select that metric. |
+| One column per metric | The conversation's score. For a turn scoped metric, the mean across turns. Hover to see the lowest turn. |
+
+Click **Columns** to show or hide metric columns. Your choice is remembered in this browser. Click **Load More** to see more than 100 conversations.
 
 <Frame>
-  ![Conversations table with each conversation's result and assertions](/images/evaluation-conversations.png)
+  ![Conversations table with each conversation's result, assertions, and metric scores](/images/evaluation-conversations.png)
 </Frame>
 
-Click any row to open the conversation. Use the left and right arrows to move between conversations. In the conversation view:
+### Inspect a conversation
 
-- Expand **Assertions** to see each assertion's result and the reason for it. For **Tool calls** assertions, click **Show calls** to see the calls it checked.
-- Expand **Scenario** to see the goal, profile, and knowledge behind the conversation.
-- Click **metrics** under an agent turn to see that turn's scores. For a label, click the info icon to read the judge's reasoning.
-- Click **Download** to save the transcript as a text file.
+Click a conversation in any tab to open it. Use the left and right arrows to move between conversations. The conversation view has these parts, top to bottom:
+
+- **Metrics**: collapsed by default. Shows the conversation scoped scores, and the mean and median of each turn scoped metric.
+- **Assertions**: each assertion with its kind, what it checks, the reason for its result, and **Pass**, **Fail**, or **Inconclusive**. For **Tool calls** assertions, click **Show calls** to compare the expected calls with the actual, missing, and unexpected ones. This is where you see why a conversation failed.
+- **Scenario**: the goal, profile, and knowledge behind the conversation. Click **Open scenario** to edit it.
+- **Conversation Transcript**: click **metrics** under an agent turn to see that turn's scores. For a label, click the info icon to read the judge's reasoning.
+
+Click **Download** to save the transcript as a text file, or **Comments** to discuss the conversation with your team. See [Add comments](/annotations#add-comments).
 
 <Frame>
   ![Conversation view with a failed assertion and the reason it failed](/images/evaluation-convo-view.png)
 </Frame>
 
-### Annotations
+### Annotations and calibration
 
-A spreadsheet where reviewers score turns or whole conversations without overwriting the judge's scores. See [Annotations](/annotations) for the full workflow.
-
-<Frame>
-  ![The Annotations section with reviewer scores next to the judge's scores](/images/evaluation-annotations.png)
-</Frame>
-
-### Annotation calibration
-
-How often the judge agrees with your team's resolved scores, for each metric. Use it to find the metrics whose prompts need work. See [Annotations](/annotations#annotation-calibration).
+On the **Annotations** tab, reviewers score turns or whole conversations without overwriting the judge's scores. **Annotation Calibration** shows how often the judge agrees with your team's resolved scores, for each metric. See [Annotations](/annotations).
 
 ---
 
@@ -160,20 +187,20 @@ How often the judge agrees with your team's resolved scores, for each metric. Us
 
 A simulated-user evaluation checks how well the simulated user played its part, so you can trust your simulation results. Set **Evaluate** to **Simulated user** when you create the evaluation. These evaluations always score three fixed metrics: **Character Consistency**, **Goal Adherence**, and **Realism**.
 
-The detail page has two sections:
+The results have two tabs:
 
-- **Overview**: **Scores** shows how often the simulated user **Stays on persona**, how many **Conversations kept on goal**, how often **Required sub-goals raised**, and how often it **Passes for a real user**. Higher is better. **Problems found** lists the issues the judge flagged, with links to the conversations and turns. Lower is better.
+- **Overview**: **Metrics** shows how often the simulated user **Stays on persona**, how many **Conversations kept on goal**, how often **Required sub-goals raised**, and how often it **Passes for a real user**, each as passed out of checked. Higher is better. **Failure patterns** shows how often each problem the judge looks for showed up. Lower is better. Expand a row to see the conversations.
 - **Conversations**: a table with **Conv #**, **Scenario Name**, **In character**, **Off-goal turns**, **Required sub-goals**, and **Issues** for each conversation.
 
-Simulated-user evaluations don't have annotation sections.
+Simulated-user evaluations don't have annotation tabs.
 
 ---
 
 ## Re-evaluate
 
-To score the same conversations again, open the menu on an evaluation row and select **Re-evaluate**, or click **Re-evaluate** on the detail page. Edit the **Evaluation name** to tell the runs apart, then click **Run Evaluation**.
+To grade the same conversations again, open the menu on an evaluation row and select **Re-evaluate**, or click **Re-evaluate** on the detail page. Edit the **Evaluation name** to tell the runs apart, then click **Run Evaluation**.
 
-Re-evaluating creates a new evaluation with the same simulation, metrics, and model. The original evaluation and its annotations stay unchanged. It uses the metric versions from the original run, so later edits to a metric aren't applied. To score with your updated metrics, create a new evaluation instead.
+Re-evaluating creates a new evaluation with the same simulation, metrics, and model. An assertions-only evaluation is re-evaluated without metrics. The original evaluation and its annotations stay unchanged. It uses the metric versions from the original run, so later edits to a metric aren't applied. To score with your updated metrics, create a new evaluation instead.
 
 If the evaluation uses metrics that call MCP tools, choose how to handle tool results:
 
@@ -195,10 +222,10 @@ Open the menu on an evaluation row:
 
 <AccordionGroup>
   <Accordion title="Can an evaluation cover multiple simulations?">
-    No. Each evaluation scores one simulation, which the **Simulations Evaluated** column shows. To compare simulations, create one evaluation per simulation with the same metrics and model. Through the API, you can also score conversations you already have without running a simulation. See [API overview](/api).
+    No. Each evaluation grades one simulation, which the **Simulations Evaluated** column shows. To compare simulations, create one evaluation per simulation with the same metrics and model. Through the API, you can also score conversations you already have without running a simulation. See [API overview](/api).
   </Accordion>
 
   <Accordion title="How do I improve a metric that consistently scores low?">
-    Start with **Unique Errors** to find specific failures, then review the linked conversations to understand the pattern. Update your agent's system prompt, knowledge, or configuration to address the root cause. Then run a new simulation and evaluation to confirm the improvement.
+    Click the metric's failure patterns link on the **Overview**, or open its **Lowest** conversations, to find the pattern. Update your agent's system prompt, knowledge, or configuration to address the root cause. Then run a new simulation and evaluation to confirm the improvement.
   </Accordion>
 </AccordionGroup>

@@ -5,9 +5,9 @@ description: "Manage the documents and websites that ground your scenarios."
 
 import { documentUploadMb, crawlLinksMax, crawlLinksDefault, folderDepth } from "/snippets/limits.mdx";
 
-The **Knowledge** page holds the documents and websites that ground your scenarios. When you build scenarios, Arklex searches your knowledge for relevant passages and gives them to the simulated users. This makes their questions realistic and specific.
+The **Knowledge** page holds the documents and websites that ground your scenarios. When you build scenarios, Arklex searches your knowledge for relevant passages and copies them into each scenario. The assistant writes the scenario's checklist and assertions from them, so the conversations are realistic and specific. During an evaluation, the judge checks your agent's answers against them.
 
-Knowledge shapes what the **simulated user** knows and asks about. It doesn't change your agent's answers. Grounding scenarios in the same material your agent relies on is a good way to test whether the agent stays faithful to it.
+Knowledge doesn't change your agent's answers, and the simulated user doesn't read it. Grounding scenarios in the same material your agent relies on is a good way to test whether the agent stays faithful to it.
 
 ---
 
@@ -62,7 +62,7 @@ On the **Documents** tab, click **Upload Document**. Select one or more files, o
 
 Supported formats: PDF, DOC, DOCX, TXT, MD, CSV, JSON, XLS, XLSX, PPTX, JPG, JPEG, and PNG. Each file can be up to {documentUploadMb} MB. Arklex reads the text in images and PowerPoint files with OCR, so text-based PDFs work better than scans.
 
-The documents table shows each document's name, tags, status, and when it was last updated.
+The documents table shows each document's name, tags, status, and when it was added.
 
 <Frame>
   ![The Documents tab with each document's tags and status](/images/knowledge-documents.png)
@@ -98,9 +98,9 @@ The folder panel next to the tabs shows **All items**, **Unfiled**, and your **F
 
 **Reprocess**: re-reads the file or re-crawls the page. Use it to pick up changes to a web page, or to retry an item that failed. Reprocessing replaces any content you edited by hand. Arklex doesn't re-crawl pages automatically.
 
-**Delete**: choose **Delete** in an item's menu, on its detail page, or from the bulk actions. Deleting frees the item's knowledge tokens. See [Settings](/settings#billing).
+**Delete**: choose **Delete** in an item's menu, on its detail page, or from the bulk actions. On cloud, deleting also frees the item's knowledge tokens. See [Billing](/settings#billing).
 
-If an item shows **Error**, open it to see why it failed. For example, Arklex couldn't extract any text, the file is password-protected, or your plan's knowledge allowance is used up. Fix the cause, then click **Reprocess**.
+If an item shows **Error**, open it to see why it failed. For example, Arklex couldn't extract any text, the file is password-protected, or, on cloud, your plan's knowledge allowance is used up. Fix the cause, then click **Reprocess**.
 
 ---
 
@@ -113,5 +113,5 @@ Each scenario stores a copy of the passages it uses. Later edits, reprocessing, 
 Grounding scenarios in your knowledge supports two kinds of testing:
 
 - **Faithfulness testing**: check that the agent's answers match your documents and don't make up information that contradicts them.
-- **Edge-case coverage**: give simulated users specific product specs, pricing tables, or policy details that reveal gaps in what your agent knows.
+- **Edge-case coverage**: build scenarios around specific product specs, pricing tables, or policy details that reveal gaps in what your agent knows.
 

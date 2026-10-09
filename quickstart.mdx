@@ -3,50 +3,23 @@ title: "Quickstart"
 description: "Connect an agent, build scenarios, run a simulation, and review your first evaluation in Arklex Platform."
 ---
 
-import {
-  conversationsPerScenarioMax,
-  conversationsPerScenarioDefault,
-  maxTurnsMax,
-  maxTurnsDefault,
-} from "/snippets/limits.mdx";
+This guide takes you from your first sign-in to your first evaluation, in one path. It follows one running example: a **Banking Assistant** that helps customers check balances, make transfers, and resolve card issues. Every step works the same for any conversational agent you connect.
 
-This guide takes you from your first sign-in to your first evaluation. It follows one running example: a **Banking Assistant** that helps customers check balances, make transfers, and resolve card issues. Every step works the same for any conversational agent you connect.
-
-Each step maps directly to a page in the platform, so the workflow you learn here is the workflow you'll use every day.
+Each step uses the defaults. For every field and option, follow the links to the reference pages.
 
 ## Before you start
 
 - An Arklex Platform account. If your team already has an organization, ask one of its Owners to invite you, so you join it directly. Otherwise, choose **Sign Up** when you first open Arklex Platform.
-- An agent with an HTTP endpoint that the public internet can reach. Arklex supports **Chat Completions** endpoints, the **A2A** protocol, and any JSON endpoint through **Custom HTTP**.
+- An agent with an HTTP endpoint that Arklex can reach. On cloud, that means a public URL. See [Agents](/agents) for the supported API types.
 - Any auth headers your endpoint requires, for example an API key or bearer token.
 
-On your first sign-in, Arklex asks you to complete your profile and shows a short walkthrough. The **Onboarding Checklist** in the left sidebar then tracks the steps in this guide.
+On your first sign-in, Arklex asks you to complete your profile and shows a short walkthrough. The **Onboarding Checklist** in the left sidebar then tracks the steps in this guide, plus setting up metrics.
 
 ---
 
 ## Step 1: Connect an agent
 
-Go to **Agents** in the left sidebar and click **Connect Agent**.
-
-Fill in the form:
-
-<Steps>
-  <Step title="Name the agent">
-    Enter a descriptive **Agent Name**, for example `Banking Assistant`.
-  </Step>
-  <Step title="Choose the API type">
-    Select **Chat Completions** for most agents, **Agent to Agent (A2A)** for the A2A protocol, or **Custom HTTP** for any other JSON endpoint.
-  </Step>
-  <Step title="Add the endpoint URL">
-    Paste your agent's endpoint. For A2A, enter the agent's base URL instead.
-  </Step>
-  <Step title="Add auth headers">
-    Add any headers your endpoint requires, for example `Authorization: Bearer <token>`. Header values are encrypted at rest.
-  </Step>
-  <Step title="Set the body">
-    For Chat Completions, add the parameters and messages your endpoint expects. For Custom HTTP, write a request body template. A2A agents don't use a body.
-  </Step>
-</Steps>
+Go to **Agents** in the left sidebar and click **Connect Agent**. Enter an **Agent Name**, for example `Banking Assistant`. Choose the **API Type**, paste the **Endpoint URL**, and add any auth headers your endpoint needs. If your endpoint expects a request body, set it up as described in [Configure the request body](/agents#configure-the-request-body).
 
 Click **Test Connection** to check that the endpoint responds, then click **Connect Agent** to save.
 
@@ -58,16 +31,16 @@ Click **Test Connection** to check that the endpoint responds, then click **Conn
 
 ## Step 2: Add scenarios
 
-A scenario represents one type of simulated user: who they are, what they want, and what they know. You build scenarios with an assistant that asks you a few questions and then drafts them.
+A scenario describes one kind of conversation to test: who the simulated user is, what they want, and the assertions that decide whether your agent passes. You build scenarios with an assistant that asks you a few questions and then drafts them. See [How a scenario works](/scenarios#how-a-scenario-works).
 
 <Steps>
   <Step title="Add knowledge (optional)">
-    Knowledge grounds scenarios in your real content, so simulated users ask realistic, specific questions. Go to **Knowledge** and add websites or upload documents. For this example, upload the bank's policy and FAQ documents. Wait until each item shows **Success**.
+    Knowledge grounds scenarios in your real content, and the judge checks your agent's answers against it. Go to **Knowledge** and add websites or upload documents. For this example, upload the bank's policy and FAQ documents. Wait until each item shows **Success**.
 
     <video controls muted playsInline preload="metadata" title="Uploading bank documents to the knowledge base" src="/videos/add-knowledge.mp4" style={{ width: "100%", aspectRatio: "1.6", borderRadius: "8px" }} />
   </Step>
   <Step title="Create a group">
-    Go to **Scenarios**, click **Create group**, name it (for example `Core Support`), and click **Create**. Then open the group.
+    Go to **Scenarios**, click **Create group**, name it (for example `Core Support`), and click **Create**. The group opens.
   </Step>
   <Step title="Start the assistant">
     Click **Add Scenarios**, then choose **Build with Assistant**.
@@ -79,7 +52,7 @@ A scenario represents one type of simulated user: who they are, what they want, 
     Confirm the goals to test and how many scenarios to write for each, then click **Send answers**. Next, choose the knowledge to use (select **My whole knowledge base** for this example). Then describe your customers, or choose **None**.
   </Step>
   <Step title="Generate and save">
-    Click **Generate** to write the scenarios. Review the drafts on the **Scenarios** tab, then click **Save N selected**.
+    Click **Generate N** to write the scenarios. Each draft comes with a user goal checklist and assertions. Review the drafts on the **Scenarios** tab, edit any assertion that doesn't match what your agent should do, then click **Save N selected**.
   </Step>
 </Steps>
 
@@ -101,8 +74,8 @@ A simulation runs your scenarios against the connected agent and records full co
   <Step title="Select scenarios">
     Choose the scenarios to include.
   </Step>
-  <Step title="Configure the conversations">
-    Set **Conversations per scenario** (default {conversationsPerScenarioDefault}, max {conversationsPerScenarioMax}) and **Max turns per conversation** (default {maxTurnsDefault}, max {maxTurnsMax}). Leave **Max concurrent conversations** at its default unless your agent struggles under load.
+  <Step title="Keep the defaults">
+    Leave the other settings as they are. See [Create a simulation](/simulations#create-a-simulation) for what each one does.
   </Step>
   <Step title="Run">
     Click **Run Simulation**.
@@ -119,7 +92,7 @@ The new simulation appears at the top of the list. Click it to open the detail p
 
 ## Step 4: Run an evaluation and review results
 
-An evaluation checks each conversation against its scenario's assertions and scores it with an LLM judge. Once the simulation shows **Completed**, go to **Evaluations** and click **New Evaluation**.
+An evaluation grades each conversation with its scenario's assertions, and scores it on the metrics you pick with an LLM judge. Once the simulation shows **Completed**, go to **Evaluations** and click **New Evaluation**.
 
 <Steps>
   <Step title="Choose what to evaluate">
@@ -131,24 +104,16 @@ An evaluation checks each conversation against its scenario's assertions and sco
   <Step title="Select simulation">
     Select the simulation you just ran.
   </Step>
-  <Step title="Select metrics">
-    **Helpfulness**, **Coherence**, and **Relevance** are selected by default. Add any other built-in or custom metrics you care about.
-  </Step>
-  <Step title="Choose a model">
-    Pick the **Provider** and **Model** the judge uses, or keep the default.
+  <Step title="Keep the default metrics and model">
+    **Helpfulness**, **Coherence**, and **Relevance** are selected, along with a default judge model. See [Create an evaluation](/evaluations#create-an-evaluation) for the other options.
   </Step>
   <Step title="Run the evaluation">
-    Click **Run Evaluation**. The status changes to **Completed** when scoring is done.
+    Click **Run Evaluation**. The status changes to **Completed** when grading is done.
   </Step>
   <Step title="Review the results">
-    Click the completed evaluation to open its detail page:
+    Click the completed evaluation. The **Overview** tab shows how many conversations passed, the metric scores, and the failure patterns that recur across conversations.
 
-    - **Quantitative Metrics** opens with **Conversations passed**, the share of conversations whose assertions all passed. Below it, each metric shows its average score with a band label (Excellent, Good, Needs Improvement, or Poor).
-    - **Qualitative Metrics** shows label distributions for categorical metrics.
-    - **Unique Errors** lists failed assertions and behavioral failures found by the judge.
-    - **Conversations** lists every conversation with its **Result** (Pass or Fail) and how many assertions passed.
-
-    Click any conversation row to open the transcript. Expand **Assertions** to see why each check passed or failed, and click **metrics** under an agent turn to see that turn's scores.
+    Click a conversation in the **Failed** list. Its **Assertions** section, above the transcript, shows which check failed and why. See [Read an evaluation's results](/evaluations#read-an-evaluations-results).
   </Step>
 </Steps>
 
@@ -163,7 +128,7 @@ An evaluation checks each conversation against its scenario's assertions and sco
 Your first evaluation is the loop you'll repeat as your agent evolves. From here:
 
 - [Invite your team](/settings) so reviewers can add **annotations** and calibrate judge scores against human judgment.
-- [Add assertions](/scenarios#assertions) to your scenarios to define exactly what a passing conversation looks like.
+- [Add assertions](/scenarios#assertions), such as **Text match** and **Tool calls**, to define exactly what a passing conversation looks like.
 - [Add more agents](/agents) to compare versions or test different prompts and models against the same scenarios.
 - [Customize metrics](/metrics) to score behaviors specific to your domain.
 - [Capture tool calls](/tool-tracing) to see and check the tools your agent calls.

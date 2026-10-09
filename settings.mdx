@@ -5,7 +5,7 @@ description: "Manage your profile, team members, API keys, usage, and billing."
 
 import { profilePhotoMb, apiKeyNameChars, invitationDays, freePlanConcurrentOps } from "/snippets/limits.mdx";
 
-The **Settings** page manages your personal profile and your organization's team, API keys, usage, and billing. Go to **Settings** in the sidebar. The page has five tabs: **Profile**, **Members**, **API keys**, **Usage**, and **Billing**.
+The **Settings** page manages your personal profile and your organization's team, API keys, usage, and billing. Go to **Settings** in the sidebar. The page has five tabs: **Profile**, **Members**, **API keys**, **Usage**, and **Billing**. **Billing** is cloud only, so self-hosted deployments show the first four.
 
 ---
 
@@ -31,10 +31,12 @@ The **Members** tab shows everyone in your organization and lets Owners manage a
 
 | Role | Permissions |
 | --- | --- |
-| **Owner** | Full access, including inviting and removing members, creating API keys, changing the plan and spending cap, editing the company name, running and approving MCP tools, and resolving annotations. |
-| **Member** | Access to agents, scenarios, simulations, evaluations, knowledge, metrics, and MCP servers. Can view the team list, usage, and billing, but can't manage members, change billing, or create API keys. |
+| **Owner** | Full access, including inviting and removing members, creating API keys, changing the plan and spending cap (cloud only), editing the company name, running and approving MCP tools, and resolving annotations. |
+| **Member** | Access to agents, scenarios, simulations, evaluations, knowledge, metrics, and MCP servers. Can view the team list, usage, and billing (cloud only), but can't manage members, change billing, or create API keys. |
 
 **Invite a teammate**: click **Add New Member**, enter the **Email Address**, choose a **Role** (**Owner** or **Member**), and click **Send Invitation**. The invitee gets an email with a link to join. People without an account can sign up from the invite. Invitations expire after {invitationDays} days.
+
+If your self-hosted deployment doesn't have email set up, the invitee gets no email. Open the menu on the invitation, click **Copy Invite Link**, and send the link yourself.
 
 **Manage invitations**: Owners can open the **Invited** list to see pending and expired invitations. Open the menu on an invitation to **Copy Invite Link**, **Resend Invite** (which restarts the {invitationDays} days), or **Revoke Invite**.
 
@@ -50,9 +52,9 @@ The **API keys** tab lets Owners create keys for the [Arklex Platform API](/api)
 
 1. Click **Create key**.
 2. Enter a **Name** (up to {apiKeyNameChars} characters) and click **Create key**.
-3. Copy the key from the **Copy your API key** dialog, then click **I have copied it**. This is the only time the key is shown.
+3. Copy the key from the **Copy your API key** dialog, then click **Done**. This is the only time the key is shown.
 
-The keys table shows each key's name, the start of the key, when it was created, and when it was last used. To revoke a key, click its trash icon and confirm. Revoking takes effect immediately.
+The keys table shows each key's name, the start of the key, when it was created, and when it was last used. To revoke a key, click its trash icon, then click **Delete**. Revoking takes effect immediately.
 
 A key acts for your whole organization. It can't access billing, members, or key management. Keys don't expire, but a key stops working if the Owner who created it leaves or is removed from the organization.
 
@@ -70,6 +72,10 @@ The **Usage** tab shows how much your organization has used Arklex over a date r
 
 ## Billing
 
+<Note>
+  **Cloud only.** Self-hosted deployments have no plans, token allowances, overage, or **Billing** tab.
+</Note>
+
 The **Billing** tab shows your current plan, your token usage for the billing period, and your overage controls. Only Owners can change the plan or the spending cap.
 
 ### Plans
@@ -84,12 +90,12 @@ The **Billing** tab shows your current plan, your token usage for the billing pe
 | **Concurrent operations** | {freePlanConcurrentOps} at a time for each type of operation | No plan limit | No plan limit |
 | **Overage** | None. Operations pause at the limit. | \$0.01 per 1K input tokens, \$0.05 per 1K output tokens | Custom |
 | **Overage ceiling** | None | \$2,000/month default, with a custom spending cap | Custom |
-| **Support** | Email | Email | Dedicated CSM and SLA |
+| **Support** | Community | Email | Dedicated CSM and SLA |
 | **Extras** | None | None | Bring your own LLM, on-prem deployment |
 
 ### Token usage
 
-Three meters track your usage. Each bar turns amber at 80% (**Approaching limit**) and red at 100% (**Allowance exceeded**).
+The **Usage** section has three meters. Each bar turns amber at 80% (**Approaching limit**) and red at 100% (**Allowance exceeded**).
 
 | Meter | Resets | Counts |
 | --- | --- | --- |
@@ -127,7 +133,7 @@ To set a lower cap, click **Adjust cap** under **Spending cap**. Enter a monthly
 Click your organization name at the bottom of the sidebar to open the account menu. From there, you can:
 
 - Switch between your organizations under **Organizations**. Your role can differ in each one. To join another organization, accept an invite from it. You can't create new organizations yourself.
-- Choose a **Theme**: **Light**, **Dark**, or **System**.
+- Choose a light, dark, or system **Theme** with the icons next to it.
 - **Log out**.
 - See the version of the app you're using. Include it when you contact support.
 

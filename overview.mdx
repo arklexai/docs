@@ -7,7 +7,7 @@ Arklex Platform helps you validate AI agents before they interact with real user
 
 It all comes together in a three-step workflow:
 
-1. **Scenarios** define who your simulated users are, what they want, and what they know. Each scenario can also carry **assertions** that decide whether a conversation passes.
+1. **Scenarios** define who your simulated users are, what they want, and when they're done. Each scenario also carries **assertions** that decide whether a conversation passes.
 2. **Simulations** run those scenarios against a connected agent and record full multi-turn transcripts.
 3. **Evaluations** check each conversation against its scenario's assertions and score it with LLM-judged metrics. You can add **custom metrics** for domain-specific behaviors. Reviewers can use **annotations** to correct judge scores they disagree with.
 
@@ -32,8 +32,8 @@ It all comes together in a three-step workflow:
 | Term | Meaning |
 | --- | --- |
 | **Agent** | The AI system you test, connected by its HTTP endpoint. |
-| **Scenario** | One type of simulated user: their goal, profile, and knowledge. Scenarios live in **scenario groups**. |
-| **User goal checklist** | The items that tell the simulated user when it's done. It ends the conversation but doesn't grade the agent. |
+| **Scenario** | One type of conversation to test: the simulated user's goal, profile, and checklist, plus the assertions and knowledge used to grade it. Scenarios live in **scenario groups**. |
+| **User goal checklist** | The goal broken into items. The conversation ends when every Required item is met. It doesn't grade the agent. |
 | **Assertion** | A check on a scenario that decides whether a conversation passes. |
 | **Simulation** | One run of selected scenarios against an agent. It produces conversations. |
 | **Conversation** | One simulated user talking to your agent, from the first message to the end. |
@@ -42,6 +42,20 @@ It all comes together in a three-step workflow:
 | **Metric** | What the LLM judge scores, per turn or per conversation. |
 | **LLM judge** | The model that scores conversations against your metrics and LLM judge assertions. |
 | **Annotation** | A reviewer's own score for a turn or conversation, kept alongside the judge's score. |
+
+---
+
+## Cloud and self-hosted
+
+Arklex Platform runs as a cloud service, or self-hosted in your own infrastructure. The features are the same, with these differences:
+
+| | Cloud | Self-hosted |
+| --- | --- | --- |
+| **Billing, plans, and token allowances** | Yes. See [Billing](/settings#billing). | None. Nothing is metered against a plan. |
+| **Private and `localhost` endpoints** | Blocked. Agents and MCP servers need public URLs. | Allowed by default. Your operator can block them. |
+| **Invitation emails** | Sent. | Sent only if your operator set up email. Otherwise, copy the invite link. |
+
+The docs mark content that applies to one deployment with **Cloud only** or **Self-hosted**.
 
 ---
 
@@ -90,7 +104,7 @@ Turn on tool call capture to record every tool your agent calls during a simulat
 
 ### Human-in-the-loop calibration
 
-When your team disputes a judge score, reviewers add their own in the **Annotations** section without overwriting it. The **Annotation Calibration** section then shows how often the judge agrees with your team for each metric. Use it to find the metrics whose prompts need work.
+When your team disputes a judge score, reviewers add their own on the **Annotations** tab without overwriting it. The **Annotation Calibration** tab then shows how often the judge agrees with your team for each metric. Use it to find the metrics whose prompts need work.
 
 <Frame>
   ![The calibration loop: the LLM judge scores, humans flag disagreements, the calibration section surfaces drift, and the team refines the metric prompt](/images/calibration-loop.png)

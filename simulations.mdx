@@ -86,7 +86,7 @@ Click **New Simulation** to open the creation sheet.
 </ParamField>
 
 <ParamField path="Provider and Model" type="string">
-  The LLM that plays the simulated user and decides when each turn ends. Choose a **Provider** (Anthropic, OpenAI, or Google), then a **Model**. A default is selected for you.
+  The LLM that plays the simulated user and judges its checklist. Choose a **Model**. If your deployment offers more than one provider, choose the **Provider** first. A default is selected for you.
 </ParamField>
 
 <Frame>
@@ -99,7 +99,7 @@ Click **Run Simulation**. The sheet closes and the new simulation appears at the
 
 ### How a conversation ends
 
-A conversation can end before it reaches the max turns. This happens when the simulated user completes the scenario's required checklist items, gives up, or the agent refuses or hands off the conversation.
+A conversation can end before it reaches the max turns: when every Required checklist item is met, when the agent refuses or hands off, or when the simulated user runs out of patience. See [How a conversation ends](/scenarios#how-a-conversation-ends).
 
 ---
 
@@ -119,7 +119,7 @@ The conversations table lists one row per conversation:
 | **Goal** | The scenario's goal. |
 | **Turns** | The number of exchanges in the conversation. |
 | **Status** | **Done**, **Running**, **Pending** (waiting for a free slot), **Failed**, or **Cancelled**. Hover over **Failed** to see the error. |
-| **Tool calls** | Whether tool calls were captured. Shown only when the simulation captures tool calls. |
+| **Tool calls** | Whether tool calls were captured. Blank when the simulation didn't capture tool calls. |
 
 Click any row to open the transcript. In the transcript view:
 
@@ -164,6 +164,6 @@ Open the menu on any simulation row for these actions:
   </Accordion>
 
   <Accordion title="Can I run multiple simulations against the same agent at once?">
-    Yes. On the Free plan, you can have up to {freePlanConcurrentOps} simulations pending or running at once. Keep in mind that all of them call the same agent endpoint.
+    Yes. Keep in mind that all of them call the same agent endpoint. On the cloud Free plan, you can have up to {freePlanConcurrentOps} simulations pending or running at once.
   </Accordion>
 </AccordionGroup>

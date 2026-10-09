@@ -50,7 +50,9 @@ Click **Connect Agent**, then fill in the form.
 </ParamField>
 
 <Warning>
-  Your endpoint must be reachable from the public internet. Arklex blocks private, loopback (`localhost`), and link-local addresses. To test an agent running on your machine, expose it through a public tunnel.
+  **Cloud:** your endpoint must be reachable from the public internet. Arklex blocks private, loopback (`localhost`), and link-local addresses. To test an agent running on your machine, expose it through a public tunnel.
+
+  **Self-hosted:** private and `localhost` addresses are allowed by default. Your operator can block them by setting `ARKDOCK_ALLOW_PRIVATE_ENDPOINTS` to `false`. Link-local and cloud metadata addresses are blocked on every deployment.
 </Warning>
 
 <ParamField path="Headers" type="object">
@@ -83,11 +85,11 @@ On every turn, Arklex sends your messages followed by the full conversation so f
   Click **Import JSON** next to **Messages** and paste a raw request body. Arklex replaces the current parameters and messages with its contents.
 </Tip>
 
-**Agent to Agent (A2A)** agents don't use a body. If the **Body** table has rows, delete them before you save.
+**Agent to Agent (A2A)** agents don't use a body. The **Body** table starts with a `model` row, so delete every row before you save.
 
 **Custom HTTP** has these fields:
 
-- **Request Body Template**: the JSON body to send. It must include `{{message}}`, which Arklex replaces with the simulated user's message. Use the **Insert variable** buttons to add `{{chat_id}}` or `{{timestamp}}`. Each variable must be an entire string value, for example `"query": "{{message}}"`. Use **Import template** to start from the OpenAI (chat completions) template.
+- **Request Body Template**: the JSON body to send. It must include `{{message}}`, which Arklex replaces with the simulated user's message. Use the **Insert variable** buttons to add `{{chat_id}}` or `{{timestamp}}`. Each variable must be an entire string value, for example `"query": "{{message}}"`. **Import template** fills in the OpenAI (chat completions) template. It also replaces the **Endpoint URL**, **Headers**, and **Response Path**, and clears **Additional Fields**.
 - **Response Path**: the dot-path to the reply text in the response, for example `data.reply` or `choices.0.message.content`.
 - **Additional Fields**: optional. Other response fields to include in the reply, such as links. Each row has a **Path**, a **Label**, and a **Format**.
 
@@ -126,13 +128,13 @@ Each agent's detail page has three tabs:
     </Frame>
   </Tab>
   <Tab title="Configuration">
-    The same fields as the **Connect Agent** form, filled in with the saved values. Edit any field, then:
+    The same fields as the **Connect Agent** form, except **Method**, filled in with the saved values. Edit any field, then:
 
     - **Save**: saves your changes. **Save** and **Discard** appear after you edit a field.
     - **Discard**: resets everything to the last saved values.
     - **Test Connection**: tests the values currently in the form, including unsaved edits.
 
-    Saved header values load as a masked placeholder. Leave the placeholder unchanged to keep the saved value, or replace it to update it. If you rename a header or change the endpoint, re-enter the header value. Deleting a header row removes that header.
+    Saved header values load as a masked placeholder. Leave it unchanged to keep the saved value, or type a new value to replace it. Renaming a header clears its value, so re-enter it. If you change the endpoint, **Save** keeps the saved values and sends them to the new endpoint, but **Test Connection** asks you to re-enter them first. Deleting a header row removes that header.
 
     The **Tool call tracing** card at the bottom of the tab shows how to send your agent's tool calls to Arklex. See [Tool call tracing](/tool-tracing).
 
@@ -142,5 +144,5 @@ Each agent's detail page has three tabs:
   </Tab>
 </Tabs>
 
-To delete an agent, click the trash icon next to its name on the detail page, or choose **Delete** from the menu on its card. You can't delete an agent while simulations use it. Delete their evaluations first, then the simulations, then the agent.
+To delete an agent, click the trash icon at the top right of its detail page, or choose **Delete** from the menu on its card. You can't delete an agent while simulations use it. Delete their evaluations first, then the simulations, then the agent.
 

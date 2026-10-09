@@ -5,6 +5,10 @@ description: "Run simulations and evaluations from scripts and CI pipelines with
 
 import {
   idempotencyKeyHours,
+  apiRequestsPerMinute,
+  apiRequestBurst,
+  connectionTestsPerMinute,
+  freePlanConcurrentOps,
 } from "/snippets/limits.mdx";
 
 The Arklex Platform API runs the same simulation and evaluation engine as the app. Use it to test your agent from a script or a CI pipeline, for example on every pull request.
@@ -37,10 +41,10 @@ To try requests in the app, open **API Reference**, paste your key into **Authen
 
 | Resource | Operations |
 | --- | --- |
-| **Connections** | Register, list, read, update, and delete the agents you test. Rotate their credentials and test their connection. Connections are called agents in the app. |
+| **Connections** | Register, list, read, update, and delete the agents you test, and test their connection. Connections are called agents in the app. Reads return header names, never values. To change headers, use `POST /connections/{id}/rotate-credentials`, which replaces the whole set. |
 | **Scenario groups** and **scenarios** | Create, list, and delete groups. Create and list scenarios. |
 | **Simulations** | Start, list, read, cancel, and delete simulations. Read their conversations. |
-| **Evaluations** | Start, list, read, cancel, and delete agent evaluations. Read scored conversations. |
+| **Evaluations** | Start, list, read, cancel, and delete agent evaluations. Read scored conversations. Each evaluation needs at least one metric. |
 | **Metrics** and **models** | List the metrics and models you can use. |
 
 Building scenarios with the assistant isn't available through the API.
@@ -119,9 +123,15 @@ Send an `Idempotency-Key` header on create requests so that a retry can't run tw
 - Same key while the first attempt is still running: `409 IDEMPOTENCY_IN_PROGRESS`.
 - Same key with a different body: `422 IDEMPOTENCY_KEY_REUSED`.
 
-Keys expire {idempotencyKeyHours} hours after the first attempt completes.
+A request rejected with `400`, `402`, or `429` didn't run, so you can retry it with the same key. Keys expire {idempotencyKeyHours} hours after the first attempt completes.
 
-### Limits
+### Rate and concurrency limits
 
-- `402 QUOTA_EXCEEDED`: your plan's allowance is used up. See [Settings](/settings#billing).
-- `429 RATE_LIMITED` or `429 CONCURRENCY_LIMIT_REACHED`: wait for the time in the `Retry-After` header, then retry.
+Two different limits return `429`. Handle them differently:
+
+| Error | Cause | What to do |
+| --- | --- | --- |
+| `429 RATE_LIMITED` | The API key sent too many requests: more than {apiRequestsPerMinute} per minute, with bursts up to {apiRequestBurst}. Connection tests have a tighter limit of {connectionTestsPerMinute} per minute. | Wait the number of seconds in the `Retry-After` header, then retry. |
+| `429 CONCURRENCY_LIMIT_REACHED` | **Cloud only.** On the Free plan, {freePlanConcurrentOps} simulations or {freePlanConcurrentOps} evaluations are already pending or running. `error.details` has the `limit` and the number `pending`. | No `Retry-After` header is sent. Poll your running simulations or evaluations, and retry when one reaches a final status. |
+
+`402 QUOTA_EXCEEDED` means your plan's token allowance is used up. It's **cloud only**. See [Billing](/settings#billing).
