@@ -3,6 +3,14 @@ title: "Tool call tracing"
 description: "Record the tools your agent calls during simulations by exporting OpenTelemetry traces to Arklex Platform."
 ---
 
+import {
+  traceRequestsPerMinute,
+  traceMibPerMinute,
+  traceRequestMib,
+  traceRequestMibUncompressed,
+  spansPerTraceRequest,
+} from "/snippets/limits.mdx";
+
 Tool call tracing records every tool your agent calls during a simulation: the tool name, its arguments, the result or error, and how long it took. You can then read the calls in transcripts, check them with assertions, and score them with the **Tool call behavior** metric.
 
 Arklex can't see inside your agent, so your agent sends its tool calls to Arklex as OpenTelemetry traces.
@@ -58,7 +66,7 @@ Export only from the deployment your simulations talk to. Arklex discards traces
 
 When you create a simulation, turn on **Capture tool calls**. If your agent sends traces in slow batches, raise **Trace wait time (seconds)** under **Advanced**. See [Simulations](/simulations#create-a-simulation) for the setting's range and default.
 
-Through the API, turn on trace capture when you create the simulation. See [API reference](/api).
+Through the API, turn on trace capture when you create the simulation. See [API overview](/api).
 
 ---
 
@@ -92,7 +100,7 @@ An evaluation of a simulation that just finished waits for its tool calls first.
 
 ## Limits
 
-Each organization can send up to 600 requests and 64 MiB of traces per minute. Each request can be up to 4 MiB (16 MiB uncompressed) and hold up to 2,000 spans.
+Each organization can send up to {traceRequestsPerMinute} requests and {traceMibPerMinute} MiB of traces per minute. Each request can be up to {traceRequestMib} MiB ({traceRequestMibUncompressed} MiB uncompressed) and hold up to {spansPerTraceRequest} spans.
 
 ---
 

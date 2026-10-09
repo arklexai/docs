@@ -3,6 +3,19 @@ title: "Scenarios"
 description: "Define the simulated users that interact with your agent during a simulation, and the assertions that decide whether a conversation passes."
 ---
 
+import {
+  scenariosPerRun,
+  historyUploadMb,
+  importFileMb,
+  scenarioNameChars,
+  goalChars,
+  userProfileChars,
+  agentContextChars,
+  knowledgePerScenario,
+  checklistItems,
+  assertionsPerScenario,
+} from "/snippets/limits.mdx";
+
 Scenarios define the simulated users that interact with your agent during a simulation. Each scenario specifies what the user wants (the **goal**), who they are (the **user profile**), and what they know (**knowledge**). A scenario can also carry **assertions**, which decide whether a conversation passes.
 
 <Note>
@@ -31,6 +44,57 @@ Inside a group, you can:
 - Switch between the **Scenarios** tab (saved scenarios) and the **Drafts** tab (work in progress).
 
 To delete a group, open the menu on its card and click **Delete**. You can't delete a group while any of its scenarios is used by a simulation. Deleting a group also deletes its unsaved drafts.
+
+---
+
+## Anatomy of a scenario
+
+Click a scenario in a group to open it. A scenario has these parts:
+
+| Field | Description |
+| --- | --- |
+| **User Profile** | Who the simulated user is: background, knowledge level, tone, and constraints. It can include a customer segment and attributes. |
+| **User Goal** | What the simulated user is trying to accomplish, written from their perspective. For example: "You think there's a charge on your account you don't recognize and you want it reversed." |
+| **User Goal Checklist** | Up to {checklistItems} items, each marked **Required** or **Optional**, that tell the simulated user when it's done. |
+| **Assertions** | The checks that decide whether a conversation passes. See [Assertions](#assertions). |
+| **Agent Context** | What the agent is and what it does, from the simulated user's point of view. |
+| **Knowledge** | Up to {knowledgePerScenario} passages the simulated user can draw on. |
+
+The knowledge passages are copied into the scenario when you create it. Later changes to your knowledge base, including deleting an item, don't change saved scenarios.
+
+<Tip>
+  Knowledge grounds what the **simulated user** knows and asks about, not the agent's answers. It also shapes the generated checklist and assertions. Grounding scenarios in the same material your agent uses is a good way to test whether the agent stays faithful to it.
+</Tip>
+
+---
+
+## Assertions
+
+Assertions are the checks that decide whether a conversation passes. Three things shape a conversation's result, and only assertions decide it:
+
+- **Assertions** grade the agent. A conversation passes only if every assertion passes. A scenario with no assertions shows **Not evaluated**.
+- The **user goal checklist** tells the simulated user when it's done, so it controls when the conversation ends. It doesn't grade the agent. For example, an agent that correctly refuses to cancel a shipped order passes, even though the user wanted it cancelled.
+- **Metrics** add scores from the LLM judge but don't change the result. See [Metrics](/metrics).
+
+Use assertions for must-have behaviors, and metrics for quality you want to track over time.
+
+The assistant writes assertions for each scenario it drafts. To add or change them, open the scenario, click **Edit**, and click **Add assertion** in the **Assertions** section. There are three kinds:
+
+| Kind | What it checks |
+| --- | --- |
+| **LLM judge** | Reads the whole conversation and checks a behavior you describe. Best for refusals, steps, and policy. |
+| **Text match** | Checks agent replies for text, ignoring case. Choose **Any reply contains**, **No reply contains**, or **Any reply matches**, which takes a regular expression. Best for IDs and secrets. |
+| **Tool calls** | Checks the tools the agent called. List the tools it **Must call** and the tools it **Must never call**. Under **Order and arguments**, choose **Exact order**, **Any order**, **At least these**, or **Only these tools**, and optionally match arguments. |
+
+**Tool calls** assertions need tool call capture. Turn on **Capture tool calls** when you start the simulation. See [Tool call tracing](/tool-tracing).
+
+<Frame>
+  ![A scenario with a Tool calls assertion](/images/scenario-assertions.png)
+</Frame>
+
+A scenario can have up to {assertionsPerScenario} assertions, including at most one **Tool calls** assertion. Changes to assertions apply to new simulations.
+
+Each conversation's result appears when you run an evaluation. See [Evaluations](/evaluations).
 
 ---
 
@@ -75,7 +139,7 @@ Choose **Build with Assistant**. The assistant asks you a few questions about yo
     Choose **Describe your customer segments** to paste your own research, or click **Suggest some for me**. You can also choose **None**. Next, add any attributes that should vary between simulated users, such as plan type or age.
   </Step>
   <Step title="Generate">
-    Click **Generate** to write the scenarios. One run writes at most 100 scenarios. To write more, click **Generate** again. Click **Stop** to cancel a run in progress.
+    Click **Generate** to write the scenarios. One run writes at most {scenariosPerRun} scenarios. To write more, click **Generate** again. Click **Stop** to cancel a run in progress.
   </Step>
   <Step title="Review and save">
     The drafts appear on the **Scenarios** tab, already selected. Review them, clear any you don't want, and click **Save N selected**.
@@ -106,13 +170,17 @@ The session header shows the model the assistant uses. Choose a different model 
 
 #### Leave and come back
 
-The assistant saves your conversation as you go, and generation keeps running if you leave the page. To return, open the group's **Drafts** tab, or click **History** in the session header. Only you can see your unsaved sessions.
+The assistant saves your conversation as you go, and generation keeps running if you leave the page. Only you can see your unsaved sessions.
+
+To return, click **History** in the session header, or open the group's **Drafts** tab. The **Drafts** tab lists your unsaved sessions in the group. Each row shows how the session started and how many drafts are saved and unsaved. Click a row to continue where you left off. Saved scenarios move to the **Scenarios** tab.
+
+Groups created before the assistant existed may also show **Unfinished runs from earlier generation methods** on the **Drafts** tab. You can't continue these runs.
 
 ### Build from conversation history
 
 Choose **From Conversation History** to start the same assistant session, but first reads your past conversations. The assistant proposes goals, scenario counts, customer segments, and attributes based on what it finds. Click **Use it as it is** to accept the proposal, or **Adjust the counts** to change it. The session then continues with the knowledge question.
 
-Upload a `.json` or `.jsonl` file of up to 256 MB:
+Upload a `.json` or `.jsonl` file of up to {historyUploadMb} MB:
 
 - **JSON**: a list of conversations.
 - **JSONL**: one conversation per line.
@@ -138,79 +206,77 @@ This option is most useful once you have production traffic and want your scenar
 
 Choose **Import a File** to upload scenarios you already have. The import has three steps: **Upload**, **Edit**, and **Review**.
 
-1. **Upload**: select a `.json` or `.csv` file of up to 10 MB. Click **Download template** for an example file.
+1. **Upload**: select a `.json` or `.csv` file of up to {importFileMb} MB. Click **Download template** for an example file.
 2. **Edit**: review the parsed scenarios. Fix errors, add or delete scenarios, and edit fields.
 3. **Review**: check the summary and click **Import N Scenarios**. Rows with errors are skipped.
 
 Each scenario needs a goal, a user profile, and an agent context. The other fields are optional.
 
-| JSON key or CSV column | Required | Description |
+| Field | Required | Description |
 | --- | --- | --- |
-| `name` | No | Scenario name, up to 100 characters. |
-| `goal` | Yes | What the simulated user wants, up to 1,000 characters. |
-| `user_profile` | Yes | Who the simulated user is, up to 3,000 characters. |
-| `agent_context` | Yes | What the agent is and does, up to 2,000 characters. |
-| `knowledge_name`, `knowledge_content` | No | One knowledge passage. Add `_2` to `_5` for more, up to 5 per scenario. |
-| `checklist_description`, `checklist_satisfied_when`, `checklist_mandatory` | No | One user goal checklist item. Add `_2` to `_4` for more. |
+| `name` | No | Scenario name, up to {scenarioNameChars} characters. |
+| `goal` | Yes | What the simulated user wants, up to {goalChars} characters. |
+| `user_profile` | Yes | Who the simulated user is, up to {userProfileChars} characters. |
+| `agent_context` | Yes | What the agent is and does, up to {agentContextChars} characters. |
+| `knowledge` | No | Up to {knowledgePerScenario} knowledge passages. |
+| `goal_checklist` | No | Up to {checklistItems} user goal checklist items. |
+| `assertions` | No | The scenario's [assertions](#assertions). JSON files only. |
 
-A JSON file can be a list of scenarios, or an object with the list under `scenarios`, `items`, or `data`. You can include assertions in JSON files only.
+<Tabs>
+  <Tab title="JSON">
+    A JSON file is a list of scenarios, or an object with the list under `scenarios`, `items`, or `data`. Each knowledge passage has a `name` and `content`. Each checklist item has a `description`, an optional `satisfied_when`, and `mandatory`.
+
+    ```json
+    {
+      "scenarios": [
+        {
+          "name": "Lost card replacement",
+          "goal": "You lost your debit card yesterday and want it blocked and replaced.",
+          "user_profile": "You are a busy nurse who wants this sorted quickly.",
+          "agent_context": "A banking assistant for a retail bank.",
+          "knowledge": [
+            { "name": "Card policy", "content": "Lost cards are blocked right away. Replacements arrive in 5 business days." }
+          ],
+          "goal_checklist": [
+            { "description": "Agent blocks the card", "mandatory": true },
+            { "description": "Agent says when the replacement arrives", "mandatory": false }
+          ],
+          "assertions": [
+            { "type": "llm_judge", "expected": "The agent verifies the customer's identity before blocking the card." },
+            { "type": "text_match", "op": "not_contains", "value": "full card number" },
+            {
+              "type": "tool_calls",
+              "match_mode": "contains",
+              "expected": [{ "name": "block_card" }],
+              "forbidden": [{ "name": "close_account" }]
+            }
+          ]
+        }
+      ]
+    }
+    ```
+
+    Each assertion has a `type` and the fields for that kind:
+
+    | `type` | Fields |
+    | --- | --- |
+    | `llm_judge` | `expected`: the behavior to check. |
+    | `text_match` | `op` (`contains`, `not_contains`, or `matches`) and `value`. |
+    | `tool_calls` | `expected` and `forbidden`: lists of tools by `name`. `match_mode`: `strict` (Exact order), `unordered` (Any order), `contains` (At least these), or `within` (Only these tools). To check arguments, add `arguments` and `arg_match_mode` (`partial` or `exact`) to a tool. |
+  </Tab>
+  <Tab title="CSV">
+    A CSV file has one scenario per row, with the field names above as column headers.
+
+    - **Knowledge**: use `knowledge_name` and `knowledge_content` for the first passage. For more, add `_2`, `_3`, and so on, for example `knowledge_name_2`, up to {knowledgePerScenario} passages.
+    - **Checklist**: use `checklist_description`, `checklist_satisfied_when`, and `checklist_mandatory` for the first item. For more, add `_2`, `_3`, and so on, up to {checklistItems} items.
+
+    CSV files can't include assertions. Add them after the import, or use a JSON file.
+  </Tab>
+</Tabs>
 
 <Frame>
   ![The Import a File wizard with the Upload, Edit, and Review steps](/images/import-a-file.jpg)
 </Frame>
-
----
-
-## Drafts
-
-The **Drafts** tab lists your unsaved assistant sessions in the group. Each row shows how the session started and how many drafts are saved and unsaved. Click a row to continue where you left off. Saved scenarios move to the **Scenarios** tab.
-
-Groups created before the assistant existed may also show **Unfinished runs from earlier generation methods**. You can't continue these runs.
-
----
-
-## Anatomy of a scenario
-
-Click a scenario in a group to open it. A scenario has these parts:
-
-| Field | Description |
-| --- | --- |
-| **User Profile** | Who the simulated user is: background, knowledge level, tone, and constraints. It can include a customer segment and attributes. |
-| **User Goal** | What the simulated user is trying to accomplish, written from their perspective. For example: "You think there's a charge on your account you don't recognize and you want it reversed." |
-| **User Goal Checklist** | Up to four items, each marked **Required** or **Optional**, that tell the simulated user when it's done. The checklist ends the conversation. It doesn't grade the agent. |
-| **Assertions** | The checks that decide whether a conversation passes. See [Assertions](#assertions). |
-| **Agent Context** | What the agent is and what it does, from the simulated user's point of view. |
-| **Knowledge** | Up to five passages the simulated user can draw on. |
-
-The knowledge passages are copied into the scenario when you create it. Later changes to your knowledge base, including deleting an item, don't change saved scenarios.
-
-<Tip>
-  Knowledge grounds what the **simulated user** knows and asks about, not the agent's answers. It also shapes the generated checklist and assertions. Grounding scenarios in the same material your agent uses is a good way to test whether the agent stays faithful to it.
-</Tip>
-
----
-
-## Assertions
-
-Assertions are the checks that decide whether a conversation passes. A conversation passes only if every assertion passes. The goal checklist only decides when the simulated user is done. For example, an agent that correctly refuses to cancel a shipped order passes, even though the user wanted it cancelled.
-
-The assistant writes assertions for each scenario it drafts. To add or change them, open the scenario, click **Edit**, and click **Add assertion** in the **Assertions** section. There are three kinds:
-
-| Kind | What it checks |
-| --- | --- |
-| **LLM judge** | Reads the whole conversation and checks a behavior you describe. Best for refusals, steps, and policy. |
-| **Text match** | Checks agent replies for exact text, ignoring case. Choose **Any reply contains**, **No reply contains**, or **Any reply matches**. Best for IDs and secrets. |
-| **Tool calls** | Checks the tools the agent called. List the tools it **Must call** and the tools it **Must never call**. Under **Order and arguments**, choose **Exact order**, **Any order**, **At least these**, or **Only these tools**, and optionally match arguments. |
-
-**Tool calls** assertions need tool call capture. Turn on **Capture tool calls** when you start the simulation. See [Tool call tracing](/tool-tracing).
-
-<Frame>
-  ![A scenario with a Tool calls assertion](/images/scenario-assertions.png)
-</Frame>
-
-A scenario can have up to 50 assertions, including at most one **Tool calls** assertion. Changes to assertions apply to new simulations.
-
-Each conversation's result appears when you run an evaluation. See [Evaluations](/evaluations).
 
 ---
 
@@ -222,33 +288,15 @@ Each conversation's result appears when you run an evaluation. See [Evaluations]
 
 **Delete**: in the group's **Scenarios** tab, click the trash icon on the scenario's row and confirm. You can't delete a scenario that a simulation has used.
 
----
-
-## Select scenarios for a simulation
-
-When you create a simulation, the **Scenarios** field lists your scenarios by group. You can:
-
-- Select individual scenarios with their checkbox.
-- Select every scenario in a group with **Select Group**, or clear it with **Deselect Group**.
-- Select every scenario with **Select All**, or clear the selection with **Deselect All**.
-- Search by goal text.
-- Click a scenario to preview its goal, profile, agent context, and knowledge.
+To choose scenarios for a simulation, see [Create a simulation](/simulations#create-a-simulation).
 
 ---
 
 ## FAQ
 
 <AccordionGroup>
-  <Accordion title="How many scenarios can I generate at once?">
-    One run of the assistant writes up to 100 scenarios. Click **Generate** again to write more. For a first pass, 10 to 15 scenarios covering your most important user intents is a good starting point.
-  </Accordion>
-
-  <Accordion title="How many scenarios should I include in a simulation?">
-    Start with 5 to 15 scenarios covering your most important intents. Once you've reviewed the results, run a new simulation with a broader set.
-  </Accordion>
-
-  <Accordion title="Can I leave the assistant and come back later?">
-    Yes. Your session is saved as you go, and generation keeps running in the background. Return to it from the group's **Drafts** tab or from **History** in the session header.
+  <Accordion title="How many scenarios should I start with?">
+    Start with 10 to 15 scenarios covering your most important user intents. Once you've reviewed the results, run a new simulation with a broader set.
   </Accordion>
 
   <Accordion title="Do I need knowledge to build scenarios?">
@@ -261,13 +309,5 @@ When you create a simulation, the **Scenarios** field lists your scenarios by gr
     - **Too vague:** "Talk to the agent about your account."
     - **Too prescriptive:** "Say 'I want to dispute charge #12345 on account #67890 from 2024-01-15 and I expect a refund within 3 days.'"
     - **Good:** "You spotted a \$240 charge you don't recognize on last month's statement and want it investigated and refunded."
-  </Accordion>
-
-  <Accordion title="What's the difference between the checklist and assertions?">
-    The user goal checklist tells the simulated user when it's done, so it controls when the conversation ends. Assertions grade the agent and decide whether the conversation passes.
-  </Accordion>
-
-  <Accordion title="How do scenario versions work?">
-    Each time you save a change to a scenario, a new version is created. Simulations record which version of each scenario they used, so historical results stay accurate even if the scenario changes later.
   </Accordion>
 </AccordionGroup>

@@ -22,6 +22,8 @@ Thank you for your interest in contributing to our documentation! This guide wil
 
 Run `mint broken-links` before you open a pull request.
 
+If you change a limit, such as a maximum or a default, edit it in `snippets/limits.mdx`. The **Limits** page and the feature pages read it from there.
+
 ## Writing guidelines
 
 Follow the terminology, style, and content rules in [AGENTS.md](AGENTS.md). In short:

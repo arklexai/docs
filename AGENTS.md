@@ -7,6 +7,7 @@
 - Configuration lives in `docs.json`
 - Run `mint dev` to preview locally
 - Run `mint broken-links` to check links
+- Limits that appear on more than one page live in `snippets/limits.mdx`. Import the variable instead of typing the number, so every page stays in sync
 
 ## Terminology
 
@@ -19,7 +20,7 @@
 ## Style preferences
 
 - Use active voice and second person ("you")
-- Keep sentences concise — one idea per sentence
+- Keep sentences concise: one idea per sentence
 - Use sentence case for headings
 - Bold for UI elements: Click **Settings**
 - Code formatting for file names, commands, paths, and code references

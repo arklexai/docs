@@ -3,6 +3,10 @@ title: "Annotations"
 description: "Add human judgment to evaluation results and calibrate LLM judge scores."
 ---
 
+import {
+  commentChars,
+} from "/snippets/limits.mdx";
+
 Annotations let your team score evaluation results with their own judgment, alongside the LLM judge's automated scores. Reviewers enter their own values, Owners resolve disagreements, and the resolved scores show how well the judge agrees with your team. You can export the results to CSV for stakeholders who aren't on the platform.
 
 <Note>
@@ -117,7 +121,7 @@ Comments are separate from scores and are for free-form discussion. Everyone wit
 
 <Tabs>
   <Tab title="Conversation comment">
-    Type in the box (up to 2,000 characters) and press Enter. Press Shift+Enter for a new line.
+    Type in the box (up to {commentChars} characters) and press Enter. Press Shift+Enter for a new line.
 
     <Frame>
       ![Adding a comment on a whole conversation](/images/annotations-convo-comment.png)
@@ -167,16 +171,8 @@ Anyone in the organization can export the file, and it includes every reviewer's
     Anyone in the organization can annotate. Only Owners can resolve, unresolve, and bulk-resolve.
   </Accordion>
 
-  <Accordion title="Can I change my annotation after saving it?">
-    Yes, as long as the row isn't resolved. Enter the new value and click **Save Annotation**. The new value replaces the previous one.
-  </Accordion>
-
   <Accordion title="What happens to annotations if I re-evaluate?">
     Annotations belong to the original evaluation. **Re-evaluate** creates a new evaluation with no annotations, and the original and its annotations stay as they are.
-  </Accordion>
-
-  <Accordion title="Can I annotate a turn the judge hasn't scored?">
-    No. Only turns the judge scored appear in the **Annotations** section.
   </Accordion>
 
   <Accordion title="Is there a limit on reviewers per evaluation?">

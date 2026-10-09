@@ -3,6 +3,13 @@ title: "Metrics"
 description: "Define what the LLM judge scores. Use built-in metrics or create custom ones with your own prompt."
 ---
 
+import {
+  metricNameChars,
+  metricDescriptionChars,
+  judgeMcpCallsPerTurn,
+  judgeMcpCallsPerConversation,
+} from "/snippets/limits.mdx";
+
 Metrics define what the LLM judge scores during an evaluation. Arklex Platform includes built-in metrics, and you can create custom metrics with your own scoring prompt.
 
 Metrics add scores to an evaluation. Whether a conversation passes or fails is decided separately, by the assertions on its scenario. See [Assertions](/scenarios#assertions).
@@ -47,11 +54,11 @@ The **Evaluates** column on the **Built-in** tab shows which metrics score the *
 Custom metrics let you score behaviors specific to your domain. Go to **Metrics**, click **Add Custom Metric**, and fill in the form:
 
 <ParamField path="Name" type="string" required>
-  A short label, for example "Identity Verification Compliance" or "Policy Accuracy". Names must start with a letter, can contain letters, digits, spaces, underscores, hyphens, and parentheses, and must be unique in your organization. Up to 100 characters.
+  A short label, for example "Identity Verification Compliance" or "Policy Accuracy". Names must start with a letter, can contain letters, digits, spaces, underscores, hyphens, and parentheses, and must be unique in your organization. Up to {metricNameChars} characters.
 </ParamField>
 
 <ParamField path="Description" type="string" required>
-  A short description of what the metric measures. Up to 512 characters.
+  A short description of what the metric measures. Up to {metricDescriptionChars} characters.
 </ParamField>
 
 <ParamField path="System Prompt" type="string" required>
@@ -120,7 +127,7 @@ When a metric uses MCP tools:
 
 - The user prompt template must include `{mcp_evidence}`, which holds the tool results.
 - A turn-scope metric must also include `{current_turn}`.
-- The judge can make up to 5 tool calls per turn and 20 per conversation.
+- The judge can make up to {judgeMcpCallsPerTurn} tool calls per turn and {judgeMcpCallsPerConversation} per conversation.
 - A turn with nothing to check isn't scored.
 - With more than one tool, use the **Required** switch to mark the tools the judge must call.
 
@@ -159,10 +166,6 @@ When you create an evaluation, the **Metrics** list shows your **Custom** metric
 
   <Accordion title="Can I use custom metrics alongside built-in ones?">
     Yes. Mix and match freely. Each metric is scored independently.
-  </Accordion>
-
-  <Accordion title="What's the difference between metrics and assertions?">
-    Assertions decide whether a conversation passes or fails. Metrics add scores that show how well the agent performed. Use assertions for must-have behaviors and metrics for quality you want to track over time.
   </Accordion>
 
   <Accordion title="Does the choice of judge model affect scores?">

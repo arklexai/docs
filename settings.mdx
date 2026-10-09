@@ -3,6 +3,8 @@ title: "Settings"
 description: "Manage your profile, team members, API keys, usage, and billing."
 ---
 
+import { profilePhotoMb, apiKeyNameChars, invitationDays, freePlanConcurrentOps } from "/snippets/limits.mdx";
+
 The **Settings** page manages your personal profile and your organization's team, API keys, usage, and billing. Go to **Settings** in the sidebar. The page has five tabs: **Profile**, **Members**, **API keys**, **Usage**, and **Billing**.
 
 ---
@@ -13,7 +15,7 @@ The **Profile** tab updates your account details:
 
 | Field | Description |
 | --- | --- |
-| Profile photo | Click your photo, choose a JPEG, PNG, or WebP file under 2 MB, crop it, and click **Apply**. |
+| Profile photo | Click your photo, choose a JPEG, PNG, or WebP file under {profilePhotoMb} MB, crop it, and click **Apply**. |
 | Full Name | Your name as it appears in evaluation results and shared views. |
 | Company | The name of the organization you're working in. Only Owners of that organization can edit it. |
 | Email | Your account email. Read-only. |
@@ -32,9 +34,9 @@ The **Members** tab shows everyone in your organization and lets Owners manage a
 | **Owner** | Full access, including inviting and removing members, creating API keys, changing the plan and spending cap, editing the company name, running and approving MCP tools, and resolving annotations. |
 | **Member** | Access to agents, scenarios, simulations, evaluations, knowledge, metrics, and MCP servers. Can view the team list, usage, and billing, but can't manage members, change billing, or create API keys. |
 
-**Invite a teammate**: click **Add New Member**, enter the **Email Address**, choose a **Role** (**Owner** or **Member**), and click **Send Invitation**. The invitee gets an email with a link to join. People without an account can sign up from the invite. Invitations expire after 7 days.
+**Invite a teammate**: click **Add New Member**, enter the **Email Address**, choose a **Role** (**Owner** or **Member**), and click **Send Invitation**. The invitee gets an email with a link to join. People without an account can sign up from the invite. Invitations expire after {invitationDays} days.
 
-**Manage invitations**: Owners can open the **Invited** list to see pending and expired invitations. Open the menu on an invitation to **Copy Invite Link**, **Resend Invite** (which restarts the 7 days), or **Revoke Invite**.
+**Manage invitations**: Owners can open the **Invited** list to see pending and expired invitations. Open the menu on an invitation to **Copy Invite Link**, **Resend Invite** (which restarts the {invitationDays} days), or **Revoke Invite**.
 
 **Remove a member**: Owners can choose **Remove from organization** from the menu on a member's row. The member loses access right away. Their past work, such as evaluations and annotations, stays in the organization. API keys they created stop working. If this was their only organization, they get a new personal organization.
 
@@ -47,7 +49,7 @@ The **Members** tab shows everyone in your organization and lets Owners manage a
 The **API keys** tab lets Owners create keys for the [Arklex Platform API](/api) and for [tool call tracing](/tool-tracing). Members see a message asking them to contact an Owner.
 
 1. Click **Create key**.
-2. Enter a **Name** (up to 100 characters) and click **Create key**.
+2. Enter a **Name** (up to {apiKeyNameChars} characters) and click **Create key**.
 3. Copy the key from the **Copy your API key** dialog, then click **I have copied it**. This is the only time the key is shown.
 
 The keys table shows each key's name, the start of the key, when it was created, and when it was last used. To revoke a key, click its trash icon and confirm. Revoking takes effect immediately.
@@ -79,7 +81,7 @@ The **Billing** tab shows your current plan, your token usage for the billing pe
 | **Input tokens** | 700K per period | 14M per period | Custom |
 | **Output tokens** | 100K per period | 2M per period | Custom |
 | **Knowledge tokens** | 5K (lifetime) | 100K (lifetime) | Custom |
-| **Concurrent operations** | 2 at a time for each type of operation | No plan limit | No plan limit |
+| **Concurrent operations** | {freePlanConcurrentOps} at a time for each type of operation | No plan limit | No plan limit |
 | **Overage** | None. Operations pause at the limit. | \$0.01 per 1K input tokens, \$0.05 per 1K output tokens | Custom |
 | **Overage ceiling** | None | \$2,000/month default, with a custom spending cap | Custom |
 | **Support** | Email | Email | Dedicated CSM and SLA |
@@ -124,25 +126,8 @@ To set a lower cap, click **Adjust cap** under **Spending cap**. Enter a monthly
 
 Click your organization name at the bottom of the sidebar to open the account menu. From there, you can:
 
-- Switch between your organizations under **Organizations**.
+- Switch between your organizations under **Organizations**. Your role can differ in each one. To join another organization, accept an invite from it. You can't create new organizations yourself.
 - Choose a **Theme**: **Light**, **Dark**, or **System**.
 - **Log out**.
 - See the version of the app you're using. Include it when you contact support.
 
----
-
-## FAQ
-
-<AccordionGroup>
-  <Accordion title="Can I belong to multiple organizations?">
-    Yes. Accept an invite to join another organization, then switch between organizations from the account menu at the bottom of the sidebar. Your role can be different in each organization. You can't create new organizations yourself.
-  </Accordion>
-
-  <Accordion title="What happens to data when a member is removed?">
-    Evaluations, simulations, agents, and scenarios they created stay in the organization, and their annotations and comments remain attributed to them. They lose access, and any API keys they created stop working.
-  </Accordion>
-
-  <Accordion title="Can a Member invite others?">
-    No. Only Owners can send invitations. Members can view the team list but can't see pending invitations or add and remove people.
-  </Accordion>
-</AccordionGroup>

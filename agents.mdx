@@ -29,6 +29,10 @@ Click **Connect Agent**, then fill in the form.
   Optional, but handy for noting what changed between versions.
 </ParamField>
 
+<Tip>
+  You can connect the same endpoint as several agents with different settings, such as different system prompts or temperatures, and compare them side by side.
+</Tip>
+
 <ParamField path="Method" type="string" required>
   Choose **API Endpoint**. The **Arklex Agent** option isn't available yet.
 </ParamField>
@@ -140,24 +144,3 @@ Each agent's detail page has three tabs:
 
 To delete an agent, click the trash icon next to its name on the detail page, or choose **Delete** from the menu on its card. You can't delete an agent while simulations use it. Delete their evaluations first, then the simulations, then the agent.
 
----
-
-## FAQ
-
-<AccordionGroup>
-  <Accordion title="Can I connect the same agent endpoint more than once?">
-    Yes. You can connect the same endpoint as several agents with different settings, such as different system prompts or temperatures, and compare them side by side.
-  </Accordion>
-
-  <Accordion title="Can I delete an agent that has simulations or evaluations?">
-    No. Delete the evaluations, then the simulations, then the agent.
-  </Accordion>
-
-  <Accordion title="How do I update a header without losing its saved value?">
-    Leave the masked value as it is. Arklex keeps the saved value for any header you don't change. To update a header, replace the masked value with the new one.
-  </Accordion>
-
-  <Accordion title="Can I test an agent running on localhost?">
-    Not directly. Arklex only calls public endpoints. Expose your local agent through a public tunnel, then use the tunnel's URL.
-  </Accordion>
-</AccordionGroup>

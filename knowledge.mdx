@@ -3,13 +3,15 @@ title: "Knowledge"
 description: "Manage the documents and websites that ground your scenarios."
 ---
 
+import { documentUploadMb, crawlLinksMax, crawlLinksDefault, folderDepth } from "/snippets/limits.mdx";
+
 The **Knowledge** page holds the documents and websites that ground your scenarios. When you build scenarios, Arklex searches your knowledge for relevant passages and gives them to the simulated users. This makes their questions realistic and specific.
 
 Knowledge shapes what the **simulated user** knows and asks about. It doesn't change your agent's answers. Grounding scenarios in the same material your agent relies on is a good way to test whether the agent stays faithful to it.
 
 ---
 
-## Knowledge types
+## Knowledge types and statuses
 
 The page has two tabs, and it opens on **Websites**:
 
@@ -35,20 +37,13 @@ Only items with **Success** status can be used to build scenarios.
 
 On the **Websites** tab, you can add a whole domain or a single link.
 
-<CardGroup cols={2}>
-  <Card title="Add Domain" icon="network">
-    Discover the pages under a URL, then choose which ones to add.
-  </Card>
-
-  <Card title="Add Link" icon="link">
-    Add a single web page.
-  </Card>
-</CardGroup>
+- **Add Domain**: discover the pages under a URL, then choose which ones to add.
+- **Add Link**: add a single web page.
 
 To add pages from a domain:
 
 1. Click **Add Domain**.
-2. Enter the **Domain URL** and the **Number of Links to Crawl** (1 to 1,000, default 50). Optionally add **Tags** and choose a **Folder**.
+2. Enter the **Domain URL** and the **Number of Links to Crawl** (1 to {crawlLinksMax}, default {crawlLinksDefault}). Optionally add **Tags** and choose a **Folder**.
 3. Click **Add Domain**. Arklex starts discovering pages. Discovery only follows links that start with the URL you entered, and it skips links to files such as PDFs and images.
 4. When the domain shows **Success**, click **Review URLs**.
 5. Select the pages you want and click **Add N Pages**.
@@ -65,7 +60,7 @@ The tab has two tables. **Domains** lists your domain discoveries. **Links** lis
 
 On the **Documents** tab, click **Upload Document**. Select one or more files, or drag them into the dialog. Optionally add **Tags** and choose a **Folder**, then confirm the upload.
 
-Supported formats: PDF, DOC, DOCX, TXT, MD, CSV, JSON, XLS, XLSX, PPTX, JPG, JPEG, and PNG. Each file can be up to 10 MB. Arklex reads the text in images and PowerPoint files with OCR, so text-based PDFs work better than scans.
+Supported formats: PDF, DOC, DOCX, TXT, MD, CSV, JSON, XLS, XLSX, PPTX, JPG, JPEG, and PNG. Each file can be up to {documentUploadMb} MB. Arklex reads the text in images and PowerPoint files with OCR, so text-based PDFs work better than scans.
 
 The documents table shows each document's name, tags, status, and when it was last updated.
 
@@ -79,7 +74,7 @@ The documents table shows each document's name, tags, status, and when it was la
 
 The folder panel next to the tabs shows **All items**, **Unfiled**, and your **Folders**.
 
-- **Create a folder**: click **+** next to **FOLDERS**. If a folder is selected, the new folder goes inside it. Folders can be up to six levels deep.
+- **Create a folder**: click **+** next to **FOLDERS**. If a folder is selected, the new folder goes inside it. Folders can be up to {folderDepth} levels deep.
 - **Filter by folder**: click a folder to show only its items. Turn **Include subfolders** on or off to include or exclude items in subfolders.
 - **File new items**: choose a **Folder** when you add knowledge. If you leave it as **No folder**, the item goes to **Unfiled**.
 - **Move items**: select items and click **Move to folder**, or drag rows onto a folder. An item lives in one folder at a time.
@@ -103,9 +98,9 @@ The folder panel next to the tabs shows **All items**, **Unfiled**, and your **F
 
 **Reprocess**: re-reads the file or re-crawls the page. Use it to pick up changes to a web page, or to retry an item that failed. Reprocessing replaces any content you edited by hand. Arklex doesn't re-crawl pages automatically.
 
-**Delete**: choose **Delete** in an item's menu, on its detail page, or from the bulk actions. Deleting frees the item's knowledge tokens.
+**Delete**: choose **Delete** in an item's menu, on its detail page, or from the bulk actions. Deleting frees the item's knowledge tokens. See [Settings](/settings#billing).
 
-If an item shows **Error**, open it to see why it failed. For example, Arklex couldn't extract any text, or your plan's knowledge allowance is used up. Fix the cause, then click **Reprocess**.
+If an item shows **Error**, open it to see why it failed. For example, Arklex couldn't extract any text, the file is password-protected, or your plan's knowledge allowance is used up. Fix the cause, then click **Reprocess**.
 
 ---
 
@@ -115,34 +110,8 @@ You choose knowledge when you build scenarios with the assistant. Select **My wh
 
 Each scenario stores a copy of the passages it uses. Later edits, reprocessing, or deletion don't change scenarios you've already saved, or their simulations. A deleted item just isn't found for new scenarios.
 
-Grounding scenarios in your knowledge supports three kinds of testing:
+Grounding scenarios in your knowledge supports two kinds of testing:
 
-- **Faithfulness testing**: check that the agent's answers match what a knowledgeable user would expect from your documents.
-- **Grounded evaluation**: make sure the agent doesn't make up information that contradicts the documents the user has access to.
+- **Faithfulness testing**: check that the agent's answers match your documents and don't make up information that contradicts them.
 - **Edge-case coverage**: give simulated users specific product specs, pricing tables, or policy details that reveal gaps in what your agent knows.
 
----
-
-## FAQ
-
-<AccordionGroup>
-  <Accordion title="What file formats can I upload?">
-    PDF, DOC, DOCX, TXT, MD, CSV, JSON, XLS, XLSX, PPTX, JPG, JPEG, and PNG, up to 10 MB per file. If a document fails, check that it isn't password-protected and contains real text rather than a scanned image.
-  </Accordion>
-
-  <Accordion title="Does adding a domain index every page on the site?">
-    No. **Add Domain** discovers up to the number of pages you set, under the URL you enter. You then choose which pages to add. **Add Link** adds only the single page you provide.
-  </Accordion>
-
-  <Accordion title="How do I refresh a web page that changed?">
-    Click **Reprocess** on the page. Arklex doesn't re-crawl automatically.
-  </Accordion>
-
-  <Accordion title="Can I use one knowledge item in many scenarios?">
-    Yes. A single document or web page can ground any number of scenarios.
-  </Accordion>
-
-  <Accordion title="Does knowledge count toward my plan?">
-    Yes. Indexed knowledge uses knowledge tokens, which have a fixed limit on every plan. Deleting items frees their tokens. See [Settings](/settings#billing).
-  </Accordion>
-</AccordionGroup>

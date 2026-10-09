@@ -3,27 +3,24 @@ title: "Quickstart"
 description: "Connect an agent, build scenarios, run a simulation, and review your first evaluation in Arklex Platform."
 ---
 
+import {
+  conversationsPerScenarioMax,
+  conversationsPerScenarioDefault,
+  maxTurnsMax,
+  maxTurnsDefault,
+} from "/snippets/limits.mdx";
+
 This guide takes you from your first sign-in to your first evaluation. It follows one running example: a **Banking Assistant** that helps customers check balances, make transfers, and resolve card issues. Every step works the same for any conversational agent you connect.
 
 Each step maps directly to a page in the platform, so the workflow you learn here is the workflow you'll use every day.
 
 ## Before you start
 
-- An Arklex Platform account. To create one, click **Sign Up** on the sign-in page. If your team already has an organization, ask one of its Owners to invite you instead, so you join it directly.
+- An Arklex Platform account. If your team already has an organization, ask one of its Owners to invite you, so you join it directly. Otherwise, choose **Sign Up** when you first open Arklex Platform.
 - An agent with an HTTP endpoint that the public internet can reach. Arklex supports **Chat Completions** endpoints, the **A2A** protocol, and any JSON endpoint through **Custom HTTP**.
 - Any auth headers your endpoint requires, for example an API key or bearer token.
 
-<Note>
-  **First sign-in:** Arklex asks you to complete your profile (**Company**, **Occupation**, and an optional **Referral source**), then click **Continue**. A short walkthrough of the main pages follows. After that, the **Onboarding Checklist** in the left sidebar tracks five steps:
-
-  - **Connect your agent**: checked when you connect an agent.
-  - **Generate scenarios**: checked when you leave a scenario-building session with the assistant.
-  - **Run a simulation**: checked when you start a simulation.
-  - **Run an evaluation**: checked when you start an evaluation.
-  - **Set up metrics**: checked when you create a custom metric.
-
-  The checklist saves progress in your browser, so it starts over in a different browser.
-</Note>
+On your first sign-in, Arklex asks you to complete your profile and shows a short walkthrough. The **Onboarding Checklist** in the left sidebar then tracks the steps in this guide.
 
 ---
 
@@ -105,7 +102,7 @@ A simulation runs your scenarios against the connected agent and records full co
     Choose the scenarios to include.
   </Step>
   <Step title="Configure the conversations">
-    Set **Conversations per scenario** (default 1, max 10) and **Max turns per conversation** (default 5, max 10). Leave **Max concurrent conversations** at its default unless your agent struggles under load.
+    Set **Conversations per scenario** (default {conversationsPerScenarioDefault}, max {conversationsPerScenarioMax}) and **Max turns per conversation** (default {maxTurnsDefault}, max {maxTurnsMax}). Leave **Max concurrent conversations** at its default unless your agent struggles under load.
   </Step>
   <Step title="Run">
     Click **Run Simulation**.

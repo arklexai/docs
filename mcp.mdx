@@ -3,6 +3,12 @@ title: "MCP servers"
 description: "Connect Model Context Protocol servers so the LLM judge can check your agent's answers against live data."
 ---
 
+import {
+  mcpTestTimeoutSeconds,
+  mcpToolCallTimeoutSeconds,
+  mcpToolsPerServer,
+} from "/snippets/limits.mdx";
+
 The **MCP** page connects Model Context Protocol (MCP) servers to Arklex Platform. Once a server is connected, a custom metric can call its tools during an evaluation. For example, the judge can look up an order's real status and check whether the agent reported it correctly.
 
 ---
@@ -56,7 +62,7 @@ For each tool, you can see:
 
 - An **Enabled** switch. Only enabled tools can be used.
 - A safety label: **Read-only**, **Write-capable**, or **Unknown safety**.
-- An approval switch that lets LLM judges call the tool. Only Owners can approve tools, and only **Read-only** tools can be approved.
+- An approval switch that lets LLM judges call the tool. Only Owners can approve tools, and only **Read-only** tools can be approved, so the judge can't change data in your systems.
 
 Tools that the server marks as read-only are enabled automatically. If a tool's definition changes on the server, Arklex removes its approval, and an Owner must approve it again.
 
@@ -87,24 +93,7 @@ During the evaluation, the judge calls the tool and scores the agent against the
 
 ## Limits
 
-- Connection tests time out after 10 seconds, and tool calls time out after 30 seconds.
-- Arklex lists up to 500 tools per server.
+- Connection tests time out after {mcpTestTimeoutSeconds} seconds, and tool calls time out after {mcpToolCallTimeoutSeconds} seconds.
+- Arklex lists up to {mcpToolsPerServer} tools per server.
 - Server URLs must be public.
 
----
-
-## FAQ
-
-<AccordionGroup>
-  <Accordion title="Why can't I approve a tool?">
-    Only Owners can approve tools, and only tools labeled **Read-only**. This keeps the judge from changing data in your systems.
-  </Accordion>
-
-  <Accordion title="Why did a tool lose its approval?">
-    The tool's definition changed on the server. Review the tool and approve it again.
-  </Accordion>
-
-  <Accordion title="How do I change a server's URL or credentials?">
-    Delete the server and add it again with the new details.
-  </Accordion>
-</AccordionGroup>

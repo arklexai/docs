@@ -16,20 +16,24 @@ Preview runs at `http://localhost:3000`.
 | File / folder | Purpose |
 |---|---|
 | `docs.json` | Site navigation and theme configuration |
+| `index.mdx` | Redirects the site root to the overview |
 | `overview.mdx` | Product overview |
 | `quickstart.mdx` | Getting started guide |
-| `faq.mdx` | Frequently asked questions |
 | `agents.mdx` | Connecting and managing agents |
-| `scenarios.mdx` | Scenario groups, building scenarios, and assertions |
+| `scenarios.mdx` | Scenario groups, assertions, and building scenarios |
 | `simulations.mdx` | Running simulations |
 | `evaluations.mdx` | Scoring with evaluations |
 | `annotations.mdx` | Human annotation and calibration |
 | `knowledge.mdx` | Knowledge base management |
 | `metrics.mdx` | Built-in and custom metrics |
-| `mcp.mdx` | MCP servers |
 | `settings.mdx` | Profile, team, API keys, usage, and billing |
-| `api.mdx` | Public API and API keys |
+| `api.mdx` | API overview |
 | `tool-tracing.mdx` | Capturing tool calls with OpenTelemetry |
+| `mcp.mdx` | MCP servers |
+| `faq.mdx` | Frequently asked questions |
+| `limits.mdx` | Size, count, and rate limits |
 | `support.mdx` | Contact and support |
+| `snippets/limits.mdx` | Limit values shared by `limits.mdx` and the feature pages |
 | `drafts/` | Unpublished pages (ignored by Mintlify) |
 | `images/` | Screenshots and diagrams |
+| `videos/` | Quickstart walkthrough videos |

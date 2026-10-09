@@ -1,11 +1,15 @@
 ---
-title: "API reference"
+title: "API overview"
 description: "Run simulations and evaluations from scripts and CI pipelines with the Arklex Platform API."
 ---
 
+import {
+  idempotencyKeyHours,
+} from "/snippets/limits.mdx";
+
 The Arklex Platform API runs the same simulation and evaluation engine as the app. Use it to test your agent from a script or a CI pipeline, for example on every pull request.
 
-The full reference lives in the app. Click **API Reference** in the sidebar to browse every endpoint, see request and response examples, and send test requests.
+This page covers how the API works. The full endpoint reference lives in the app: click **API Reference** in the sidebar to browse every endpoint, see request and response examples, and send test requests.
 
 ---
 
@@ -89,7 +93,7 @@ Simulations and evaluations share one set of statuses. The API names differ from
 
 | API `status` | In the app | Final |
 | --- | --- | --- |
-| `pending` | **Pending** | No |
+| `pending` | **Pending** for simulations, **Running** for evaluations | No |
 | `running` | **Running** | No |
 | `success` | **Completed** | Yes |
 | `error` | **Failed** | Yes |
@@ -115,7 +119,7 @@ Send an `Idempotency-Key` header on create requests so that a retry can't run tw
 - Same key while the first attempt is still running: `409 IDEMPOTENCY_IN_PROGRESS`.
 - Same key with a different body: `422 IDEMPOTENCY_KEY_REUSED`.
 
-Keys expire 24 hours after the first attempt completes.
+Keys expire {idempotencyKeyHours} hours after the first attempt completes.
 
 ### Limits
 

@@ -3,6 +3,20 @@ title: "Simulations"
 description: "Run scenarios against a connected agent and record full conversation transcripts."
 ---
 
+import {
+  conversationsPerScenarioMax,
+  conversationsPerScenarioDefault,
+  maxTurnsMax,
+  maxTurnsDefault,
+  concurrencyMax,
+  concurrencyDefault,
+  conversationsPerSimulation,
+  traceWaitMin,
+  traceWaitMax,
+  traceWaitDefault,
+  freePlanConcurrentOps,
+} from "/snippets/limits.mdx";
+
 A simulation runs a set of scenarios against a connected agent and records the full transcript of each conversation. Simulations are the execution layer. They produce the conversations that evaluations then score.
 
 <Note>
@@ -55,20 +69,20 @@ Click **New Simulation** to open the creation sheet.
   The scenarios to include, listed by scenario group. Select individual scenarios, use **Select Group** for a whole group, or use **Select All**. Search by goal text to narrow a long list. Click a scenario to preview its goal, profile, agent context, and knowledge.
 </ParamField>
 
-<ParamField path="Conversations per scenario" default="1" type="integer">
-  How many independent conversations to run for each selected scenario (max **10**). More conversations give you more variation and more reliable results, but take longer.
+<ParamField path="Conversations per scenario" type="integer">
+  How many independent conversations to run for each selected scenario (default **{conversationsPerScenarioDefault}**, max **{conversationsPerScenarioMax}**). More conversations give you more variation and more reliable results, but take longer.
 </ParamField>
 
-<ParamField path="Max turns per conversation" default="5" type="integer">
-  The maximum number of exchanges before a conversation ends (max **10**). Set this to match the typical length of a conversation with your agent.
+<ParamField path="Max turns per conversation" type="integer">
+  The maximum number of exchanges before a conversation ends (default **{maxTurnsDefault}**, max **{maxTurnsMax}**). Set this to match the typical length of a conversation with your agent.
 </ParamField>
 
-<ParamField path="Max concurrent conversations" default="10" type="integer">
-  How many conversations run at the same time (max **50**). Lower it if your agent returns errors under load. Arklex remembers the last value you used.
+<ParamField path="Max concurrent conversations" type="integer">
+  How many conversations run at the same time (default **{concurrencyDefault}**, max **{concurrencyMax}**). Lower it if your agent returns errors under load. Arklex remembers the last value you used.
 </ParamField>
 
 <ParamField path="Capture tool calls" type="boolean">
-  Records the tools your agent calls in each conversation. Your agent must export OpenTelemetry traces. See [Tool call tracing](/tool-tracing). Under **Advanced**, **Trace wait time (seconds)** sets how long Arklex keeps accepting traces after each agent reply (10 to 300, default 60). Raise it if your agent sends traces in slow batches.
+  Records the tools your agent calls in each conversation. Your agent must export OpenTelemetry traces. See [Tool call tracing](/tool-tracing). Under **Advanced**, **Trace wait time (seconds)** sets how long Arklex keeps accepting traces after each agent reply ({traceWaitMin} to {traceWaitMax}, default {traceWaitDefault}). Raise it if your agent sends traces in slow batches.
 </ParamField>
 
 <ParamField path="Provider and Model" type="string">
@@ -79,7 +93,7 @@ Click **New Simulation** to open the creation sheet.
   ![New Simulation form: choose an agent, name the run, select scenarios, set conversations and turns, and pick a model.](/images/run-simulation.png)
 </Frame>
 
-Below the fields, the sheet shows how many conversations the simulation will run. One simulation can run at most 2,000 conversations in total. **Run Simulation** stays disabled until you select an agent, enter a name, select at least one scenario, and stay within that limit.
+Below the fields, the sheet shows how many conversations the simulation will run. One simulation can run at most {conversationsPerSimulation} conversations in total. **Run Simulation** stays disabled until you select an agent, enter a name, select at least one scenario, and stay within that limit.
 
 Click **Run Simulation**. The sheet closes and the new simulation appears at the top of the list.
 
@@ -150,6 +164,6 @@ Open the menu on any simulation row for these actions:
   </Accordion>
 
   <Accordion title="Can I run multiple simulations against the same agent at once?">
-    Yes. On the Free plan, you can have up to 2 simulations pending or running at once. Keep in mind that all of them call the same agent endpoint.
+    Yes. On the Free plan, you can have up to {freePlanConcurrentOps} simulations pending or running at once. Keep in mind that all of them call the same agent endpoint.
   </Accordion>
 </AccordionGroup>
