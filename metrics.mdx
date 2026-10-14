@@ -1,25 +1,47 @@
 ---
 title: "Metrics"
-description: "Define what the LLM judge evaluates. Use built-in metrics or create custom ones with your own rubric."
+description: "Define what the LLM judge scores. Use built-in metrics or create custom ones with your own prompt."
 ---
 
-Metrics define what the LLM judge evaluates during an evaluation run. Arklex includes seven built-in metrics and supports custom metrics you define with a natural-language rubric.
+import {
+  metricNameChars,
+  metricDescriptionChars,
+  judgeMcpCallsPerTurn,
+  judgeMcpCallsPerConversation,
+} from "/snippets/limits.mdx";
+
+Metrics define what the LLM judge scores during an evaluation. Arklex Platform includes built-in metrics, and you can create custom metrics with your own scoring prompt.
+
+Metrics add scores to an evaluation. Whether a conversation passes or fails is decided separately, by the assertions on its scenario. See [Assertions](/scenarios#assertions).
 
 ---
 
 ## Built-in metrics
 
-Seven built-in metrics use Arklex's default scoring rubrics and are available in every evaluation without configuration:
+Go to **Metrics** in the sidebar and open the **Built-in** tab. Built-in metrics are available in every evaluation without any setup. Click a built-in metric to see its full definition. You can't edit or delete built-in metrics.
+
+These metrics score your agent:
+
+| Metric | Scope | Scale | What it measures |
+| --- | --- | --- | --- |
+| **Helpfulness** | Turn | 1 to 5 | How effectively the response addresses the user's need. |
+| **Coherence** | Turn | 1 to 5 | The logical flow and clarity of the response. |
+| **Relevance** | Turn | 1 to 5 | How directly the response addresses the user's input. |
+| **Verbosity** | Turn | 1 to 5 | How concise the response is. Higher scores mean more concise responses. |
+| **Faithfulness** | Turn | 1 to 5 | Whether the response contradicts the scenario's knowledge. |
+| **User Goal Completion** | Conversation | 0 or 1 | Whether the simulated user got what they asked for by the end of the conversation. A low score is expected when the agent correctly declines a request. |
+| **Agent Behavior Failure** | Turn | Labels | The type of failure in each turn: false information, disobey user request, lack of specific information, failure to ask for clarification, repetition, or no failure. |
+| **Tool call behavior** | Turn | Labels | Incorrect tool use in the turn's captured tool calls: wrong tool, wrong parameters, unnecessary calls, ignored results, or unsafe actions. Needs a simulation that captured tool calls. |
+
+These metrics score the simulated user, and run only in simulated-user evaluations:
 
 | Metric | What it measures |
 | --- | --- |
-| **Helpfulness** | Whether responses actually help the user accomplish their goal. |
-| **Coherence** | Whether responses are logically consistent and well-structured across the conversation. |
-| **Relevance** | Whether the agent stays on topic and addresses what the user asked. |
-| **Verbosity** | Whether response length is appropriate — not too terse or unnecessarily long. |
-| **Faithfulness** | Whether the agent's claims are grounded in the knowledge it was given, without hallucination. |
-| **Goal Completion** | Whether the simulated user's stated goal was fully achieved. Scored 0–1 rather than 1–5, and **always included** in every evaluation — it can't be deselected. |
-| **Agent Behavior Failure** | Whether the agent showed any defined failure behaviors (e.g. answering its own follow-up questions, recommending without gathering context). |
+| **Character Consistency** | Whether the simulated user stayed the person its persona describes, and stayed consistent with itself. |
+| **Goal Adherence** | Whether the simulated user pursued the sub-goals it was given and raised every required one. |
+| **Realism** | Whether the user side of the conversation reads like a real person rather than a language model. |
+
+The **Evaluates** column on the **Built-in** tab shows which metrics score the **Agent** and which score the **Simulated user**.
 
 <Frame>
   ![The built-in metrics list on the Metrics page](/images/metrics-built-in.png)
@@ -29,47 +51,61 @@ Seven built-in metrics use Arklex's default scoring rubrics and are available in
 
 ## Create a custom metric
 
-Custom metrics let you score domain-specific behaviors. Navigate to **Metrics** in the sidebar and click **New Metric** (or the **\+** icon), then fill in the form:
+Custom metrics let you score behaviors specific to your domain. Go to **Metrics**, click **Add Custom Metric**, and fill in the form:
 
 <ParamField path="Name" type="string" required>
-  A short label — e.g. "Identity Verification Compliance" or "Policy Accuracy."
+  A short label, for example "Identity Verification Compliance" or "Policy Accuracy". Names must start with a letter, can contain letters, digits, spaces, underscores, hyphens, and parentheses, and must be unique in your organization. Up to {metricNameChars} characters.
 </ParamField>
 
-<ParamField path="Description" type="string">
-  A one-sentence description that appears as a tooltip in evaluation results.
-</ParamField>
-
-<ParamField path="Type" type="string" required>
-  Whether the metric produces a numeric score (**Quantitative**) or a category label (**Qualitative**).
-</ParamField>
-
-<ParamField path="Scope" type="string" required>
-  Whether to score each assistant turn independently (**Turn**) or the full conversation once (**Conversation**).
+<ParamField path="Description" type="string" required>
+  A short description of what the metric measures. Up to {metricDescriptionChars} characters.
 </ParamField>
 
 <ParamField path="System Prompt" type="string" required>
-  The fixed instruction the judge receives, describing its role and how to apply this metric.
+  The fixed instructions the judge receives, describing its role and how to apply this metric.
 </ParamField>
 
 <ParamField path="User Prompt Template" type="string" required>
-  The per-turn or per-conversation prompt the judge uses to produce a score. Reference the conversation content here, and for quantitative metrics, define the scale and what each level means.
+  The prompt the judge uses to produce a score for each turn or conversation. Define what each score or label means here. Click a variable under **Insert variable** to add it:
+
+  - `{chat_history}`: the conversation so far. Required.
+  - `{current_turn}`: the agent turn being scored.
+  - `{knowledge}`: the scenario's knowledge passages.
+  - `{user_goal}`: the scenario's goal.
+  - `{profile}`: the scenario's user profile.
 </ParamField>
 
-<ParamField path="Type-specific config" type="object">
-  For quantitative metrics, set the score range (e.g. 1–5 or 0–1). For qualitative metrics, define the label options the judge can assign.
+<ParamField path="Scope" type="string" required>
+  **Turn** scores each agent turn separately. **Conversation** scores the full conversation once. The default is **Conversation**.
 </ParamField>
+
+<ParamField path="Type" type="string" required>
+  **Quantitative** produces a number. **Qualitative** produces one of the labels you define. The default is **Qualitative**.
+</ParamField>
+
+<ParamField path="Labels or Scoring System" type="object" required>
+  For a qualitative metric, add at least one label with **Add label**. Each label has a value, an optional explanation, and a color. For a quantitative metric, choose a **Scoring System**: a 1 to 5 integer scale or a 0 to 1 decimal scale.
+</ParamField>
+
+You can't change a metric's type or scope after you create it. If you change them in the **Edit Metric** form, saving returns an error.
 
 <Frame>
-  ![The custom metric creation form](/images/metrics-custom.png)
+  ![The custom metrics list](/images/metrics-custom.png)
 </Frame>
 
 <Tip>
   Be specific about score boundaries. Defining what a 1, 3, and 5 look like produces far more reliable scores than a vague instruction like "rate how professional the agent sounds."
 </Tip>
 
-Here's an example quantitative, turn-level rubric for a banking agent:
+Here's an example user prompt template for a quantitative, turn-level metric for a banking agent:
 
 ```text
+Conversation so far:
+{chat_history}
+
+Agent turn to score:
+{current_turn}
+
 Evaluate whether the agent verified the customer's identity before sharing
 any account-specific information.
 
@@ -81,35 +117,45 @@ confirming, identifying information.
 Score 1 if the agent disclosed account details with no verification at all.
 ```
 
-Click **Save** to create the metric — it's immediately available in the metric selector when creating an evaluation.
+Click **Create Metric** to save. The metric appears on the **Custom** tab and in the metric list when you create an evaluation.
+
+### Check facts with MCP tools
+
+A custom metric can call tools on your [MCP servers](/mcp) to check the agent's claims against live data, such as an order status or account balance. In the **MCP tools used by this metric** section, click **Add MCP tool** and choose a tool. Only tools an Owner has approved for judges on the **MCP** page are listed.
+
+When a metric uses MCP tools:
+
+- The user prompt template must include `{mcp_evidence}`, which holds the tool results.
+- A turn-scope metric must also include `{current_turn}`.
+- A turn-scope metric can make up to {judgeMcpCallsPerTurn} tool calls per turn and {judgeMcpCallsPerConversation} per conversation. Once it uses all {judgeMcpCallsPerConversation}, later turns are scored against what earlier turns found. A conversation-scope metric can make {judgeMcpCallsPerTurn} in total.
+- A turn with nothing to check isn't scored.
+- With more than one tool, use the **Required** switch to mark the tools the judge must call.
+
+In an evaluation's conversation view, expand the tool calls next to a score to see **Evidence used for this score**.
 
 ---
 
 ## Manage custom metrics
 
-Click a metric row to open its detail view.
+The **Custom** tab lists your custom metrics with their latest version.
 
-**Edit** — Change the name, description, or prompt and click **Save**. The updated prompt applies to all future evaluations; previous results aren't retroactively rescored.
+**Edit**: click a metric to open the **Edit Metric** form. Change the name, description, prompts, labels, scoring system, or MCP tools, then click **Save Changes**. The changes apply to future evaluations. Past results aren't rescored.
 
-**Version history** — Each save creates a new version. View the history from the detail page to see what changed between runs and understand score differences over time.
+**Versions**: if an evaluation has used the current version, saving creates a new version. Otherwise, saving updates the current version. Use the version menu next to the **Edit Metric** heading to view earlier versions. Earlier versions are read-only.
 
-**Delete** — Use the delete action on the detail page. The metric is removed from future evaluations, while historical results that used it stay unchanged.
+**Delete**: click the trash icon on the metric's row and confirm. You can only delete a metric that no evaluation has used.
 
 ---
 
 ## Select metrics for an evaluation
 
-When creating an evaluation, the **Metrics** selector lists all available metrics grouped by type — **Custom** first, then the seven **Built-in** metrics. Search by name, or check metrics individually and use **Select All** / **Deselect All**. At least one metric must be selected before an evaluation can run (Goal Completion is always included).
+When you create an evaluation, the **Metrics** list shows your **Custom** metrics first, then the **Built-in** metrics. **Helpfulness**, **Coherence**, and **Relevance** are selected by default. Search by name, check metrics individually, or use **Select All** and **Deselect All**. **Create Custom Metric** closes the form and opens the **Metrics** page.
+
+For an agent evaluation, metrics are optional. Leave every metric unchecked to check assertions only. See [Assertions-only evaluations](/evaluations#assertions-only-evaluations).
 
 <Frame>
-  ![The metric selector grouped into custom and built-in types](/images/metrics-types.png)
+  ![The metric list grouped into custom and built-in metrics](/images/metrics-types.png)
 </Frame>
-
----
-
-## Refine a metric automatically
-
-When your team's annotations consistently disagree with the judge's scores on a metric, **Metric Alignment** distills those disagreements into a refined rubric automatically — no manual prompt rewriting. See [Metric Alignment](/metric-alignment) for the full workflow.
 
 ---
 
@@ -117,18 +163,18 @@ When your team's annotations consistently disagree with the judge's scores on a 
 
 <AccordionGroup>
   <Accordion title="How do I choose which metrics to include?">
-    Start with the built-in metrics most relevant to your agent's purpose — for a banking assistant, Helpfulness, Goal Completion, and Faithfulness are usually the most informative. Add custom metrics for behaviors specific to your use case, like identity verification or policy accuracy.
+    Start with the built-in metrics most relevant to your agent's purpose. For a banking assistant, Helpfulness and Faithfulness are usually the most informative. Add custom metrics for behaviors specific to your use case, like identity verification or policy accuracy.
   </Accordion>
 
   <Accordion title="Can I use custom metrics alongside built-in ones?">
-    Yes — mix and match freely. Each metric is scored independently.
+    Yes. Mix and match freely. Each metric is scored independently.
   </Accordion>
 
-  <Accordion title="Does the choice of LLM judge affect scores?">
-    Yes. Different models interpret rubrics differently. Use the same judge and model for consistency across runs; if you change judges, treat the results as a separate baseline rather than a direct comparison.
+  <Accordion title="Does the choice of judge model affect scores?">
+    Yes. Different models interpret prompts differently. Use the same model for consistency across runs. If you change models, treat the results as a new baseline rather than a direct comparison.
   </Accordion>
 
   <Accordion title="How many custom metrics should I create?">
-    There's no hard limit, but evaluations with more than 10–12 metrics get hard to interpret. Focus on the 3–5 that best capture the behaviors you care about.
+    There's no hard limit, but evaluations with more than 10 to 12 metrics get hard to interpret. Focus on the 3 to 5 that best capture the behaviors you care about.
   </Accordion>
 </AccordionGroup>

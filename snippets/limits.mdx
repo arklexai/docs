@@ -1,0 +1,70 @@
+{/*
+  Every limit that appears on more than one page. Change a value here and
+  limits.mdx and the feature pages that import it update together.
+*/}
+
+{/* Scenarios */}
+export const scenariosPerRun = "100";
+export const historyUploadMb = "256";
+export const importFileMb = "10";
+export const scenarioNameChars = "100";
+export const goalChars = "1,000";
+export const userProfileChars = "3,000";
+export const agentContextChars = "2,000";
+export const agentContextEditChars = "3,000";
+export const knowledgePerScenario = "5";
+export const checklistItems = "4";
+export const checklistItemChars = "500";
+export const knowledgeNameChars = "120";
+export const knowledgeContentChars = "2,000";
+export const assertionsPerScenario = "50";
+
+{/* Simulations */}
+export const conversationsPerScenarioMax = "10";
+export const conversationsPerScenarioDefault = "1";
+export const maxTurnsMax = "10";
+export const maxTurnsDefault = "5";
+export const concurrencyMax = "50";
+export const concurrencyDefault = "10";
+export const conversationsPerSimulation = "2,000";
+export const traceWaitMin = "10";
+export const traceWaitMax = "300";
+export const traceWaitDefault = "60";
+export const freePlanConcurrentOps = "2";
+
+{/* Knowledge */}
+export const documentUploadMb = "10";
+export const crawlLinksMax = "1,000";
+export const crawlLinksDefault = "50";
+export const folderDepth = "6";
+
+{/* Metrics and MCP servers */}
+export const metricNameChars = "100";
+export const metricDescriptionChars = "512";
+export const judgeMcpCallsPerTurn = "5";
+export const judgeMcpCallsPerConversation = "20";
+export const mcpTestTimeoutSeconds = "10";
+export const mcpToolCallTimeoutSeconds = "30";
+export const mcpToolsPerServer = "500";
+
+{/* Annotations and settings */}
+export const commentChars = "2,000";
+export const profilePhotoMb = "2";
+export const apiKeyNameChars = "100";
+export const invitationDays = "7";
+
+{/* API and tool call tracing */}
+export const idempotencyKeyHours = "24";
+export const traceRequestsPerMinute = "600";
+export const traceMibPerMinute = "64";
+export const traceRequestMib = "4";
+export const traceRequestMibUncompressed = "16";
+export const spansPerTraceRequest = "2,000";
+export const traceRequestMibJson = "4";
+export const spansPerTurn = "2,000";
+export const traceMibPerTurn = "16";
+export const toolCallFieldKib = "64";
+export const toolCallErrorKib = "8";
+export const apiRequestsPerMinute = "500";
+export const apiRequestBurst = "600";
+export const connectionTestsPerMinute = "10";

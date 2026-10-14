@@ -1,0 +1,131 @@
+---
+title: "Tool call tracing"
+description: "Record the tools your agent calls during simulations by exporting OpenTelemetry traces to Arklex Platform."
+---
+
+import {
+  traceRequestsPerMinute,
+  traceMibPerMinute,
+  traceRequestMib,
+  traceRequestMibUncompressed,
+  spansPerTraceRequest,
+  traceRequestMibJson,
+  spansPerTurn,
+  traceMibPerTurn,
+  toolCallFieldKib,
+  toolCallErrorKib,
+} from "/snippets/limits.mdx";
+
+Tool call tracing records every tool your agent calls during a simulation: the tool name, its arguments, the result or error, and how long it took. You can then read the calls in transcripts, check them with assertions, and score them with the **Tool call behavior** metric.
+
+Arklex can't see inside your agent, so your agent sends its tool calls to Arklex as OpenTelemetry traces.
+
+---
+
+## Before you start
+
+- An organization API key. An Owner creates it under **Settings** > **API keys**. See [Settings](/settings#api-keys).
+- An agent instrumented with OpenTelemetry. Arklex reads tool calls from these instrumentations:
+  - Google ADK
+  - OpenInference, for LangChain, LangGraph, and the OpenAI Agents SDK
+  - LangSmith OpenTelemetry export
+  - The OpenTelemetry GenAI semantic conventions
+
+---
+
+## Set up your agent
+
+<Steps>
+  <Step title="Find the endpoint">
+    Open your agent's detail page and go to the **Configuration** tab. Copy the **OTLP/HTTP traces endpoint** from the **Tool call tracing** card.
+  </Step>
+  <Step title="Export traces to Arklex">
+    Configure your agent's OpenTelemetry exporter, or your OpenTelemetry Collector, to send traces to that endpoint. Authenticate with your API key in the `Authorization: Bearer ark_...` header.
+
+    With the OpenTelemetry SDK, you can set the standard environment variables:
+
+    ```bash
+    export OTEL_EXPORTER_OTLP_TRACES_ENDPOINT="<OTLP/HTTP traces endpoint>"
+    export OTEL_EXPORTER_OTLP_TRACES_HEADERS="Authorization=Bearer%20ark_..."
+    export OTEL_EXPORTER_OTLP_TRACES_PROTOCOL="http/protobuf"
+    ```
+
+    The `%20` stands for the space after `Bearer`. Arklex accepts protobuf or JSON, optionally gzip-compressed.
+  </Step>
+  <Step title="Link traces to the simulation">
+    Each message Arklex sends carries a W3C `traceparent` header. Your HTTP server must continue the trace it starts, so your tool spans are linked to the simulation. For example, use `opentelemetry-instrumentation-fastapi` or `opentelemetry-instrumentation-flask`.
+
+    If your framework always starts a new trace for each request, copy the incoming baggage entry `arklex.capture.id` onto your spans as an attribute instead.
+  </Step>
+</Steps>
+
+<Note>
+  Instrumenting only Google ADK or LangChain doesn't read the `traceparent` header, so add the HTTP server instrumentation too. Google ADK records tool spans on its own. LangChain and LangGraph need OpenInference or LangSmith OpenTelemetry export.
+</Note>
+
+Export only from the deployment your simulations talk to. Arklex discards traces from other traffic, such as production.
+
+---
+
+## Capture tool calls in a simulation
+
+When you create a simulation, turn on **Capture tool calls**. If your agent sends traces in slow batches, raise **Trace wait time (seconds)** under **Advanced**. See [Simulations](/simulations#create-a-simulation) for the setting's range and default.
+
+Through the API, turn on trace capture when you create the simulation. See [API overview](/api).
+
+---
+
+## Read the results
+
+On the simulation's detail page, the **Tool calls** column shows each conversation's capture status:
+
+| Status | Meaning |
+| --- | --- |
+| **Collecting tool calls** | Arklex is still waiting for traces. |
+| **Tool calls captured** | Tool calls were recorded for the conversation. |
+| **Partially captured** | Some tool calls may be missing, for example because traces didn't arrive for every turn or were too large. |
+| **No tool calls captured** | No traces arrived, or the traces contained no tool calls. |
+
+While traces are arriving, the header shows how many conversations are still collecting. In a transcript, click **N tool calls** under an agent message to see each call's arguments, result or error, and duration. If a turn's capture is incomplete, the transcript shows why, for example "no traces received from the agent".
+
+<Frame>
+  ![A transcript with the captured tool calls expanded](/images/tool-calls-transcript.png)
+</Frame>
+
+---
+
+## Check tool calls
+
+- **Assertions**: add a **Tool calls** assertion to a scenario to list the tools the agent must call or must never call, in order or in any order. See [Assertions](/scenarios#assertions).
+- **Metrics**: select the **Tool call behavior** metric in an evaluation to flag incorrect tool use, such as the wrong tool, wrong parameters, unnecessary calls, ignored results, or unsafe actions. See [Metrics](/metrics).
+
+An evaluation of a simulation that just finished waits for its tool calls first. See [Evaluations](/evaluations#create-an-evaluation).
+
+---
+
+## Limits
+
+- Each organization can send up to {traceRequestsPerMinute} requests and {traceMibPerMinute} MiB of traces per minute. Traces that don't belong to a simulation count against a separate limit of the same size. Over the limit, Arklex returns `429` with a `Retry-After` header.
+- Each request can be up to {traceRequestMib} MiB compressed and hold up to {spansPerTraceRequest} spans. Uncompressed, it can be up to {traceRequestMibUncompressed} MiB for protobuf and {traceRequestMibJson} MiB for JSON.
+- Each turn keeps up to {spansPerTurn} spans and {traceMibPerTurn} MiB of trace data. Spans past that are dropped, and the transcript says some were dropped.
+- A tool call's arguments and result are cut at {toolCallFieldKib} KiB each, and its error at {toolCallErrorKib} KiB.
+
+On self-hosted deployments, your operator can change these limits.
+
+---
+
+## Troubleshooting
+
+<AccordionGroup>
+  <Accordion title="The column shows No tool calls captured">
+    Check that your exporter sends traces to the endpoint on the **Configuration** tab with a valid API key. Then check that your HTTP server continues the incoming `traceparent`, or copies `arklex.capture.id` onto your spans.
+  </Accordion>
+
+  <Accordion title="Some turns are missing tool calls">
+    Your agent may send traces after the wait time ends. Increase **Trace wait time (seconds)** under **Advanced** and run the simulation again.
+  </Accordion>
+
+  <Accordion title="Traces from my production agent don't appear">
+    That's expected. Arklex keeps only traces that belong to a simulation and discards the rest.
+  </Accordion>
+</AccordionGroup>

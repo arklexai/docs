@@ -1,0 +1,153 @@
+---
+title: "Limits"
+description: "Size, count, and rate limits across Arklex Platform, in one place."
+---
+
+import {
+  scenariosPerRun,
+  historyUploadMb,
+  importFileMb,
+  scenarioNameChars,
+  goalChars,
+  userProfileChars,
+  agentContextChars,
+  agentContextEditChars,
+  knowledgePerScenario,
+  knowledgeNameChars,
+  knowledgeContentChars,
+  checklistItems,
+  checklistItemChars,
+  assertionsPerScenario,
+  conversationsPerScenarioMax,
+  maxTurnsMax,
+  concurrencyMax,
+  concurrencyDefault,
+  conversationsPerSimulation,
+  traceWaitMin,
+  traceWaitMax,
+  traceWaitDefault,
+  freePlanConcurrentOps,
+  documentUploadMb,
+  crawlLinksMax,
+  crawlLinksDefault,
+  folderDepth,
+  metricNameChars,
+  metricDescriptionChars,
+  judgeMcpCallsPerTurn,
+  judgeMcpCallsPerConversation,
+  mcpTestTimeoutSeconds,
+  mcpToolCallTimeoutSeconds,
+  mcpToolsPerServer,
+  commentChars,
+  profilePhotoMb,
+  apiKeyNameChars,
+  invitationDays,
+  idempotencyKeyHours,
+  traceRequestsPerMinute,
+  traceMibPerMinute,
+  traceRequestMib,
+  traceRequestMibUncompressed,
+  spansPerTraceRequest,
+  traceRequestMibJson,
+  spansPerTurn,
+  traceMibPerTurn,
+  toolCallFieldKib,
+  toolCallErrorKib,
+  apiRequestsPerMinute,
+  apiRequestBurst,
+  connectionTestsPerMinute,
+} from "/snippets/limits.mdx";
+
+This page collects the limits that apply across Arklex Platform. Each section links to the page that explains the feature. On cloud, token allowances depend on your plan. See [Billing](/settings#billing). On self-hosted deployments, your operator can change the API and tracing rate limits.
+
+---
+
+## Scenarios
+
+| Limit | Value |
+| --- | --- |
+| Scenarios written per assistant run | {scenariosPerRun} |
+| Conversation history upload | {historyUploadMb} MB, `.json` or `.jsonl` |
+| Scenario import file | {importFileMb} MB, `.json` or `.csv` |
+| Scenario name | {scenarioNameChars} characters |
+| Goal | {goalChars} characters |
+| User profile | {userProfileChars} characters |
+| Agent context | {agentContextChars} characters when you import or write scenarios, {agentContextEditChars} when you edit one or use the API |
+| Knowledge passages per scenario | {knowledgePerScenario}, each with a name up to {knowledgeNameChars} characters and content up to {knowledgeContentChars} |
+| User goal checklist items | 1 to {checklistItems}, at least one Required. Each description up to {checklistItemChars} characters. |
+| Assertions per scenario | {assertionsPerScenario}, including at most one **Tool calls** assertion |
+
+See [Scenarios](/scenarios).
+
+---
+
+## Simulations
+
+| Limit | Value |
+| --- | --- |
+| Conversations per scenario | {conversationsPerScenarioMax} |
+| Max turns per conversation | {maxTurnsMax} |
+| Max concurrent conversations | {concurrencyMax} (default {concurrencyDefault}) |
+| Conversations per simulation | {conversationsPerSimulation} |
+| Trace wait time | {traceWaitMin} to {traceWaitMax} seconds (default {traceWaitDefault}) |
+| Simulations pending or running at once | {freePlanConcurrentOps} on the cloud Free plan. No limit on other plans or on self-hosted. |
+
+See [Simulations](/simulations).
+
+---
+
+## Knowledge
+
+| Limit | Value |
+| --- | --- |
+| Document upload | {documentUploadMb} MB per file |
+| Links crawled per domain | 1 to {crawlLinksMax} (default {crawlLinksDefault}) |
+| Folder depth | {folderDepth} levels |
+
+See [Knowledge](/knowledge).
+
+---
+
+## Metrics and MCP servers
+
+| Limit | Value |
+| --- | --- |
+| Custom metric name | {metricNameChars} characters |
+| Custom metric description | {metricDescriptionChars} characters |
+| MCP tool calls per metric | Turn scope: {judgeMcpCallsPerTurn} per turn and {judgeMcpCallsPerConversation} per conversation. Conversation scope: {judgeMcpCallsPerTurn} in total. |
+| MCP connection test timeout | {mcpTestTimeoutSeconds} seconds |
+| MCP tool call timeout | {mcpToolCallTimeoutSeconds} seconds |
+| Tools listed per MCP server | {mcpToolsPerServer} |
+
+See [Metrics](/metrics) and [MCP servers](/mcp).
+
+---
+
+## Annotations and settings
+
+| Limit | Value |
+| --- | --- |
+| Comment length | {commentChars} characters |
+| Profile photo | {profilePhotoMb} MB, JPEG, PNG, or WebP |
+| API key name | {apiKeyNameChars} characters |
+| Invitation lifetime | {invitationDays} days |
+
+See [Annotations](/annotations) and [Settings](/settings).
+
+---
+
+## API and tool call tracing
+
+| Limit | Value |
+| --- | --- |
+| API requests per key | {apiRequestsPerMinute} per minute, with bursts up to {apiRequestBurst} |
+| Connection tests per key | {connectionTestsPerMinute} per minute |
+| Idempotency key lifetime | {idempotencyKeyHours} hours after the first attempt completes |
+| Trace requests per organization | {traceRequestsPerMinute} per minute |
+| Trace data per organization | {traceMibPerMinute} MiB per minute |
+| Trace request size | {traceRequestMib} MiB compressed. Uncompressed, {traceRequestMibUncompressed} MiB for protobuf and {traceRequestMibJson} MiB for JSON. |
+| Spans per trace request | {spansPerTraceRequest} |
+| Trace data kept per turn | {spansPerTurn} spans and {traceMibPerTurn} MiB |
+| Tool call arguments, result, and error | {toolCallFieldKib} KiB, {toolCallFieldKib} KiB, and {toolCallErrorKib} KiB. Longer values are cut. |
+
+See [API overview](/api) and [Tool call tracing](/tool-tracing).

@@ -22,12 +22,7 @@
         "label": "Support",
         "href": "mailto:support@arklex.ai"
       }
-    ],
-    "primary": {
-      "type": "button",
-      "label": "Sign in",
-      "href": "https://arkdock.arklex.ai/platform/login"
-    }
+    ]
   },
   "contextual": {
     "options": [
@@ -44,7 +39,7 @@
     "socials": {
       "x": "https://x.com/arklexai",
       "github": "https://github.com/arklexai",
-      "linkedin": "https://linkedin.com/company/arklexai"
+      "linkedin": "https://www.linkedin.com/company/arklex"
     }
   },
   "navigation": {
@@ -53,8 +48,7 @@
         "group": "Get Started",
         "pages": [
           "overview",
-          "quickstart",
-          "faq"
+          "quickstart"
         ],
         "icon": "rocket"
       },
@@ -72,22 +66,26 @@
         "icon": "layers"
       },
       {
-        "group": "Team Management",
+        "group": "Account",
         "pages": [
           "settings"
         ],
         "icon": "users"
       },
       {
-        "group": "Advanced",
+        "group": "Developers",
         "pages": [
-          "metric-alignment"
+          "api",
+          "tool-tracing",
+          "mcp"
         ],
-        "icon": "settings"
+        "icon": "code"
       },
       {
         "group": "Help",
         "pages": [
+          "faq",
+          "limits",
           "support"
         ],
         "icon": "headset"
