@@ -77,7 +77,7 @@
         "pages": [
           "api",
           "tool-tracing",
-          "mcp"
+          "mcp-servers"
         ],
         "icon": "code"
       },
@@ -104,5 +104,12 @@
   },
   "thumbnails": {
     "background": "/images/thumbnail-background.svg"
-  }
+  },
+  "redirects": [
+    {
+      "source": "/",
+      "destination": "/overview",
+      "permanent": false
+    }
+  ]
 }
